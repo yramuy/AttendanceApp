@@ -156,7 +156,7 @@ class MonthlyMaintenance extends StatelessWidget {
                               DataColumn(
                                   label: SizedBox(
                                 width: 80,
-                                child: Text('Received Amount',
+                                child: Text('Amount Received ',
                                     overflow: TextOverflow.ellipsis,
                                     maxLines: 2,
                                     style: TextStyle(
@@ -168,7 +168,7 @@ class MonthlyMaintenance extends StatelessWidget {
                               DataColumn(
                                   label: SizedBox(
                                 width: 80,
-                                child: Text('Expense Amount',
+                                child: Text('Amount Spent',
                                     overflow: TextOverflow.ellipsis,
                                     maxLines: 2,
                                     style: TextStyle(
@@ -206,13 +206,13 @@ class MonthlyMaintenance extends StatelessWidget {
                                     style: TextStyle(
                                         color: Colors.green,
                                         fontFamily: "Inter-Medium",
-                                        fontWeight: FontWeight.bold,
+                                        // fontWeight: FontWeight.bold,
                                         fontSize: 14))),
                                 DataCell(Text(controller.expenseAmount,
                                     style: TextStyle(
                                         color: Colors.red,
                                         fontFamily: "Inter-Medium",
-                                        fontWeight: FontWeight.bold,
+                                        // fontWeight: FontWeight.bold,
                                         fontSize: 14))),
                                 DataCell(Text(controller.closingBalance,
                                     style: TextStyle(
@@ -269,7 +269,7 @@ class MonthlyMaintenance extends StatelessWidget {
                               )),
                               DataColumn(
                                   label: SizedBox(
-                                width: 80,
+                                width: 60,
                                 child: Text('Type',
                                     overflow: TextOverflow.ellipsis,
                                     maxLines: 2,
@@ -304,37 +304,55 @@ class MonthlyMaintenance extends StatelessWidget {
                                         fontWeight: FontWeight.bold)),
                               )),
                             ],
-                            rows: [
-                              DataRow(cells: [
+                            rows: controller.maintenanceHistory
+                                .map((transaction) {
+                              return DataRow(cells: [
                                 DataCell(SizedBox(
-                                  width: 80,
-                                  child: Text("25,000",
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontFamily: "Inter-Medium",
-                                          fontSize: 14)),
+                                  width: 60,
+                                  child: Text(
+                                    transaction['transaction_date'].toString(),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: "Inter-Medium",
+                                      fontSize: 14,
+                                    ),
+                                  ),
                                 )),
-                                DataCell(Text("5,000",
-                                    style: TextStyle(
-                                        color: Colors.green,
-                                        fontFamily: "Inter-Medium",
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 14))),
-                                DataCell(Text("10,000",
-                                    style: TextStyle(
-                                        color: Colors.red,
-                                        fontFamily: "Inter-Medium",
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 14))),
-                                DataCell(Text("35,000",
-                                    style: TextStyle(
-                                        fontFamily: "Inter-Medium",
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 14))),
-                              ]),
-                            ],
+                                DataCell(Text(
+                                  transaction['transaction_type'].toString(),
+                                  style: TextStyle(
+                                    color: transaction['transaction_type'] ==
+                                        'credit'
+                                        ? Colors.green
+                                        : Colors.red,
+                                    fontFamily: "Inter-Medium",
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
+                                  ),
+                                )),
+                                DataCell(Text(
+                                  transaction['closing_balance'].toString(),
+                                  style: TextStyle(
+                                    color: transaction['transaction_type'] ==
+                                        'credit'
+                                        ? Colors.green
+                                        : Colors.red,
+                                    fontFamily: "Inter-Medium",
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
+                                  ),
+                                )),
+                                DataCell(Text(
+                                  transaction['description'],
+                                  style: TextStyle(
+                                    fontFamily: "Inter-Medium",
+                                    fontSize: 14,
+                                  ),
+                                )),
+                              ]);
+                            }).toList(),
                           ),
                         ),
                       ],
