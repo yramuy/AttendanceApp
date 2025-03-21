@@ -5,6 +5,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:maintenanceapp/controllers/finance/monthlymaintenancecontroller.dart';
+import 'package:maintenanceapp/views/finance/monthlymaintanance.dart';
+
+import '../../apiservice/restapi.dart';
 
 class AddDailyMaintenanceController extends GetxController {
   List paymentTypes = [
@@ -17,6 +21,8 @@ class AddDailyMaintenanceController extends GetxController {
   String todayDate = Jiffy(DateTime.now()).format('yyyy-MM-dd');
   TextEditingController amount = TextEditingController();
   TextEditingController description = TextEditingController();
+  MonthlyMaintenanceController mmController =
+      Get.put(MonthlyMaintenanceController());
   @override
   void onInit() {
     // TODO: implement onInit
@@ -40,12 +46,35 @@ class AddDailyMaintenanceController extends GetxController {
     update();
   }
 
-  handleSave() {
+  handleSave() async {
+
     var body = jsonEncode({
       "transactionType": paymentType,
       "amount": amount.text,
       "description": description.text,
       "transactionDate": transactionDate
+    });
+
+    await ApiService.post("saveMaintenance", body).then((success) {
+      if (success.statusCode == 200) {
+        var responseBody = jsonDecode(success.body);
+        if (responseBody['status'].toString() == '200') {
+          Get.rawSnackbar(
+              snackPosition: SnackPosition.TOP,
+              message: responseBody['message'].toString());
+          mmController.loadMaintenanceHistory();
+          Get.off(() => const MonthlyMaintenance());
+        } else {
+          Get.rawSnackbar(
+              snackPosition: SnackPosition.TOP,
+              message: responseBody['message'].toString());
+        }
+      } else {
+        Get.rawSnackbar(
+            snackPosition: SnackPosition.TOP,
+            message: 'Something went wrong, Please retry later');
+      }
+      update();
     });
 
     log("Body $body");
