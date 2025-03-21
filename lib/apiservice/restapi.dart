@@ -2,8 +2,8 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 
 class Url {
-  static const String baseUrl = 'http://portal.prospectatech.com/maintenanceApp/api';
-  // static const String baseUrl = 'https://billspayeadmin.in/maintenanceApp/api';
+  // static const String baseUrl = 'http://portal.prospectatech.com/maintenanceApp/api';
+  static const String baseUrl = 'https://civsp.in/statisticsApp/api';
 }
 
 class ApiService {

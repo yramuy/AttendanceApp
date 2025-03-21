@@ -60,59 +60,77 @@ class _HomeState extends State<Home> {
                                         spreadRadius: 2),
                                   ]),
                               child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
+                                  Container(
+                                    width: 150,
+                                    margin: EdgeInsets.all(5),
+                                    decoration: BoxDecoration(
+                                        borderRadius:
+                                        BorderRadius.circular(10),
+                                        border:
+                                        Border.all(color: Colors.blue),
+                                        color: Colors.white),
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        controller.datePicker(context);
+                                      },
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Padding(
+                                            padding:
+                                            const EdgeInsets.all(8.0),
+                                            child: Text(
+                                              controller.meetingDate,
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                  fontSize: 14,
+                                                  color: Colors.black,
+                                                  fontFamily:
+                                                  "Inter-Medium"),
+                                            ),
+                                          ),
+                                          IconButton(
+                                              iconSize: 25,
+                                              onPressed: () {
+                                                controller
+                                                    .datePicker(context);
+                                              },
+                                              icon: const Icon(
+                                                Icons
+                                                    .calendar_month_rounded,
+                                                color: Color(0xff005F01),
+                                              ))
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(height: 10,),
                                   Row(
                                     children: [
-                                      Container(
-                                        margin: EdgeInsets.all(5),
-                                        decoration: BoxDecoration(
-                                            borderRadius:
-                                            BorderRadius.circular(10),
-                                            border:
-                                            Border.all(color: Colors.blue),
-                                            color: Colors.white),
-                                        child: GestureDetector(
-                                          onTap: () {
-                                            controller.datePicker(context);
-                                          },
-                                          child: Row(
-                                            children: [
-                                              Padding(
-                                                padding:
-                                                const EdgeInsets.all(8.0),
-                                                child: Text(
-                                                  controller.meetingDate,
-                                                  textAlign: TextAlign.center,
-                                                  style: TextStyle(
-                                                      fontSize: 14,
-                                                      color: Colors.black,
-                                                      fontFamily:
-                                                      "Inter-Medium"),
-                                                ),
-                                              ),
-                                              IconButton(
-                                                  iconSize: 25,
-                                                  onPressed: () {
-                                                    controller
-                                                        .datePicker(context);
-                                                  },
-                                                  icon: const Icon(
-                                                    Icons
-                                                        .calendar_month_rounded,
-                                                    color: Color(0xff005F01),
-                                                  ))
-                                            ],
-                                          ),
-                                        ),
-                                      ),
                                       ElevatedButton(
                                           style: ElevatedButton.styleFrom(
                                               backgroundColor: Colors.green),
                                           onPressed: () async {
                                             await controller
-                                                .generatePdfReport();
+                                                .generateReport('week');
                                           },
                                           child: Text("Weekly Report",
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontFamily: "Inter-Medium",
+                                                  fontSize: 16,
+                                                  fontWeight:
+                                                  FontWeight.bold))),
+                                      ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                              backgroundColor: Colors.green),
+                                          onPressed: () async {
+                                            controller
+                                                .handleReport('month');
+                                          },
+                                          child: Text("Monthly Report",
                                               style: TextStyle(
                                                   color: Colors.white,
                                                   fontFamily: "Inter-Medium",
@@ -559,7 +577,7 @@ class _HomeState extends State<Home> {
                                                         child: Text(
                                                             controller
                                                                 .updateAttendeesSunTotalPercentage(
-                                                                'Present'),
+                                                                'Present', 'week'),
                                                             style: TextStyle(
                                                                 color: Colors
                                                                     .green,
@@ -878,7 +896,7 @@ class _HomeState extends State<Home> {
                                                         child: Text(
                                                             controller
                                                                 .updateAttendeesTuesTotalPercentage(
-                                                                'Present'),
+                                                                'Present', 'week'),
                                                             style: TextStyle(
                                                                 color: Colors
                                                                     .green,
@@ -1197,7 +1215,7 @@ class _HomeState extends State<Home> {
                                                         child: Text(
                                                             controller
                                                                 .updateAttendeesFriTotalPercentage(
-                                                                'Present'),
+                                                                'Present', 'week'),
                                                             style: TextStyle(
                                                                 color: Colors
                                                                     .green,
@@ -2241,7 +2259,7 @@ class _HomeState extends State<Home> {
                                                         child: Text(
                                                             controller
                                                                 .updateAttendeesSunTotalPercentage(
-                                                                'Absent'),
+                                                                'Absent', 'week'),
                                                             style: TextStyle(
                                                                 color: Colors
                                                                     .green,
@@ -2560,7 +2578,7 @@ class _HomeState extends State<Home> {
                                                         child: Text(
                                                             controller
                                                                 .updateAttendeesTuesTotalPercentage(
-                                                                'Absent'),
+                                                                'Absent', 'week'),
                                                             style: TextStyle(
                                                                 color: Colors
                                                                     .green,
@@ -2879,7 +2897,7 @@ class _HomeState extends State<Home> {
                                                         child: Text(
                                                             controller
                                                                 .updateAttendeesFriTotalPercentage(
-                                                                'Absent'),
+                                                                'Absent', 'week'),
                                                             style: TextStyle(
                                                                 color: Colors
                                                                     .green,

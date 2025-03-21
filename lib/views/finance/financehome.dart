@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:maintenanceapp/controllers/finance/financehomecontroller.dart';
 import 'package:maintenanceapp/views/finance/creditwithdrawalpayment.dart';
+import 'package:maintenanceapp/views/finance/monthlymaintanance.dart';
 import 'package:maintenanceapp/views/finance/paymenthistory.dart';
 
 import '../../widgets/constants.dart';
@@ -65,18 +66,28 @@ class _FinanceHomeState extends State<FinanceHome> {
                                       return GestureDetector(
                                         onTap: () {
                                           if (controller.submenus[index]['id']
-                                                  .toString() ==
-                                              "4" || controller.submenus[index]['id']
-                                                  .toString() ==
-                                              "48") {
+                                                      .toString() ==
+                                                  "4" ||
+                                              controller.submenus[index]['id']
+                                                      .toString() ==
+                                                  "48") {
                                             Get.to(() =>
                                                 const CreditWithdrawalPayment());
-                                          } else if(controller.submenus[index]['id']
-                                              .toString() ==
-                                              "5" || controller.submenus[index]['id']
-                                              .toString() ==
-                                              "49"){
-                                            Get.to(() => const PaymentHistory());
+                                          } else if (controller.submenus[index]
+                                                          ['id']
+                                                      .toString() ==
+                                                  "5" ||
+                                              controller.submenus[index]['id']
+                                                      .toString() ==
+                                                  "49") {
+                                            Get.to(
+                                                () => const PaymentHistory());
+                                          } else if (controller.submenus[index]
+                                                      ['id']
+                                                  .toString() ==
+                                              "53") {
+                                            Get.to(() =>
+                                                const MonthlyMaintenance());
                                           }
                                         },
                                         child: Card(
