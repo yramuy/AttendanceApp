@@ -11,6 +11,7 @@ import 'package:maintenanceapp/views/saint/addsaint.dart';
 import 'package:maintenanceapp/views/saint/saints.dart';
 
 import '../../widgets/constants.dart';
+import '../finance/monthlymaintanance.dart';
 
 class GeneralHome extends StatefulWidget {
   const GeneralHome({super.key});
@@ -80,14 +81,11 @@ class _GeneralHomeState extends State<GeneralHome> {
                                         return GestureDetector(
                                           onTap: () {
                                             if (controller.submenus[index]['id'].toString() == "12" ||
-                                                controller.submenus[index]['id']
-                                                        .toString() ==
+                                                controller.submenus[index]['id'].toString() ==
                                                     "20" ||
-                                                controller.submenus[index]['id']
-                                                        .toString() ==
+                                                controller.submenus[index]['id'].toString() ==
                                                     "22" ||
-                                                controller.submenus[index]['id']
-                                                        .toString() ==
+                                                controller.submenus[index]['id'].toString() ==
                                                     "40") {
                                               Get.to(() => const Saints(),
                                                   arguments: {
@@ -103,14 +101,11 @@ class _GeneralHomeState extends State<GeneralHome> {
                                                     "user_name": ""
                                                   });
                                             } else if (controller.submenus[index]['id'].toString() == "13" ||
-                                                controller.submenus[index]['id']
-                                                        .toString() ==
+                                                controller.submenus[index]['id'].toString() ==
                                                     "21" ||
-                                                controller.submenus[index]['id']
-                                                        .toString() ==
+                                                controller.submenus[index]['id'].toString() ==
                                                     "23" ||
-                                                controller.submenus[index]['id']
-                                                        .toString() ==
+                                                controller.submenus[index]['id'].toString() ==
                                                     "41") {
                                               Get.to(() => const AddSaint(),
                                                   arguments: {
@@ -126,8 +121,7 @@ class _GeneralHomeState extends State<GeneralHome> {
                                                     "user_name": ""
                                                   });
                                             } else if (controller.submenus[index]['id'].toString() == "16" ||
-                                                controller.submenus[index]['id']
-                                                        .toString() ==
+                                                controller.submenus[index]['id'].toString() ==
                                                     "26" ||
                                                 controller.submenus[index]['id']
                                                         .toString() ==
@@ -137,10 +131,20 @@ class _GeneralHomeState extends State<GeneralHome> {
                                                     "44") {
                                               Get.to(() => Attendance());
                                             } else if (controller.submenus[index]['id'].toString() == "17" ||
-                                                controller.submenus[index]['id'].toString() == "27" ||
-                                                controller.submenus[index]['id'].toString() == "33" ||
-                                                controller.submenus[index]['id'].toString() == "45") {
+                                                controller.submenus[index]['id']
+                                                        .toString() ==
+                                                    "27" ||
+                                                controller.submenus[index]['id']
+                                                        .toString() ==
+                                                    "33" ||
+                                                controller.submenus[index]['id']
+                                                        .toString() ==
+                                                    "45") {
                                               Get.to(() => AttendanceList());
+                                            } else if (controller.submenus[index]['id'].toString() == "53" &&
+                                                controller.userID.toString() == "18") {
+                                              Get.to(() =>
+                                                  const MonthlyMaintenance());
                                             }
                                           },
                                           child: Card(

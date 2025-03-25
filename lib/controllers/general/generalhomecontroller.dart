@@ -13,6 +13,7 @@ class GeneralHomeController extends GetxController {
   List submenus = [];
   bool isLoading = true;
   String roleId = "";
+  String userID = "";
 
   @override
   void onInit() {
@@ -24,9 +25,10 @@ class GeneralHomeController extends GetxController {
   loadSubMenus() async {
     SharedPreferences userPref = await SharedPreferences.getInstance();
     roleId = userPref.getString('roleID').toString();
+    userID = userPref.getString('userID').toString();
     var id = Utilities.navId.toString();
     log("message");
-    log("$roleId $id");
+    log("$roleId $userID");
 
     var body =
         jsonEncode({"parent_id": id, "role_id": roleId, "type": 'child'});

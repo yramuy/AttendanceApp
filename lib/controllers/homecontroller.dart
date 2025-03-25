@@ -15,6 +15,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/services.dart' show rootBundle;
 
 class HomeController extends GetxController {
   String title = "HOME";
@@ -81,6 +82,9 @@ class HomeController extends GetxController {
   int friday = 0;
   int sunday = 0;
 
+  List absentees = [];
+  List lordsDayAbsentees = [];
+
   @override
   void onInit() {
     if (argumentData != null) {
@@ -117,6 +121,11 @@ class HomeController extends GetxController {
     super.dispose();
   }
 
+  Future<pw.Font> loadCustomFont() async {
+    final fontData = await rootBundle.load("assets/fonts/NotoSans-Regular.ttf");
+    return pw.Font.ttf(fontData);
+  }
+
   datePicker(BuildContext context) async {
     currentDate = (await showDatePicker(
       context: context,
@@ -127,6 +136,7 @@ class HomeController extends GetxController {
     meetingDate = Jiffy(currentDate).format('yyyy-MM-dd');
     loadWeekdayCounts();
     loadMeetingAttendance();
+    loadSaints();
     update();
   }
 
@@ -295,6 +305,7 @@ class HomeController extends GetxController {
           cityChildCount = responseBody['counts']['cityChildCnt'];
           totalChildren = responseBody['counts']['childrens'];
           // dormantSaints = responseBody['counts']['dormantSaints'];
+          getAllMeetingsAbsentees();
           log("Total Saints ${responseBody['total'].toString()}");
           isLoading = false;
           update();
@@ -311,6 +322,47 @@ class HomeController extends GetxController {
       update();
     });
     update();
+  }
+
+  getAllMeetingsAbsentees() {
+    absentees = [];
+    lordsDayAbsentees = [];
+    var sno1 = 1;
+    var sno2 = 1;
+    for (int i = 0; i < saints.length; i++) {
+      var meetingAttendance = saints[i]['meetingAttendance'];
+      if (meetingAttendance['sundayMeeting'].toString() == '0' &&
+          meetingAttendance['tuesdayMeeting'].toString() == '0' &&
+          meetingAttendance['fridayMeeting'].toString() == '0') {
+        var absentsEncode = jsonEncode({
+          "sno": sno1++,
+          "name": saints[i]['name'].toString(),
+          "district": saints[i]['district'].toString()
+        });
+
+        var absentsDecode = jsonDecode(absentsEncode);
+
+        absentees.add(absentsDecode);
+      }
+      if (meetingAttendance['sundayMeeting'].toString() == '0') {
+        var absentsEncode = jsonEncode({
+          "sno": sno2++,
+          "name": saints[i]['name'].toString(),
+          "district": saints[i]['district'].toString()
+        });
+
+        var absentsDecode = jsonDecode(absentsEncode);
+
+        lordsDayAbsentees.add(absentsDecode);
+      }
+
+      // log("MeetingAttendance $meetingAttendance");
+      // var absents = jsonEncode({});
+    }
+
+    log("Absentees $absentees");
+    log("lordsDayAbsentees $lordsDayAbsentees");
+    // log("Absentees Saints $saints");
   }
 
   loadMeetingAttendance() async {
@@ -486,7 +538,10 @@ class HomeController extends GetxController {
     log("Tuesdays $tuesday");
     log("Fridays $friday");
     log("Sundays $sunday");
+
     final pdf = pw.Document();
+    final customFont = await loadCustomFont();
+
     var ltmTotal;
     var ltmATotal;
     var ltmAvg;
@@ -638,6 +693,9 @@ class HomeController extends GetxController {
         ? "$meetingDate Week"
         : "$monthName Month";
 
+    // Create a PDF document
+
+    // Add 10 pages to the PDF
     pdf.addPage(
       pw.MultiPage(
         pageFormat: PdfPageFormat.a4,
@@ -814,14 +872,17 @@ class HomeController extends GetxController {
                       "$gmATotal"
                     ],
                   ],
-                  headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                  headerStyle: pw.TextStyle(
+                      font: customFont, fontWeight: pw.FontWeight.bold),
                   headerAlignment: pw.Alignment.center,
                   cellAlignment: pw.Alignment.center,
                 ),
                 pw.SizedBox(height: 30),
                 pw.Text("Children Lords table meeting attendance",
                     style: pw.TextStyle(
-                        fontSize: 24, fontWeight: pw.FontWeight.bold)),
+                        font: customFont,
+                        fontSize: 24,
+                        fontWeight: pw.FontWeight.bold)),
                 pw.SizedBox(height: 10),
                 pw.Table.fromTextArray(
                   headers: ["Attendance", "Agp", "City", "AKP", "Gwk", "Total"],
@@ -843,7 +904,8 @@ class HomeController extends GetxController {
                       "$ltmAChildTotal"
                     ],
                   ],
-                  headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                  headerStyle: pw.TextStyle(
+                      font: customFont, fontWeight: pw.FontWeight.bold),
                   headerAlignment: pw.Alignment.center,
                   cellAlignment: pw.Alignment.center,
                 ),
@@ -853,6 +915,76 @@ class HomeController extends GetxController {
         ],
       ),
     );
+
+    // Loop through chunks and add individual pages
+    for (var i = 0; i < lordsDayAbsentees.length; i += 25) {
+      var chunk = lordsDayAbsentees.sublist(
+        i,
+        i + 25 > lordsDayAbsentees.length ? lordsDayAbsentees.length : i + 25,
+      );
+
+      pdf.addPage(
+        pw.Page(
+          pageFormat: PdfPageFormat.a4,
+          build: (pw.Context context) => pw.Container(
+            child: pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
+              children: [
+                pw.Text("Lords Table Meeting Absentees",
+                    style: pw.TextStyle(
+                        fontSize: 30, fontWeight: pw.FontWeight.bold)),
+                pw.SizedBox(height: 20),
+                pw.Table.fromTextArray(
+                  headers: ["Sno", "Saint Name", "District"],
+                  data: chunk
+                      .map((e) => [e["sno"], e["name"], e["district"]])
+                      .toList(),
+                  headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                  headerAlignment: pw.Alignment.center,
+                  cellAlignment: pw.Alignment.center,
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
+    // Loop through chunks and add individual pages
+    for (var i = 0; i < absentees.length; i += 25) {
+      var absenteesChunk = absentees.sublist(
+        i,
+        i + 25 > absentees.length ? absentees.length : i + 25,
+      );
+
+      pdf.addPage(
+        pw.Page(
+          pageFormat: PdfPageFormat.a4,
+          build: (pw.Context context) => pw.Container(
+            child: pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
+              children: [
+                pw.Text("Lords Day, Prayer Meeting and Group Meeting Absentees",
+                    style: pw.TextStyle(
+                        fontSize: 30, fontWeight: pw.FontWeight.bold)),
+                pw.SizedBox(height: 20),
+                pw.Table.fromTextArray(
+                  headers: ["Sno", "Saint Name", "District"],
+                  data: absenteesChunk
+                      .map((e) => [e["sno"], e["name"], e["district"]])
+                      .toList(),
+                  headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                  headerAlignment: pw.Alignment.center,
+                  cellAlignment: pw.Alignment.center,
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
+    // You can also use a package like `share_plus` to share the file
 
     final directory = await getExternalStorageDirectory();
     final filePath = "${directory!.path}/${reportTitle}_report.pdf";

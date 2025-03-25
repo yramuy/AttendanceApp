@@ -105,6 +105,7 @@ class AddDailyMaintenance extends StatelessWidget {
                               border: Border.all(color: Colors.grey, width: 1)),
                           child: TextFormField(
                             controller: controller.amount,
+                            keyboardType: TextInputType.number,
                             decoration: const InputDecoration(
                                 contentPadding: EdgeInsets.only(
                                     left: 10, bottom: 10, right: 10),
@@ -184,11 +185,32 @@ class AddDailyMaintenance extends StatelessWidget {
                           children: [
                             GestureDetector(
                               onTap: () {
-                                controller.handleSave();
+                                if(controller.paymentType.toString() == "") {
+                                  Get.rawSnackbar(
+                                      snackPosition: SnackPosition.TOP,
+                                      padding: EdgeInsets.all(15),
+                                      margin: EdgeInsets.all(5),
+                                      message: "Transaction type required");
+                                }else if(controller.amount.text.toString() == "") {
+                                  Get.rawSnackbar(
+                                      snackPosition: SnackPosition.TOP,
+                                      padding: EdgeInsets.all(15),
+                                      margin: EdgeInsets.all(5),
+                                      message: "Amount required");
+                                }else if(controller.description.text.toString() == "") {
+                                  Get.rawSnackbar(
+                                      snackPosition: SnackPosition.TOP,
+                                      padding: EdgeInsets.all(15),
+                                      margin: EdgeInsets.all(5),
+                                      message: "Description required");
+                                }else {
+                                  controller.handleSave();
+                                }
+
                               },
                               child: Container(
                                 width: 100,
-                                padding: EdgeInsets.all(15),
+                                padding: EdgeInsets.all(12),
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(8),
                                     color: Colors.green),
@@ -212,7 +234,7 @@ class AddDailyMaintenance extends StatelessWidget {
                               },
                               child: Container(
                                 width: 100,
-                                padding: EdgeInsets.all(15),
+                                padding: EdgeInsets.all(12),
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(8),
                                     color: Colors.grey),

@@ -3,7 +3,9 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:maintenanceapp/controllers/finance/monthlymaintenancecontroller.dart';
+import 'package:maintenanceapp/views/bottompages/bottomnavigationbar.dart';
 import 'package:maintenanceapp/views/finance/adddailymaintenance.dart';
+import 'package:maintenanceapp/views/finance/financehome.dart';
 
 class MonthlyMaintenance extends StatelessWidget {
   const MonthlyMaintenance({super.key});
@@ -24,7 +26,7 @@ class MonthlyMaintenance extends StatelessWidget {
                 ),
                 leading: GestureDetector(
                   onTap: () {
-                    Get.back();
+                    Get.offAll(const BottomNavigationTileScreen());
                   },
                   child: const Icon(
                     Icons.arrow_back_ios,
@@ -36,19 +38,17 @@ class MonthlyMaintenance extends StatelessWidget {
                     onTap: () {
                       Get.to(() => const AddDailyMaintenance());
                     },
-                    child: Icon(Icons.add, size: 30),
+                    child: Icon(Icons.add, size: 40,),
                   ),
                   SizedBox(
                     width: 15,
                   )
                 ],
               ),
-              body: SingleChildScrollView(
-                physics: const ScrollPhysics(),
-                child: Card(
-                  margin: EdgeInsets.all(10),
-                  elevation: 5,
-                  shadowColor: Colors.green,
+              body: SizedBox(
+                height: MediaQuery.of(context).size.height,
+                child: SingleChildScrollView(
+                   physics: ScrollPhysics(),
                   child: Container(
                     padding: EdgeInsets.all(10),
                     margin: EdgeInsets.all(5),
@@ -156,7 +156,7 @@ class MonthlyMaintenance extends StatelessWidget {
                               DataColumn(
                                   label: SizedBox(
                                 width: 80,
-                                child: Text('Amount Received ',
+                                child: Text('Income',
                                     overflow: TextOverflow.ellipsis,
                                     maxLines: 2,
                                     style: TextStyle(
@@ -168,7 +168,7 @@ class MonthlyMaintenance extends StatelessWidget {
                               DataColumn(
                                   label: SizedBox(
                                 width: 80,
-                                child: Text('Amount Spent',
+                                child: Text('Expense',
                                     overflow: TextOverflow.ellipsis,
                                     maxLines: 2,
                                     style: TextStyle(
@@ -202,23 +202,32 @@ class MonthlyMaintenance extends StatelessWidget {
                                           fontFamily: "Inter-Medium",
                                           fontSize: 14)),
                                 )),
-                                DataCell(Text(controller.receivedAmount,
-                                    style: TextStyle(
-                                        color: Colors.green,
-                                        fontFamily: "Inter-Medium",
-                                        // fontWeight: FontWeight.bold,
-                                        fontSize: 14))),
-                                DataCell(Text(controller.expenseAmount,
-                                    style: TextStyle(
-                                        color: Colors.red,
-                                        fontFamily: "Inter-Medium",
-                                        // fontWeight: FontWeight.bold,
-                                        fontSize: 14))),
-                                DataCell(Text(controller.closingBalance,
-                                    style: TextStyle(
-                                        fontFamily: "Inter-Medium",
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 14))),
+                                DataCell(SizedBox(
+                                  width: 70,
+                                  child: Text(controller.receivedAmount,
+                                      style: TextStyle(
+                                          color: Colors.green,
+                                          fontFamily: "Inter-Medium",
+                                          // fontWeight: FontWeight.bold,
+                                          fontSize: 14)),
+                                )),
+                                DataCell(SizedBox(
+                                  width: 70,
+                                  child: Text(controller.expenseAmount,
+                                      style: TextStyle(
+                                          color: Colors.red,
+                                          fontFamily: "Inter-Medium",
+                                          // fontWeight: FontWeight.bold,
+                                          fontSize: 14)),
+                                )),
+                                DataCell(SizedBox(
+                                  width: 80,
+                                  child: Text(controller.closingBalance,
+                                      style: TextStyle(
+                                          fontFamily: "Inter-Medium",
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 14)),
+                                )),
                               ]),
                             ],
                           ),
@@ -238,121 +247,144 @@ class MonthlyMaintenance extends StatelessWidget {
                           height: 10,
                         ),
                         Container(
-                          // width: 400,
                           decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(8),
                               boxShadow: [
                                 BoxShadow(
-                                    color: Colors.blueGrey.shade200,
+                                    color: Colors.green.shade200,
                                     blurRadius: 3,
                                     spreadRadius: 2)
                               ]),
                           child: DataTable(
                             columnSpacing: 0,
                             horizontalMargin: 5,
-                            dataRowMinHeight: 50,
-                            dataRowMaxHeight: 50,
-                            // showCheckboxColumn: true,
+                            dataRowMinHeight: 60,
+                            dataRowMaxHeight: 60,
                             columns: [
                               DataColumn(
-                                  label: SizedBox(
-                                width: 80,
-                                child: Text('Date',
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 2,
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        fontFamily: "Inter-Medium",
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold)),
-                              )),
-                              DataColumn(
-                                  label: SizedBox(
-                                width: 60,
-                                child: Text('Type',
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 2,
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        fontFamily: "Inter-Medium",
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold)),
-                              )),
-                              DataColumn(
-                                  label: SizedBox(
-                                width: 80,
-                                child: Text('Amount',
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 2,
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        fontFamily: "Inter-Medium",
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold)),
-                              )),
-                              DataColumn(
-                                  label: SizedBox(
-                                width: 90,
-                                child: Text('Description',
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 2,
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        fontFamily: "Inter-Medium",
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold)),
-                              )),
-                            ],
-                            rows: controller.maintenanceHistory
-                                .map((transaction) {
-                              return DataRow(cells: [
-                                DataCell(SizedBox(
-                                  width: 60,
+                                label: SizedBox(
+                                  width: 90,
                                   child: Text(
-                                    transaction['transaction_date'].toString(),
-                                    maxLines: 2,
+                                    'Date',
                                     overflow: TextOverflow.ellipsis,
+                                    maxLines: 2,
                                     style: TextStyle(
-                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black,
                                       fontFamily: "Inter-Medium",
                                       fontSize: 14,
+                                      fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                )),
+                                ),
+                              ),
+                              DataColumn(
+                                label: SizedBox(
+                                  width: 60,
+                                  child: Text(
+                                    'Type',
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 2,
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontFamily: "Inter-Medium",
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              DataColumn(
+                                label: SizedBox(
+                                  width: 80,
+                                  child: Text(
+                                    'Amount',
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 2,
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontFamily: "Inter-Medium",
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              DataColumn(
+                                label: SizedBox(
+                                  width: 90,
+                                  child: Text(
+                                    'Description',
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 2,
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontFamily: "Inter-Medium",
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                            rows: controller.maintenanceHistory.isNotEmpty
+                                ? controller.maintenanceHistory
+                                .map((transaction) {
+                              return DataRow(cells: [
                                 DataCell(Text(
-                                  transaction['transaction_type'].toString(),
+                                  transaction['transaction_date']
+                                      .toString(),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
-                                    color: transaction['transaction_type'] ==
-                                        'credit'
-                                        ? Colors.green
-                                        : Colors.red,
+
                                     fontFamily: "Inter-Medium",
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 14,
                                   ),
                                 )),
                                 DataCell(Text(
-                                  transaction['closing_balance'].toString(),
+                                  transaction['transaction_type']
+                                      .toString(),
                                   style: TextStyle(
-                                    color: transaction['transaction_type'] ==
+                                    color:
+                                    transaction['transaction_type'] ==
                                         'credit'
                                         ? Colors.green
                                         : Colors.red,
                                     fontFamily: "Inter-Medium",
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 14,
+
+
+                                  ),
+                                )),
+                                DataCell(Text(
+                                  transaction['amount'].toString(),
+                                  style: TextStyle(
+                                    fontFamily: "Inter-Medium",
+
                                   ),
                                 )),
                                 DataCell(Text(
                                   transaction['description'],
                                   style: TextStyle(
-                                    fontFamily: "Inter-Medium",
-                                    fontSize: 14,
+                                    fontFamily: "Inter-Medium"
                                   ),
                                 )),
                               ]);
-                            }).toList(),
+                            }).toList()
+                                : [
+                              DataRow(cells: [
+                                DataCell(Text(
+                                  "No records found",
+                                  style: TextStyle(
+                                    fontFamily: "Inter-Medium",
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                )),
+                                DataCell.empty,
+                                DataCell.empty,
+                                DataCell.empty,
+                              ]),
+                            ],
                           ),
                         ),
                       ],

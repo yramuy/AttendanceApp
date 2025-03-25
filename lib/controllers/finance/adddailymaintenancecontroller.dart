@@ -63,7 +63,7 @@ class AddDailyMaintenanceController extends GetxController {
               snackPosition: SnackPosition.TOP,
               message: responseBody['message'].toString());
           mmController.loadMaintenanceHistory();
-          Get.off(() => const MonthlyMaintenance());
+          Get.offAll(() => const MonthlyMaintenance());
         } else {
           Get.rawSnackbar(
               snackPosition: SnackPosition.TOP,
