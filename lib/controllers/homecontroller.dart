@@ -77,6 +77,8 @@ class HomeController extends GetxController {
   List sundayMeetingMonth = [];
   List tuesdayMeetingMonth = [];
   List fridayMeetingMonth = [];
+  List homeMeetingMonth = [];
+  List gospelMeetingMonth = [];
 
   int tuesday = 0;
   int friday = 0;
@@ -380,6 +382,8 @@ class HomeController extends GetxController {
           sundayMeeting = responseBody['sundayMeeting'];
           tuesdayMeeting = responseBody['tuesdayMeeting'];
           fridayMeeting = responseBody['fridayMeeting'];
+          homeMeeting = responseBody['homeMeeting'];
+          gospelMeeting = responseBody['gospelMeeting'];
           var counts = loadWeekdayCounts();
           tuesday = counts['Tuesday'];
           friday = counts['Friday'];
@@ -534,6 +538,74 @@ class HomeController extends GetxController {
     }
   }
 
+  updateAttendeesHomeTotalPercentage(key, reportType) {
+    if (reportType.toString() == 'week') {
+      var fridayTotal = homeMeeting.fold<int>(
+          0,
+          (sum, sunday) =>
+              sum + (int.tryParse(sunday['$key'].toString()) ?? 0));
+
+      log("fridayTotal $fridayTotal");
+
+// Ensure `total` is a valid number
+      double parsedTotal = double.tryParse(total) ?? 0;
+      if (parsedTotal == 0) {
+        log("Warning: Total is zero, avoiding division by zero.");
+        return "${fridayTotal.toString()} (0%)";
+      }
+
+// Calculate percentage safely
+      double percentage = (fridayTotal / parsedTotal) * 100;
+      int finalPercentage = percentage.isFinite ? percentage.round() : 0;
+
+      var totalPercentage = "${fridayTotal.toString()} (${finalPercentage}%)";
+      return totalPercentage;
+    } else {
+      var fridayTotal = fridayMeetingMonth.fold<int>(
+          0,
+          (sum, sunday) =>
+              sum + (int.tryParse(sunday['$key'].toString()) ?? 0));
+
+      log("fridayTotal $fridayTotal");
+
+      return fridayTotal;
+    }
+  }
+
+  updateAttendeesGospelTotalPercentage(key, reportType) {
+    if (reportType.toString() == 'week') {
+      var fridayTotal = gospelMeeting.fold<int>(
+          0,
+          (sum, sunday) =>
+              sum + (int.tryParse(sunday['$key'].toString()) ?? 0));
+
+      log("fridayTotal $fridayTotal");
+
+// Ensure `total` is a valid number
+      double parsedTotal = double.tryParse(total) ?? 0;
+      if (parsedTotal == 0) {
+        log("Warning: Total is zero, avoiding division by zero.");
+        return "${fridayTotal.toString()} (0%)";
+      }
+
+// Calculate percentage safely
+      double percentage = (fridayTotal / parsedTotal) * 100;
+      int finalPercentage = percentage.isFinite ? percentage.round() : 0;
+
+      var totalPercentage = "${fridayTotal.toString()} (${finalPercentage}%)";
+      return totalPercentage;
+    } else {
+      var fridayTotal = fridayMeetingMonth.fold<int>(
+          0,
+          (sum, sunday) =>
+              sum + (int.tryParse(sunday['$key'].toString()) ?? 0));
+
+      log("fridayTotal $fridayTotal");
+
+      return fridayTotal;
+    }
+  }
+
   generateReport(reportType) async {
     log("Tuesdays $tuesday");
     log("Fridays $friday");
@@ -639,6 +711,38 @@ class HomeController extends GetxController {
       gmPercentage = gmPer;
     }
 
+    var agpHm = getPresentByDistrict(homeMeeting, "1", reportType);
+    var cityHm = getPresentByDistrict(homeMeeting, "4", reportType);
+    var akpHm = getPresentByDistrict(homeMeeting, "3", reportType);
+    var gwkHm = getPresentByDistrict(homeMeeting, "2", reportType);
+
+    var hmTotal;
+    if (reportType.toString() == 'week') {
+      hmTotal = updateAttendeesHomeTotalPercentage('Present', reportType);
+    } else {
+      gmTotal = updateAttendeesFriTotalPercentage('monthlyPresent', reportType);
+      double gmAvgTotal = gmTotal / friday;
+      gmAvg = gmAvgTotal.round();
+      double gmPer = (gmTotal / saintTotal) * 100;
+      gmPercentage = gmPer;
+    }
+
+    var agpGsm = getPresentByDistrict(gospelMeeting, "1", reportType);
+    var cityGsm = getPresentByDistrict(gospelMeeting, "4", reportType);
+    var akpGsm = getPresentByDistrict(gospelMeeting, "3", reportType);
+    var gwkGsm = getPresentByDistrict(gospelMeeting, "2", reportType);
+
+    var gsmTotal;
+    if (reportType.toString() == 'week') {
+      gsmTotal = updateAttendeesGospelTotalPercentage('Present', reportType);
+    } else {
+      gmTotal = updateAttendeesFriTotalPercentage('monthlyPresent', reportType);
+      double gmAvgTotal = gmTotal / friday;
+      gmAvg = gmAvgTotal.round();
+      double gmPer = (gmTotal / saintTotal) * 100;
+      gmPercentage = gmPer;
+    }
+
     var agpAbLtm = getAbsentByDistrict(sundayMeeting, "1", reportType);
     var cityALtm = getAbsentByDistrict(sundayMeeting, "4", reportType);
     var akpLAtm = getAbsentByDistrict(sundayMeeting, "3", reportType);
@@ -666,6 +770,18 @@ class HomeController extends GetxController {
     var akpAGm = getAbsentByDistrict(fridayMeeting, "3", reportType);
     var gwkAGm = getAbsentByDistrict(fridayMeeting, "2", reportType);
     var gmATotal = updateAttendeesFriTotalPercentage('Absent', reportType);
+
+    var agpAHm = getAbsentByDistrict(homeMeeting, "1", reportType);
+    var cityAHm = getAbsentByDistrict(homeMeeting, "4", reportType);
+    var akpAHm = getAbsentByDistrict(homeMeeting, "3", reportType);
+    var gwkAHm = getAbsentByDistrict(homeMeeting, "2", reportType);
+    var hmATotal = updateAttendeesHomeTotalPercentage('Absent', reportType);
+
+    var agpAGsm = getAbsentByDistrict(gospelMeeting, "1", reportType);
+    var cityAGsm = getAbsentByDistrict(gospelMeeting, "4", reportType);
+    var akpAGsm = getAbsentByDistrict(gospelMeeting, "3", reportType);
+    var gwkAGsm = getAbsentByDistrict(gospelMeeting, "2", reportType);
+    var gsmATotal = updateAttendeesGospelTotalPercentage('Absent', reportType);
 
     var agpPChildLtm =
         getPresentAbsentByDistrict(sundayMeeting, "1", "childPresent");
@@ -731,7 +847,7 @@ class HomeController extends GetxController {
                 pw.Text("Category wise saints",
                     style: pw.TextStyle(
                         fontSize: 24, fontWeight: pw.FontWeight.bold)),
-                pw.SizedBox(height: 10),
+                pw.SizedBox(height: 20),
                 pw.Table.fromTextArray(
                   headers: ["Category", "Agp", "City", "AKP", "Gwk", "Total"],
                   data: [
@@ -827,6 +943,22 @@ class HomeController extends GetxController {
                       "$gwkGm",
                       "$gmTotal"
                     ],
+                    [
+                    "Home Meeting",
+                    "$agpHm",
+                    "$cityHm",
+                    "$akpHm",
+                    "$gwkHm",
+                    "$hmTotal"
+                    ],
+                    [
+                      "Gospel Meeting",
+                      "$agpGsm",
+                      "$cityGsm",
+                      "$akpGsm",
+                      "$gwkGsm",
+                      "$gsmTotal"
+                    ]
                   ],
                   headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold),
                   headerAlignment: pw.Alignment.center,
@@ -871,37 +1003,21 @@ class HomeController extends GetxController {
                       "$gwkAGm",
                       "$gmATotal"
                     ],
-                  ],
-                  headerStyle: pw.TextStyle(
-                      font: customFont, fontWeight: pw.FontWeight.bold),
-                  headerAlignment: pw.Alignment.center,
-                  cellAlignment: pw.Alignment.center,
-                ),
-                pw.SizedBox(height: 30),
-                pw.Text("Children Lords table meeting attendance",
-                    style: pw.TextStyle(
-                        font: customFont,
-                        fontSize: 24,
-                        fontWeight: pw.FontWeight.bold)),
-                pw.SizedBox(height: 10),
-                pw.Table.fromTextArray(
-                  headers: ["Attendance", "Agp", "City", "AKP", "Gwk", "Total"],
-                  data: [
                     [
-                      "Present",
-                      "$agpPChildLtm",
-                      "$cityPChildLtm",
-                      "$akpPChildLtm",
-                      "$gwkPChildLtm",
-                      "$ltmPChildTotal"
+                      "Home Meeting",
+                      "$agpAHm",
+                      "$cityAHm",
+                      "$akpAHm",
+                      "$gwkAHm",
+                      "$hmATotal"
                     ],
                     [
-                      "Absent",
-                      "$agpAChildLtm",
-                      "$cityAChildLtm",
-                      "$akpAChildLtm",
-                      "$gwkAChildLtm",
-                      "$ltmAChildTotal"
+                      "Gospel Meeting",
+                      "$agpAGsm",
+                      "$cityAGsm",
+                      "$akpAGsm",
+                      "$gwkAGsm",
+                      "$gsmATotal"
                     ],
                   ],
                   headerStyle: pw.TextStyle(
@@ -909,6 +1025,38 @@ class HomeController extends GetxController {
                   headerAlignment: pw.Alignment.center,
                   cellAlignment: pw.Alignment.center,
                 ),
+                // pw.SizedBox(height: 30),
+                // pw.Text("Children Lords table meeting attendance",
+                //     style: pw.TextStyle(
+                //         font: customFont,
+                //         fontSize: 24,
+                //         fontWeight: pw.FontWeight.bold)),
+                // pw.SizedBox(height: 10),
+                // pw.Table.fromTextArray(
+                //   headers: ["Attendance", "Agp", "City", "AKP", "Gwk", "Total"],
+                //   data: [
+                //     [
+                //       "Present",
+                //       "$agpPChildLtm",
+                //       "$cityPChildLtm",
+                //       "$akpPChildLtm",
+                //       "$gwkPChildLtm",
+                //       "$ltmPChildTotal"
+                //     ],
+                //     [
+                //       "Absent",
+                //       "$agpAChildLtm",
+                //       "$cityAChildLtm",
+                //       "$akpAChildLtm",
+                //       "$gwkAChildLtm",
+                //       "$ltmAChildTotal"
+                //     ],
+                //   ],
+                //   headerStyle: pw.TextStyle(
+                //       font: customFont, fontWeight: pw.FontWeight.bold),
+                //   headerAlignment: pw.Alignment.center,
+                //   cellAlignment: pw.Alignment.center,
+                // ),
               ],
             ),
           ),
@@ -1347,34 +1495,34 @@ class HomeController extends GetxController {
                   cellAlignment: pw.Alignment.center,
                 ),
                 pw.SizedBox(height: 30),
-                pw.Text("Children Lords table meeting attendance",
-                    style: pw.TextStyle(
-                        fontSize: 24, fontWeight: pw.FontWeight.bold)),
-                pw.SizedBox(height: 10),
-                pw.Table.fromTextArray(
-                  headers: ["Attendance", "Agp", "City", "AKP", "Gwk", "Total"],
-                  data: [
-                    [
-                      "Present",
-                      "$agpPChildLtm",
-                      "$cityPChildLtm",
-                      "$akpPChildLtm",
-                      "$gwkPChildLtm",
-                      "$ltmPChildTotal"
-                    ],
-                    [
-                      "Absent",
-                      "$agpAChildLtm",
-                      "$cityAChildLtm",
-                      "$akpAChildLtm",
-                      "$gwkAChildLtm",
-                      "$ltmAChildTotal"
-                    ],
-                  ],
-                  headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold),
-                  headerAlignment: pw.Alignment.center,
-                  cellAlignment: pw.Alignment.center,
-                ),
+                // pw.Text("Children Lords table meeting attendance",
+                //     style: pw.TextStyle(
+                //         fontSize: 24, fontWeight: pw.FontWeight.bold)),
+                // pw.SizedBox(height: 10),
+                // pw.Table.fromTextArray(
+                //   headers: ["Attendance", "Agp", "City", "AKP", "Gwk", "Total"],
+                //   data: [
+                //     [
+                //       "Present",
+                //       "$agpPChildLtm",
+                //       "$cityPChildLtm",
+                //       "$akpPChildLtm",
+                //       "$gwkPChildLtm",
+                //       "$ltmPChildTotal"
+                //     ],
+                //     [
+                //       "Absent",
+                //       "$agpAChildLtm",
+                //       "$cityAChildLtm",
+                //       "$akpAChildLtm",
+                //       "$gwkAChildLtm",
+                //       "$ltmAChildTotal"
+                //     ],
+                //   ],
+                //   headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                //   headerAlignment: pw.Alignment.center,
+                //   cellAlignment: pw.Alignment.center,
+                // ),
               ],
             ),
           ),
@@ -1412,6 +1560,8 @@ class HomeController extends GetxController {
           sundayMeetingMonth = responseBody['sundayMeeting'];
           tuesdayMeetingMonth = responseBody['tuesdayMeeting'];
           fridayMeetingMonth = responseBody['fridayMeeting'];
+          homeMeetingMonth = responseBody['homeMeeting'];
+          gospelMeetingMonth = responseBody['gospelMeeting'];
           generateMonthReport(type);
           isLoading = false;
           update();

@@ -163,7 +163,7 @@ class _HomeState extends State<Home> {
                                     height: 10,
                                   ),
                                   Container(
-                                    height: 330,
+                                    height: MediaQuery.of(context).size.height*0.57,
                                     child: DefaultTabController(
                                       length: 2,
                                       child: Column(
@@ -1227,648 +1227,644 @@ class _HomeState extends State<Home> {
                                                                     .bold)),
                                                       )),
                                                     ]),
-                                                    // DataRow(cells: [
-                                                    //   DataCell(SizedBox(
-                                                    //     width: 100,
-                                                    //     child: Text(
-                                                    //         "Home Meeting",
-                                                    //         maxLines: 2,
-                                                    //         overflow:
-                                                    //             TextOverflow
-                                                    //                 .ellipsis,
-                                                    //         style: TextStyle(
-                                                    //             color: Colors
-                                                    //                 .black,
-                                                    //             fontFamily:
-                                                    //                 "Inter-Medium",
-                                                    //             fontSize: 14)),
-                                                    //   )),
-                                                    //   DataCell(GestureDetector(
-                                                    //     onTap: () {
-                                                    //       var mDate = controller
-                                                    //               .homeMeeting
-                                                    //               .isNotEmpty
-                                                    //           ? controller
-                                                    //               .homeMeeting[
-                                                    //                   0][
-                                                    //                   'meetingDate']
-                                                    //               .toString()
-                                                    //           : controller
-                                                    //               .meetingDate
-                                                    //               .toString();
-                                                    //       controller.homeMeeting
-                                                    //               .isNotEmpty
-                                                    //           ? Get.to(
-                                                    //               () => const AttendanceReport(),
-                                                    //               arguments: [
-                                                    //                   '1',
-                                                    //                   mDate
-                                                    //                       .toString(),
-                                                    //                   '1',
-                                                    //                   "Home Meeting"
-                                                    //                 ])
-                                                    //           : Get.rawSnackbar(
-                                                    //               snackPosition:
-                                                    //                   SnackPosition
-                                                    //                       .TOP,
-                                                    //               message:
-                                                    //                   'No attendance found in this meeting');
-                                                    //     },
-                                                    //     child: Padding(
-                                                    //       padding:
-                                                    //           const EdgeInsets
-                                                    //               .all(8.0),
-                                                    //       child: Text(
-                                                    //           controller
-                                                    //               .homeMeeting
-                                                    //               .firstWhere(
-                                                    //                   (sunday) =>
-                                                    //                       sunday['districtID'].toString() ==
-                                                    //                       "1",
-                                                    //                   orElse:
-                                                    //                       () =>
-                                                    //                           {
-                                                    //                             "Present": "0"
-                                                    //                           })[
-                                                    //                   'Present']
-                                                    //               .toString(),
-                                                    //           style: TextStyle(
-                                                    //               decoration:
-                                                    //                   TextDecoration
-                                                    //                       .underline,
-                                                    //               decorationThickness:
-                                                    //                   2,
-                                                    //               decorationColor:
-                                                    //                   Colors
-                                                    //                       .green,
-                                                    //               color: Colors
-                                                    //                   .blue,
-                                                    //               fontFamily:
-                                                    //                   "Inter-Medium",
-                                                    //               fontWeight:
-                                                    //                   FontWeight
-                                                    //                       .bold,
-                                                    //               fontSize:
-                                                    //                   14)),
-                                                    //     ),
-                                                    //   )),
-                                                    //   DataCell(GestureDetector(
-                                                    //     onTap: () {
-                                                    //       var mDate = controller
-                                                    //               .homeMeeting
-                                                    //               .isNotEmpty
-                                                    //           ? controller
-                                                    //               .homeMeeting[
-                                                    //                   0][
-                                                    //                   'meetingDate']
-                                                    //               .toString()
-                                                    //           : controller
-                                                    //               .meetingDate
-                                                    //               .toString();
-                                                    //       controller.homeMeeting
-                                                    //               .isNotEmpty
-                                                    //           ? Get.to(
-                                                    //               () => const AttendanceReport(),
-                                                    //               arguments: [
-                                                    //                   '4',
-                                                    //                   mDate
-                                                    //                       .toString(),
-                                                    //                   '1',
-                                                    //                   "Home Meeting"
-                                                    //                 ])
-                                                    //           : Get.rawSnackbar(
-                                                    //               snackPosition:
-                                                    //                   SnackPosition
-                                                    //                       .TOP,
-                                                    //               message:
-                                                    //                   'No attendance found in this meeting');
-                                                    //     },
-                                                    //     child: Padding(
-                                                    //       padding:
-                                                    //           const EdgeInsets
-                                                    //               .all(8.0),
-                                                    //       child: Text(
-                                                    //           controller
-                                                    //               .homeMeeting
-                                                    //               .firstWhere(
-                                                    //                   (sunday) =>
-                                                    //                       sunday['districtID'].toString() ==
-                                                    //                       "4",
-                                                    //                   orElse:
-                                                    //                       () =>
-                                                    //                           {
-                                                    //                             "Present": "0"
-                                                    //                           })[
-                                                    //                   'Present']
-                                                    //               .toString(),
-                                                    //           style: TextStyle(
-                                                    //               decoration:
-                                                    //                   TextDecoration
-                                                    //                       .underline,
-                                                    //               decorationThickness:
-                                                    //                   2,
-                                                    //               decorationColor:
-                                                    //                   Colors
-                                                    //                       .green,
-                                                    //               color: Colors
-                                                    //                   .blue,
-                                                    //               fontFamily:
-                                                    //                   "Inter-Medium",
-                                                    //               fontWeight:
-                                                    //                   FontWeight
-                                                    //                       .bold,
-                                                    //               fontSize:
-                                                    //                   14)),
-                                                    //     ),
-                                                    //   )),
-                                                    //   DataCell(GestureDetector(
-                                                    //     onTap: () {
-                                                    //       var mDate = controller
-                                                    //               .homeMeeting
-                                                    //               .isNotEmpty
-                                                    //           ? controller
-                                                    //               .homeMeeting[
-                                                    //                   0][
-                                                    //                   'meetingDate']
-                                                    //               .toString()
-                                                    //           : controller
-                                                    //               .meetingDate
-                                                    //               .toString();
-                                                    //       controller.homeMeeting
-                                                    //               .isNotEmpty
-                                                    //           ? Get.to(
-                                                    //               () => const AttendanceReport(),
-                                                    //               arguments: [
-                                                    //                   '3',
-                                                    //                   mDate
-                                                    //                       .toString(),
-                                                    //                   '1',
-                                                    //                   "Home Meeting"
-                                                    //                 ])
-                                                    //           : Get.rawSnackbar(
-                                                    //               snackPosition:
-                                                    //                   SnackPosition
-                                                    //                       .TOP,
-                                                    //               message:
-                                                    //                   'No attendance found in this meeting');
-                                                    //     },
-                                                    //     child: Padding(
-                                                    //       padding:
-                                                    //           const EdgeInsets
-                                                    //               .all(8.0),
-                                                    //       child: Text(
-                                                    //           controller
-                                                    //               .homeMeeting
-                                                    //               .firstWhere(
-                                                    //                   (sunday) =>
-                                                    //                       sunday['districtID'].toString() ==
-                                                    //                       "3",
-                                                    //                   orElse:
-                                                    //                       () =>
-                                                    //                           {
-                                                    //                             "Present": "0"
-                                                    //                           })[
-                                                    //                   'Present']
-                                                    //               .toString(),
-                                                    //           style: TextStyle(
-                                                    //               decoration:
-                                                    //                   TextDecoration
-                                                    //                       .underline,
-                                                    //               decorationThickness:
-                                                    //                   2,
-                                                    //               decorationColor:
-                                                    //                   Colors
-                                                    //                       .green,
-                                                    //               color: Colors
-                                                    //                   .blue,
-                                                    //               fontFamily:
-                                                    //                   "Inter-Medium",
-                                                    //               fontWeight:
-                                                    //                   FontWeight
-                                                    //                       .bold,
-                                                    //               fontSize:
-                                                    //                   14)),
-                                                    //     ),
-                                                    //   )),
-                                                    //   DataCell(GestureDetector(
-                                                    //     onTap: () {
-                                                    //       var mDate = controller
-                                                    //               .homeMeeting
-                                                    //               .isNotEmpty
-                                                    //           ? controller
-                                                    //               .homeMeeting[
-                                                    //                   0][
-                                                    //                   'meetingDate']
-                                                    //               .toString()
-                                                    //           : controller
-                                                    //               .meetingDate
-                                                    //               .toString();
-                                                    //       controller.homeMeeting
-                                                    //               .isNotEmpty
-                                                    //           ? Get.to(
-                                                    //               () => const AttendanceReport(),
-                                                    //               arguments: [
-                                                    //                   '2',
-                                                    //                   mDate
-                                                    //                       .toString(),
-                                                    //                   '1',
-                                                    //                   "Home Meeting"
-                                                    //                 ])
-                                                    //           : Get.rawSnackbar(
-                                                    //               snackPosition:
-                                                    //                   SnackPosition
-                                                    //                       .TOP,
-                                                    //               message:
-                                                    //                   'No attendance found in this meeting');
-                                                    //     },
-                                                    //     child: Padding(
-                                                    //       padding:
-                                                    //           const EdgeInsets
-                                                    //               .all(8.0),
-                                                    //       child: Text(
-                                                    //           controller
-                                                    //               .homeMeeting
-                                                    //               .firstWhere(
-                                                    //                   (sunday) =>
-                                                    //                       sunday['districtID'].toString() ==
-                                                    //                       "2",
-                                                    //                   orElse:
-                                                    //                       () =>
-                                                    //                           {
-                                                    //                             "Present": "0"
-                                                    //                           })[
-                                                    //                   'Present']
-                                                    //               .toString(),
-                                                    //           style: TextStyle(
-                                                    //               decoration:
-                                                    //                   TextDecoration
-                                                    //                       .underline,
-                                                    //               decorationThickness:
-                                                    //                   2,
-                                                    //               decorationColor:
-                                                    //                   Colors
-                                                    //                       .green,
-                                                    //               color: Colors
-                                                    //                   .blue,
-                                                    //               fontFamily:
-                                                    //                   "Inter-Medium",
-                                                    //               fontWeight:
-                                                    //                   FontWeight
-                                                    //                       .bold,
-                                                    //               fontSize:
-                                                    //                   14)),
-                                                    //     ),
-                                                    //   )),
-                                                    //   DataCell(Padding(
-                                                    //     padding:
-                                                    //         const EdgeInsets
-                                                    //             .all(8.0),
-                                                    //     child: Text(
-                                                    //         controller
-                                                    //             .homeMeeting
-                                                    //             .fold<int>(
-                                                    //                 0,
-                                                    //                 (sum, sunday) =>
-                                                    //                     sum +
-                                                    //                     int.parse(sunday['Present']
-                                                    //                         .toString()))
-                                                    //             .toString(),
-                                                    //         style: TextStyle(
-                                                    //             color: Colors
-                                                    //                 .green,
-                                                    //             fontFamily:
-                                                    //                 "Inter-Medium",
-                                                    //             fontSize: 14,
-                                                    //             fontWeight:
-                                                    //                 FontWeight
-                                                    //                     .bold)),
-                                                    //   )),
-                                                    // ]),
-                                                    // DataRow(cells: [
-                                                    //   DataCell(SizedBox(
-                                                    //     width: 100,
-                                                    //     child: Text(
-                                                    //         "Gospel Meeting",
-                                                    //         maxLines: 2,
-                                                    //         overflow:
-                                                    //             TextOverflow
-                                                    //                 .ellipsis,
-                                                    //         style: TextStyle(
-                                                    //             color: Colors
-                                                    //                 .black,
-                                                    //             fontFamily:
-                                                    //                 "Inter-Medium",
-                                                    //             fontSize: 14)),
-                                                    //   )),
-                                                    //   DataCell(GestureDetector(
-                                                    //     onTap: () {
-                                                    //       var mDate = controller
-                                                    //               .gospelMeeting
-                                                    //               .isNotEmpty
-                                                    //           ? controller
-                                                    //               .gospelMeeting[
-                                                    //                   0][
-                                                    //                   'meetingDate']
-                                                    //               .toString()
-                                                    //           : controller
-                                                    //               .meetingDate
-                                                    //               .toString();
-                                                    //       controller
-                                                    //               .gospelMeeting
-                                                    //               .isNotEmpty
-                                                    //           ? Get.to(
-                                                    //               () =>
-                                                    //                   const AttendanceReport(),
-                                                    //               arguments: [
-                                                    //                   '1',
-                                                    //                   mDate
-                                                    //                       .toString(),
-                                                    //                   '1',
-                                                    //                   "Gospel Meeting"
-                                                    //                 ])
-                                                    //           : Get.rawSnackbar(
-                                                    //               snackPosition:
-                                                    //                   SnackPosition
-                                                    //                       .TOP,
-                                                    //               message:
-                                                    //                   'No attendance found in this meeting');
-                                                    //     },
-                                                    //     child: Padding(
-                                                    //       padding:
-                                                    //           const EdgeInsets
-                                                    //               .all(8.0),
-                                                    //       child: Text(
-                                                    //           controller
-                                                    //               .gospelMeeting
-                                                    //               .firstWhere(
-                                                    //                   (sunday) =>
-                                                    //                       sunday['districtID'].toString() ==
-                                                    //                       "1",
-                                                    //                   orElse:
-                                                    //                       () =>
-                                                    //                           {
-                                                    //                             "Present": "0"
-                                                    //                           })[
-                                                    //                   'Present']
-                                                    //               .toString(),
-                                                    //           style: TextStyle(
-                                                    //               decoration:
-                                                    //                   TextDecoration
-                                                    //                       .underline,
-                                                    //               decorationThickness:
-                                                    //                   2,
-                                                    //               decorationColor:
-                                                    //                   Colors
-                                                    //                       .green,
-                                                    //               color: Colors
-                                                    //                   .blue,
-                                                    //               fontFamily:
-                                                    //                   "Inter-Medium",
-                                                    //               fontWeight:
-                                                    //                   FontWeight
-                                                    //                       .bold,
-                                                    //               fontSize:
-                                                    //                   14)),
-                                                    //     ),
-                                                    //   )),
-                                                    //   DataCell(GestureDetector(
-                                                    //     onTap: () {
-                                                    //       var mDate = controller
-                                                    //               .gospelMeeting
-                                                    //               .isNotEmpty
-                                                    //           ? controller
-                                                    //               .gospelMeeting[
-                                                    //                   0][
-                                                    //                   'meetingDate']
-                                                    //               .toString()
-                                                    //           : controller
-                                                    //               .meetingDate
-                                                    //               .toString();
-                                                    //       controller
-                                                    //               .gospelMeeting
-                                                    //               .isNotEmpty
-                                                    //           ? Get.to(
-                                                    //               () =>
-                                                    //                   const AttendanceReport(),
-                                                    //               arguments: [
-                                                    //                   '4',
-                                                    //                   mDate
-                                                    //                       .toString(),
-                                                    //                   '1',
-                                                    //                   "Gospel Meeting"
-                                                    //                 ])
-                                                    //           : Get.rawSnackbar(
-                                                    //               snackPosition:
-                                                    //                   SnackPosition
-                                                    //                       .TOP,
-                                                    //               message:
-                                                    //                   'No attendance found in this meeting');
-                                                    //     },
-                                                    //     child: Padding(
-                                                    //       padding:
-                                                    //           const EdgeInsets
-                                                    //               .all(8.0),
-                                                    //       child: Text(
-                                                    //           controller
-                                                    //               .gospelMeeting
-                                                    //               .firstWhere(
-                                                    //                   (sunday) =>
-                                                    //                       sunday['districtID'].toString() ==
-                                                    //                       "4",
-                                                    //                   orElse:
-                                                    //                       () =>
-                                                    //                           {
-                                                    //                             "Present": "0"
-                                                    //                           })[
-                                                    //                   'Present']
-                                                    //               .toString(),
-                                                    //           style: TextStyle(
-                                                    //               decoration:
-                                                    //                   TextDecoration
-                                                    //                       .underline,
-                                                    //               decorationThickness:
-                                                    //                   2,
-                                                    //               decorationColor:
-                                                    //                   Colors
-                                                    //                       .green,
-                                                    //               color: Colors
-                                                    //                   .blue,
-                                                    //               fontFamily:
-                                                    //                   "Inter-Medium",
-                                                    //               fontWeight:
-                                                    //                   FontWeight
-                                                    //                       .bold,
-                                                    //               fontSize:
-                                                    //                   14)),
-                                                    //     ),
-                                                    //   )),
-                                                    //   DataCell(GestureDetector(
-                                                    //     onTap: () {
-                                                    //       var mDate = controller
-                                                    //               .gospelMeeting
-                                                    //               .isNotEmpty
-                                                    //           ? controller
-                                                    //               .gospelMeeting[
-                                                    //                   0][
-                                                    //                   'meetingDate']
-                                                    //               .toString()
-                                                    //           : controller
-                                                    //               .meetingDate
-                                                    //               .toString();
-                                                    //       controller
-                                                    //               .gospelMeeting
-                                                    //               .isNotEmpty
-                                                    //           ? Get.to(
-                                                    //               () =>
-                                                    //                   const AttendanceReport(),
-                                                    //               arguments: [
-                                                    //                   '3',
-                                                    //                   mDate
-                                                    //                       .toString(),
-                                                    //                   '1',
-                                                    //                   "Gospel Meeting"
-                                                    //                 ])
-                                                    //           : Get.rawSnackbar(
-                                                    //               snackPosition:
-                                                    //                   SnackPosition
-                                                    //                       .TOP,
-                                                    //               message:
-                                                    //                   'No attendance found in this meeting');
-                                                    //     },
-                                                    //     child: Padding(
-                                                    //       padding:
-                                                    //           const EdgeInsets
-                                                    //               .all(8.0),
-                                                    //       child: Text(
-                                                    //           controller
-                                                    //               .gospelMeeting
-                                                    //               .firstWhere(
-                                                    //                   (sunday) =>
-                                                    //                       sunday['districtID'].toString() ==
-                                                    //                       "3",
-                                                    //                   orElse:
-                                                    //                       () =>
-                                                    //                           {
-                                                    //                             "Present": "0"
-                                                    //                           })[
-                                                    //                   'Present']
-                                                    //               .toString(),
-                                                    //           style: TextStyle(
-                                                    //               decoration:
-                                                    //                   TextDecoration
-                                                    //                       .underline,
-                                                    //               decorationThickness:
-                                                    //                   2,
-                                                    //               decorationColor:
-                                                    //                   Colors
-                                                    //                       .green,
-                                                    //               color: Colors
-                                                    //                   .blue,
-                                                    //               fontFamily:
-                                                    //                   "Inter-Medium",
-                                                    //               fontWeight:
-                                                    //                   FontWeight
-                                                    //                       .bold,
-                                                    //               fontSize:
-                                                    //                   14)),
-                                                    //     ),
-                                                    //   )),
-                                                    //   DataCell(GestureDetector(
-                                                    //     onTap: () {
-                                                    //       var mDate = controller
-                                                    //               .gospelMeeting
-                                                    //               .isNotEmpty
-                                                    //           ? controller
-                                                    //               .gospelMeeting[
-                                                    //                   0][
-                                                    //                   'meetingDate']
-                                                    //               .toString()
-                                                    //           : controller
-                                                    //               .meetingDate
-                                                    //               .toString();
-                                                    //       controller
-                                                    //               .gospelMeeting
-                                                    //               .isNotEmpty
-                                                    //           ? Get.to(
-                                                    //               () =>
-                                                    //                   const AttendanceReport(),
-                                                    //               arguments: [
-                                                    //                   '2',
-                                                    //                   mDate
-                                                    //                       .toString(),
-                                                    //                   '1',
-                                                    //                   "Gospel Meeting"
-                                                    //                 ])
-                                                    //           : Get.rawSnackbar(
-                                                    //               snackPosition:
-                                                    //                   SnackPosition
-                                                    //                       .TOP,
-                                                    //               message:
-                                                    //                   'No attendance found in this meeting');
-                                                    //     },
-                                                    //     child: Padding(
-                                                    //       padding:
-                                                    //           const EdgeInsets
-                                                    //               .all(8.0),
-                                                    //       child: Text(
-                                                    //           controller
-                                                    //               .gospelMeeting
-                                                    //               .firstWhere(
-                                                    //                   (sunday) =>
-                                                    //                       sunday['districtID'].toString() ==
-                                                    //                       "2",
-                                                    //                   orElse:
-                                                    //                       () =>
-                                                    //                           {
-                                                    //                             "Present": "0"
-                                                    //                           })[
-                                                    //                   'Present']
-                                                    //               .toString(),
-                                                    //           style: TextStyle(
-                                                    //               decoration:
-                                                    //                   TextDecoration
-                                                    //                       .underline,
-                                                    //               decorationThickness:
-                                                    //                   2,
-                                                    //               decorationColor:
-                                                    //                   Colors
-                                                    //                       .green,
-                                                    //               color: Colors
-                                                    //                   .blue,
-                                                    //               fontFamily:
-                                                    //                   "Inter-Medium",
-                                                    //               fontWeight:
-                                                    //                   FontWeight
-                                                    //                       .bold,
-                                                    //               fontSize:
-                                                    //                   14)),
-                                                    //     ),
-                                                    //   )),
-                                                    //   DataCell(Padding(
-                                                    //     padding:
-                                                    //         const EdgeInsets
-                                                    //             .all(8.0),
-                                                    //     child: Text(
-                                                    //         controller
-                                                    //             .gospelMeeting
-                                                    //             .fold<int>(
-                                                    //                 0,
-                                                    //                 (sum, sunday) =>
-                                                    //                     sum +
-                                                    //                     int.parse(sunday['Present']
-                                                    //                         .toString()))
-                                                    //             .toString(),
-                                                    //         style: TextStyle(
-                                                    //             color: Colors
-                                                    //                 .green,
-                                                    //             fontFamily:
-                                                    //                 "Inter-Medium",
-                                                    //             fontSize: 14,
-                                                    //             fontWeight:
-                                                    //                 FontWeight
-                                                    //                     .bold)),
-                                                    //   )),
-                                                    // ]),
+                                                    DataRow(cells: [
+                                                      DataCell(SizedBox(
+                                                        width: 100,
+                                                        child: Text(
+                                                            "Home Meeting",
+                                                            maxLines: 2,
+                                                            overflow:
+                                                            TextOverflow
+                                                                .ellipsis,
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .black,
+                                                                fontFamily:
+                                                                "Inter-Medium",
+                                                                fontSize: 14)),
+                                                      )),
+                                                      DataCell(GestureDetector(
+                                                        onTap: () {
+                                                          var mDate = controller
+                                                              .homeMeeting
+                                                              .isNotEmpty
+                                                              ? controller
+                                                              .homeMeeting[
+                                                          0][
+                                                          'meetingDate']
+                                                              .toString()
+                                                              : controller
+                                                              .meetingDate
+                                                              .toString();
+                                                          controller
+                                                              .homeMeeting
+                                                              .isNotEmpty
+                                                              ? Get.to(
+                                                                  () =>
+                                                              const AttendanceReport(),
+                                                              arguments: [
+                                                                '1',
+                                                                mDate
+                                                                    .toString(),
+                                                                '1',
+                                                                "Home Meeting"
+                                                              ])
+                                                              : Get.rawSnackbar(
+                                                              snackPosition:
+                                                              SnackPosition
+                                                                  .TOP,
+                                                              message:
+                                                              'No attendance found in this meeting');
+                                                        },
+                                                        child: Padding(
+                                                          padding:
+                                                          const EdgeInsets
+                                                              .all(8.0),
+                                                          child: Text(
+                                                              controller
+                                                                  .homeMeeting
+                                                                  .firstWhere(
+                                                                      (sunday) =>
+                                                                  sunday['districtID'].toString() ==
+                                                                      "1",
+                                                                  orElse:
+                                                                      () =>
+                                                                  {
+                                                                    "Present": "0"
+                                                                  })[
+                                                              'Present']
+                                                                  .toString(),
+                                                              style: TextStyle(
+                                                                  decoration:
+                                                                  TextDecoration
+                                                                      .underline,
+                                                                  decorationThickness:
+                                                                  2,
+                                                                  decorationColor:
+                                                                  Colors
+                                                                      .green,
+                                                                  color: Colors
+                                                                      .blue,
+                                                                  fontFamily:
+                                                                  "Inter-Medium",
+                                                                  fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                                  fontSize:
+                                                                  14)),
+                                                        ),
+                                                      )),
+                                                      DataCell(GestureDetector(
+                                                        onTap: () {
+                                                          var mDate = controller
+                                                              .homeMeeting
+                                                              .isNotEmpty
+                                                              ? controller
+                                                              .homeMeeting[
+                                                          0][
+                                                          'meetingDate']
+                                                              .toString()
+                                                              : controller
+                                                              .meetingDate
+                                                              .toString();
+                                                          controller
+                                                              .homeMeeting
+                                                              .isNotEmpty
+                                                              ? Get.to(
+                                                                  () =>
+                                                              const AttendanceReport(),
+                                                              arguments: [
+                                                                '4',
+                                                                mDate
+                                                                    .toString(),
+                                                                '1',
+                                                                "Home Meeting"
+                                                              ])
+                                                              : Get.rawSnackbar(
+                                                              snackPosition:
+                                                              SnackPosition
+                                                                  .TOP,
+                                                              message:
+                                                              'No attendance found in this meeting');
+                                                        },
+                                                        child: Padding(
+                                                          padding:
+                                                          const EdgeInsets
+                                                              .all(8.0),
+                                                          child: Text(
+                                                              controller
+                                                                  .homeMeeting
+                                                                  .firstWhere(
+                                                                      (sunday) =>
+                                                                  sunday['districtID'].toString() ==
+                                                                      "4",
+                                                                  orElse:
+                                                                      () =>
+                                                                  {
+                                                                    "Present": "0"
+                                                                  })[
+                                                              'Present']
+                                                                  .toString(),
+                                                              style: TextStyle(
+                                                                  decoration:
+                                                                  TextDecoration
+                                                                      .underline,
+                                                                  decorationThickness:
+                                                                  2,
+                                                                  decorationColor:
+                                                                  Colors
+                                                                      .green,
+                                                                  color: Colors
+                                                                      .blue,
+                                                                  fontFamily:
+                                                                  "Inter-Medium",
+                                                                  fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                                  fontSize:
+                                                                  14)),
+                                                        ),
+                                                      )),
+                                                      DataCell(GestureDetector(
+                                                        onTap: () {
+                                                          var mDate = controller
+                                                              .homeMeeting
+                                                              .isNotEmpty
+                                                              ? controller
+                                                              .homeMeeting[
+                                                          0][
+                                                          'meetingDate']
+                                                              .toString()
+                                                              : controller
+                                                              .meetingDate
+                                                              .toString();
+                                                          controller
+                                                              .homeMeeting
+                                                              .isNotEmpty
+                                                              ? Get.to(
+                                                                  () =>
+                                                              const AttendanceReport(),
+                                                              arguments: [
+                                                                '3',
+                                                                mDate
+                                                                    .toString(),
+                                                                '1',
+                                                                "Home Meeting"
+                                                              ])
+                                                              : Get.rawSnackbar(
+                                                              snackPosition:
+                                                              SnackPosition
+                                                                  .TOP,
+                                                              message:
+                                                              'No attendance found in this meeting');
+                                                        },
+                                                        child: Padding(
+                                                          padding:
+                                                          const EdgeInsets
+                                                              .all(8.0),
+                                                          child: Text(
+                                                              controller
+                                                                  .homeMeeting
+                                                                  .firstWhere(
+                                                                      (sunday) =>
+                                                                  sunday['districtID'].toString() ==
+                                                                      "3",
+                                                                  orElse:
+                                                                      () =>
+                                                                  {
+                                                                    "Present": "0"
+                                                                  })[
+                                                              'Present']
+                                                                  .toString(),
+                                                              style: TextStyle(
+                                                                  decoration:
+                                                                  TextDecoration
+                                                                      .underline,
+                                                                  decorationThickness:
+                                                                  2,
+                                                                  decorationColor:
+                                                                  Colors
+                                                                      .green,
+                                                                  color: Colors
+                                                                      .blue,
+                                                                  fontFamily:
+                                                                  "Inter-Medium",
+                                                                  fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                                  fontSize:
+                                                                  14)),
+                                                        ),
+                                                      )),
+                                                      DataCell(GestureDetector(
+                                                        onTap: () {
+                                                          var mDate = controller
+                                                              .homeMeeting
+                                                              .isNotEmpty
+                                                              ? controller
+                                                              .homeMeeting[
+                                                          0][
+                                                          'meetingDate']
+                                                              .toString()
+                                                              : controller
+                                                              .meetingDate
+                                                              .toString();
+                                                          controller
+                                                              .homeMeeting
+                                                              .isNotEmpty
+                                                              ? Get.to(
+                                                                  () =>
+                                                              const AttendanceReport(),
+                                                              arguments: [
+                                                                '2',
+                                                                mDate
+                                                                    .toString(),
+                                                                '1',
+                                                                "Home Meeting"
+                                                              ])
+                                                              : Get.rawSnackbar(
+                                                              snackPosition:
+                                                              SnackPosition
+                                                                  .TOP,
+                                                              message:
+                                                              'No attendance found in this meeting');
+                                                        },
+                                                        child: Padding(
+                                                          padding:
+                                                          const EdgeInsets
+                                                              .all(8.0),
+                                                          child: Text(
+                                                              controller
+                                                                  .homeMeeting
+                                                                  .firstWhere(
+                                                                      (sunday) =>
+                                                                  sunday['districtID'].toString() ==
+                                                                      "2",
+                                                                  orElse:
+                                                                      () =>
+                                                                  {
+                                                                    "Present": "0"
+                                                                  })[
+                                                              'Present']
+                                                                  .toString(),
+                                                              style: TextStyle(
+                                                                  decoration:
+                                                                  TextDecoration
+                                                                      .underline,
+                                                                  decorationThickness:
+                                                                  2,
+                                                                  decorationColor:
+                                                                  Colors
+                                                                      .green,
+                                                                  color: Colors
+                                                                      .blue,
+                                                                  fontFamily:
+                                                                  "Inter-Medium",
+                                                                  fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                                  fontSize:
+                                                                  14)),
+                                                        ),
+                                                      )),
+                                                      DataCell(Padding(
+                                                        padding:
+                                                        const EdgeInsets
+                                                            .all(8.0),
+                                                        child: Text(
+                                                            controller
+                                                                .updateAttendeesHomeTotalPercentage(
+                                                                'Present', 'week'),
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .green,
+                                                                fontFamily:
+                                                                "Inter-Medium",
+                                                                fontSize: 14,
+                                                                fontWeight:
+                                                                FontWeight
+                                                                    .bold)),
+                                                      )),
+                                                    ]),
+                                                    DataRow(cells: [
+                                                      DataCell(SizedBox(
+                                                        width: 100,
+                                                        child: Text(
+                                                            "Gospel Meeting",
+                                                            maxLines: 2,
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .black,
+                                                                fontFamily:
+                                                                    "Inter-Medium",
+                                                                fontSize: 14)),
+                                                      )),
+                                                      DataCell(GestureDetector(
+                                                        onTap: () {
+                                                          var mDate = controller
+                                                                  .gospelMeeting
+                                                                  .isNotEmpty
+                                                              ? controller
+                                                                  .gospelMeeting[
+                                                                      0][
+                                                                      'meetingDate']
+                                                                  .toString()
+                                                              : controller
+                                                                  .meetingDate
+                                                                  .toString();
+                                                          controller
+                                                                  .gospelMeeting
+                                                                  .isNotEmpty
+                                                              ? Get.to(
+                                                                  () =>
+                                                                      const AttendanceReport(),
+                                                                  arguments: [
+                                                                      '1',
+                                                                      mDate
+                                                                          .toString(),
+                                                                      '1',
+                                                                      "Gospel Meeting"
+                                                                    ])
+                                                              : Get.rawSnackbar(
+                                                                  snackPosition:
+                                                                      SnackPosition
+                                                                          .TOP,
+                                                                  message:
+                                                                      'No attendance found in this meeting');
+                                                        },
+                                                        child: Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(8.0),
+                                                          child: Text(
+                                                              controller
+                                                                  .gospelMeeting
+                                                                  .firstWhere(
+                                                                      (sunday) =>
+                                                                          sunday['districtID'].toString() ==
+                                                                          "1",
+                                                                      orElse:
+                                                                          () =>
+                                                                              {
+                                                                                "Present": "0"
+                                                                              })[
+                                                                      'Present']
+                                                                  .toString(),
+                                                              style: TextStyle(
+                                                                  decoration:
+                                                                      TextDecoration
+                                                                          .underline,
+                                                                  decorationThickness:
+                                                                      2,
+                                                                  decorationColor:
+                                                                      Colors
+                                                                          .green,
+                                                                  color: Colors
+                                                                      .blue,
+                                                                  fontFamily:
+                                                                      "Inter-Medium",
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  fontSize:
+                                                                      14)),
+                                                        ),
+                                                      )),
+                                                      DataCell(GestureDetector(
+                                                        onTap: () {
+                                                          var mDate = controller
+                                                                  .gospelMeeting
+                                                                  .isNotEmpty
+                                                              ? controller
+                                                                  .gospelMeeting[
+                                                                      0][
+                                                                      'meetingDate']
+                                                                  .toString()
+                                                              : controller
+                                                                  .meetingDate
+                                                                  .toString();
+                                                          controller
+                                                                  .gospelMeeting
+                                                                  .isNotEmpty
+                                                              ? Get.to(
+                                                                  () =>
+                                                                      const AttendanceReport(),
+                                                                  arguments: [
+                                                                      '4',
+                                                                      mDate
+                                                                          .toString(),
+                                                                      '1',
+                                                                      "Gospel Meeting"
+                                                                    ])
+                                                              : Get.rawSnackbar(
+                                                                  snackPosition:
+                                                                      SnackPosition
+                                                                          .TOP,
+                                                                  message:
+                                                                      'No attendance found in this meeting');
+                                                        },
+                                                        child: Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(8.0),
+                                                          child: Text(
+                                                              controller
+                                                                  .gospelMeeting
+                                                                  .firstWhere(
+                                                                      (sunday) =>
+                                                                          sunday['districtID'].toString() ==
+                                                                          "4",
+                                                                      orElse:
+                                                                          () =>
+                                                                              {
+                                                                                "Present": "0"
+                                                                              })[
+                                                                      'Present']
+                                                                  .toString(),
+                                                              style: TextStyle(
+                                                                  decoration:
+                                                                      TextDecoration
+                                                                          .underline,
+                                                                  decorationThickness:
+                                                                      2,
+                                                                  decorationColor:
+                                                                      Colors
+                                                                          .green,
+                                                                  color: Colors
+                                                                      .blue,
+                                                                  fontFamily:
+                                                                      "Inter-Medium",
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  fontSize:
+                                                                      14)),
+                                                        ),
+                                                      )),
+                                                      DataCell(GestureDetector(
+                                                        onTap: () {
+                                                          var mDate = controller
+                                                                  .gospelMeeting
+                                                                  .isNotEmpty
+                                                              ? controller
+                                                                  .gospelMeeting[
+                                                                      0][
+                                                                      'meetingDate']
+                                                                  .toString()
+                                                              : controller
+                                                                  .meetingDate
+                                                                  .toString();
+                                                          controller
+                                                                  .gospelMeeting
+                                                                  .isNotEmpty
+                                                              ? Get.to(
+                                                                  () =>
+                                                                      const AttendanceReport(),
+                                                                  arguments: [
+                                                                      '3',
+                                                                      mDate
+                                                                          .toString(),
+                                                                      '1',
+                                                                      "Gospel Meeting"
+                                                                    ])
+                                                              : Get.rawSnackbar(
+                                                                  snackPosition:
+                                                                      SnackPosition
+                                                                          .TOP,
+                                                                  message:
+                                                                      'No attendance found in this meeting');
+                                                        },
+                                                        child: Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(8.0),
+                                                          child: Text(
+                                                              controller
+                                                                  .gospelMeeting
+                                                                  .firstWhere(
+                                                                      (sunday) =>
+                                                                          sunday['districtID'].toString() ==
+                                                                          "3",
+                                                                      orElse:
+                                                                          () =>
+                                                                              {
+                                                                                "Present": "0"
+                                                                              })[
+                                                                      'Present']
+                                                                  .toString(),
+                                                              style: TextStyle(
+                                                                  decoration:
+                                                                      TextDecoration
+                                                                          .underline,
+                                                                  decorationThickness:
+                                                                      2,
+                                                                  decorationColor:
+                                                                      Colors
+                                                                          .green,
+                                                                  color: Colors
+                                                                      .blue,
+                                                                  fontFamily:
+                                                                      "Inter-Medium",
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  fontSize:
+                                                                      14)),
+                                                        ),
+                                                      )),
+                                                      DataCell(GestureDetector(
+                                                        onTap: () {
+                                                          var mDate = controller
+                                                                  .gospelMeeting
+                                                                  .isNotEmpty
+                                                              ? controller
+                                                                  .gospelMeeting[
+                                                                      0][
+                                                                      'meetingDate']
+                                                                  .toString()
+                                                              : controller
+                                                                  .meetingDate
+                                                                  .toString();
+                                                          controller
+                                                                  .gospelMeeting
+                                                                  .isNotEmpty
+                                                              ? Get.to(
+                                                                  () =>
+                                                                      const AttendanceReport(),
+                                                                  arguments: [
+                                                                      '2',
+                                                                      mDate
+                                                                          .toString(),
+                                                                      '1',
+                                                                      "Gospel Meeting"
+                                                                    ])
+                                                              : Get.rawSnackbar(
+                                                                  snackPosition:
+                                                                      SnackPosition
+                                                                          .TOP,
+                                                                  message:
+                                                                      'No attendance found in this meeting');
+                                                        },
+                                                        child: Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(8.0),
+                                                          child: Text(
+                                                              controller
+                                                                  .gospelMeeting
+                                                                  .firstWhere(
+                                                                      (sunday) =>
+                                                                          sunday['districtID'].toString() ==
+                                                                          "2",
+                                                                      orElse:
+                                                                          () =>
+                                                                              {
+                                                                                "Present": "0"
+                                                                              })[
+                                                                      'Present']
+                                                                  .toString(),
+                                                              style: TextStyle(
+                                                                  decoration:
+                                                                      TextDecoration
+                                                                          .underline,
+                                                                  decorationThickness:
+                                                                      2,
+                                                                  decorationColor:
+                                                                      Colors
+                                                                          .green,
+                                                                  color: Colors
+                                                                      .blue,
+                                                                  fontFamily:
+                                                                      "Inter-Medium",
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  fontSize:
+                                                                      14)),
+                                                        ),
+                                                      )),
+                                                      DataCell(Padding(
+                                                        padding:
+                                                        const EdgeInsets
+                                                            .all(8.0),
+                                                        child: Text(
+                                                            controller
+                                                                .updateAttendeesGospelTotalPercentage(
+                                                                'Present', 'week'),
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .green,
+                                                                fontFamily:
+                                                                "Inter-Medium",
+                                                                fontSize: 14,
+                                                                fontWeight:
+                                                                FontWeight
+                                                                    .bold)),
+                                                      )),
+                                                    ]),
                                                   ],
                                                 ),
                                                 DataTable(
@@ -2909,648 +2905,645 @@ class _HomeState extends State<Home> {
                                                                     .bold)),
                                                       )),
                                                     ]),
-                                                    // DataRow(cells: [
-                                                    //   DataCell(SizedBox(
-                                                    //     width: 100,
-                                                    //     child: Text(
-                                                    //         "Home Meeting",
-                                                    //         maxLines: 2,
-                                                    //         overflow:
-                                                    //             TextOverflow
-                                                    //                 .ellipsis,
-                                                    //         style: TextStyle(
-                                                    //             color: Colors
-                                                    //                 .black,
-                                                    //             fontFamily:
-                                                    //                 "Inter-Medium",
-                                                    //             fontSize: 14)),
-                                                    //   )),
-                                                    //   DataCell(GestureDetector(
-                                                    //     onTap: () {
-                                                    //       var mDate = controller
-                                                    //               .homeMeeting
-                                                    //               .isNotEmpty
-                                                    //           ? controller
-                                                    //               .homeMeeting[
-                                                    //                   0][
-                                                    //                   'meetingDate']
-                                                    //               .toString()
-                                                    //           : controller
-                                                    //               .meetingDate
-                                                    //               .toString();
-                                                    //       controller.homeMeeting
-                                                    //               .isNotEmpty
-                                                    //           ? Get.to(
-                                                    //               () => const AttendanceReport(),
-                                                    //               arguments: [
-                                                    //                   '1',
-                                                    //                   mDate
-                                                    //                       .toString(),
-                                                    //                   '0',
-                                                    //                   "Home Meeting"
-                                                    //                 ])
-                                                    //           : Get.rawSnackbar(
-                                                    //               snackPosition:
-                                                    //                   SnackPosition
-                                                    //                       .TOP,
-                                                    //               message:
-                                                    //                   'No attendance found in this meeting');
-                                                    //     },
-                                                    //     child: Padding(
-                                                    //       padding:
-                                                    //           const EdgeInsets
-                                                    //               .all(8.0),
-                                                    //       child: Text(
-                                                    //           controller
-                                                    //               .homeMeeting
-                                                    //               .firstWhere(
-                                                    //                   (sunday) =>
-                                                    //                       sunday['districtID'].toString() ==
-                                                    //                       "1",
-                                                    //                   orElse:
-                                                    //                       () =>
-                                                    //                           {
-                                                    //                             "Absent": "0"
-                                                    //                           })[
-                                                    //                   'Absent']
-                                                    //               .toString(),
-                                                    //           style: TextStyle(
-                                                    //               decoration:
-                                                    //                   TextDecoration
-                                                    //                       .underline,
-                                                    //               decorationThickness:
-                                                    //                   2,
-                                                    //               decorationColor:
-                                                    //                   Colors
-                                                    //                       .green,
-                                                    //               color: Colors
-                                                    //                   .blue,
-                                                    //               fontFamily:
-                                                    //                   "Inter-Medium",
-                                                    //               fontWeight:
-                                                    //                   FontWeight
-                                                    //                       .bold,
-                                                    //               fontSize:
-                                                    //                   14)),
-                                                    //     ),
-                                                    //   )),
-                                                    //   DataCell(GestureDetector(
-                                                    //     onTap: () {
-                                                    //       var mDate = controller
-                                                    //               .homeMeeting
-                                                    //               .isNotEmpty
-                                                    //           ? controller
-                                                    //               .homeMeeting[
-                                                    //                   0][
-                                                    //                   'meetingDate']
-                                                    //               .toString()
-                                                    //           : controller
-                                                    //               .meetingDate
-                                                    //               .toString();
-                                                    //       controller.homeMeeting
-                                                    //               .isNotEmpty
-                                                    //           ? Get.to(
-                                                    //               () => const AttendanceReport(),
-                                                    //               arguments: [
-                                                    //                   '4',
-                                                    //                   mDate
-                                                    //                       .toString(),
-                                                    //                   '0',
-                                                    //                   "Home Meeting"
-                                                    //                 ])
-                                                    //           : Get.rawSnackbar(
-                                                    //               snackPosition:
-                                                    //                   SnackPosition
-                                                    //                       .TOP,
-                                                    //               message:
-                                                    //                   'No attendance found in this meeting');
-                                                    //     },
-                                                    //     child: Padding(
-                                                    //       padding:
-                                                    //           const EdgeInsets
-                                                    //               .all(8.0),
-                                                    //       child: Text(
-                                                    //           controller
-                                                    //               .homeMeeting
-                                                    //               .firstWhere(
-                                                    //                   (sunday) =>
-                                                    //                       sunday['districtID'].toString() ==
-                                                    //                       "4",
-                                                    //                   orElse:
-                                                    //                       () =>
-                                                    //                           {
-                                                    //                             "Absent": "0"
-                                                    //                           })[
-                                                    //                   'Absent']
-                                                    //               .toString(),
-                                                    //           style: TextStyle(
-                                                    //               decoration:
-                                                    //                   TextDecoration
-                                                    //                       .underline,
-                                                    //               decorationThickness:
-                                                    //                   2,
-                                                    //               decorationColor:
-                                                    //                   Colors
-                                                    //                       .green,
-                                                    //               color: Colors
-                                                    //                   .blue,
-                                                    //               fontFamily:
-                                                    //                   "Inter-Medium",
-                                                    //               fontWeight:
-                                                    //                   FontWeight
-                                                    //                       .bold,
-                                                    //               fontSize:
-                                                    //                   14)),
-                                                    //     ),
-                                                    //   )),
-                                                    //   DataCell(GestureDetector(
-                                                    //     onTap: () {
-                                                    //       var mDate = controller
-                                                    //               .homeMeeting
-                                                    //               .isNotEmpty
-                                                    //           ? controller
-                                                    //               .homeMeeting[
-                                                    //                   0][
-                                                    //                   'meetingDate']
-                                                    //               .toString()
-                                                    //           : controller
-                                                    //               .meetingDate
-                                                    //               .toString();
-                                                    //       controller.homeMeeting
-                                                    //               .isNotEmpty
-                                                    //           ? Get.to(
-                                                    //               () => const AttendanceReport(),
-                                                    //               arguments: [
-                                                    //                   '3',
-                                                    //                   mDate
-                                                    //                       .toString(),
-                                                    //                   '0',
-                                                    //                   "Home Meeting"
-                                                    //                 ])
-                                                    //           : Get.rawSnackbar(
-                                                    //               snackPosition:
-                                                    //                   SnackPosition
-                                                    //                       .TOP,
-                                                    //               message:
-                                                    //                   'No attendance found in this meeting');
-                                                    //     },
-                                                    //     child: Padding(
-                                                    //       padding:
-                                                    //           const EdgeInsets
-                                                    //               .all(8.0),
-                                                    //       child: Text(
-                                                    //           controller
-                                                    //               .homeMeeting
-                                                    //               .firstWhere(
-                                                    //                   (sunday) =>
-                                                    //                       sunday['districtID'].toString() ==
-                                                    //                       "3",
-                                                    //                   orElse:
-                                                    //                       () =>
-                                                    //                           {
-                                                    //                             "Absent": "0"
-                                                    //                           })[
-                                                    //                   'Absent']
-                                                    //               .toString(),
-                                                    //           style: TextStyle(
-                                                    //               decoration:
-                                                    //                   TextDecoration
-                                                    //                       .underline,
-                                                    //               decorationThickness:
-                                                    //                   2,
-                                                    //               decorationColor:
-                                                    //                   Colors
-                                                    //                       .green,
-                                                    //               color: Colors
-                                                    //                   .blue,
-                                                    //               fontFamily:
-                                                    //                   "Inter-Medium",
-                                                    //               fontWeight:
-                                                    //                   FontWeight
-                                                    //                       .bold,
-                                                    //               fontSize:
-                                                    //                   14)),
-                                                    //     ),
-                                                    //   )),
-                                                    //   DataCell(GestureDetector(
-                                                    //     onTap: () {
-                                                    //       var mDate = controller
-                                                    //               .homeMeeting
-                                                    //               .isNotEmpty
-                                                    //           ? controller
-                                                    //               .homeMeeting[
-                                                    //                   0][
-                                                    //                   'meetingDate']
-                                                    //               .toString()
-                                                    //           : controller
-                                                    //               .meetingDate
-                                                    //               .toString();
-                                                    //       controller.homeMeeting
-                                                    //               .isNotEmpty
-                                                    //           ? Get.to(
-                                                    //               () => const AttendanceReport(),
-                                                    //               arguments: [
-                                                    //                   '2',
-                                                    //                   mDate
-                                                    //                       .toString(),
-                                                    //                   '0',
-                                                    //                   "Home Meeting"
-                                                    //                 ])
-                                                    //           : Get.rawSnackbar(
-                                                    //               snackPosition:
-                                                    //                   SnackPosition
-                                                    //                       .TOP,
-                                                    //               message:
-                                                    //                   'No attendance found in this meeting');
-                                                    //     },
-                                                    //     child: Padding(
-                                                    //       padding:
-                                                    //           const EdgeInsets
-                                                    //               .all(8.0),
-                                                    //       child: Text(
-                                                    //           controller
-                                                    //               .homeMeeting
-                                                    //               .firstWhere(
-                                                    //                   (sunday) =>
-                                                    //                       sunday['districtID'].toString() ==
-                                                    //                       "2",
-                                                    //                   orElse:
-                                                    //                       () =>
-                                                    //                           {
-                                                    //                             "Absent": "0"
-                                                    //                           })[
-                                                    //                   'Absent']
-                                                    //               .toString(),
-                                                    //           style: TextStyle(
-                                                    //               decoration:
-                                                    //                   TextDecoration
-                                                    //                       .underline,
-                                                    //               decorationThickness:
-                                                    //                   2,
-                                                    //               decorationColor:
-                                                    //                   Colors
-                                                    //                       .green,
-                                                    //               color: Colors
-                                                    //                   .blue,
-                                                    //               fontFamily:
-                                                    //                   "Inter-Medium",
-                                                    //               fontWeight:
-                                                    //                   FontWeight
-                                                    //                       .bold,
-                                                    //               fontSize:
-                                                    //                   14)),
-                                                    //     ),
-                                                    //   )),
-                                                    //   DataCell(Padding(
-                                                    //     padding:
-                                                    //         const EdgeInsets
-                                                    //             .all(8.0),
-                                                    //     child: Text(
-                                                    //         controller
-                                                    //             .homeMeeting
-                                                    //             .fold<int>(
-                                                    //                 0,
-                                                    //                 (sum, sunday) =>
-                                                    //                     sum +
-                                                    //                     int.parse(sunday['Absent']
-                                                    //                         .toString()))
-                                                    //             .toString(),
-                                                    //         style: TextStyle(
-                                                    //             color: Colors
-                                                    //                 .green,
-                                                    //             fontFamily:
-                                                    //                 "Inter-Medium",
-                                                    //             fontSize: 14,
-                                                    //             fontWeight:
-                                                    //                 FontWeight
-                                                    //                     .bold)),
-                                                    //   )),
-                                                    // ]),
-                                                    // DataRow(cells: [
-                                                    //   DataCell(SizedBox(
-                                                    //     width: 100,
-                                                    //     child: Text(
-                                                    //         "Gospel Meeting",
-                                                    //         maxLines: 2,
-                                                    //         overflow:
-                                                    //             TextOverflow
-                                                    //                 .ellipsis,
-                                                    //         style: TextStyle(
-                                                    //             color: Colors
-                                                    //                 .black,
-                                                    //             fontFamily:
-                                                    //                 "Inter-Medium",
-                                                    //             fontSize: 14)),
-                                                    //   )),
-                                                    //   DataCell(GestureDetector(
-                                                    //     onTap: () {
-                                                    //       var mDate = controller
-                                                    //               .gospelMeeting
-                                                    //               .isNotEmpty
-                                                    //           ? controller
-                                                    //               .gospelMeeting[
-                                                    //                   0][
-                                                    //                   'meetingDate']
-                                                    //               .toString()
-                                                    //           : controller
-                                                    //               .meetingDate
-                                                    //               .toString();
-                                                    //       controller
-                                                    //               .gospelMeeting
-                                                    //               .isNotEmpty
-                                                    //           ? Get.to(
-                                                    //               () =>
-                                                    //                   const AttendanceReport(),
-                                                    //               arguments: [
-                                                    //                   '1',
-                                                    //                   mDate
-                                                    //                       .toString(),
-                                                    //                   '0',
-                                                    //                   "Gospel Meeting"
-                                                    //                 ])
-                                                    //           : Get.rawSnackbar(
-                                                    //               snackPosition:
-                                                    //                   SnackPosition
-                                                    //                       .TOP,
-                                                    //               message:
-                                                    //                   'No attendance found in this meeting');
-                                                    //     },
-                                                    //     child: Padding(
-                                                    //       padding:
-                                                    //           const EdgeInsets
-                                                    //               .all(8.0),
-                                                    //       child: Text(
-                                                    //           controller
-                                                    //               .gospelMeeting
-                                                    //               .firstWhere(
-                                                    //                   (sunday) =>
-                                                    //                       sunday['districtID'].toString() ==
-                                                    //                       "1",
-                                                    //                   orElse:
-                                                    //                       () =>
-                                                    //                           {
-                                                    //                             "Absent": "0"
-                                                    //                           })[
-                                                    //                   'Absent']
-                                                    //               .toString(),
-                                                    //           style: TextStyle(
-                                                    //               decoration:
-                                                    //                   TextDecoration
-                                                    //                       .underline,
-                                                    //               decorationThickness:
-                                                    //                   2,
-                                                    //               decorationColor:
-                                                    //                   Colors
-                                                    //                       .green,
-                                                    //               color: Colors
-                                                    //                   .blue,
-                                                    //               fontFamily:
-                                                    //                   "Inter-Medium",
-                                                    //               fontWeight:
-                                                    //                   FontWeight
-                                                    //                       .bold,
-                                                    //               fontSize:
-                                                    //                   14)),
-                                                    //     ),
-                                                    //   )),
-                                                    //   DataCell(GestureDetector(
-                                                    //     onTap: () {
-                                                    //       var mDate = controller
-                                                    //               .gospelMeeting
-                                                    //               .isNotEmpty
-                                                    //           ? controller
-                                                    //               .gospelMeeting[
-                                                    //                   0][
-                                                    //                   'meetingDate']
-                                                    //               .toString()
-                                                    //           : controller
-                                                    //               .meetingDate
-                                                    //               .toString();
-                                                    //       controller
-                                                    //               .gospelMeeting
-                                                    //               .isNotEmpty
-                                                    //           ? Get.to(
-                                                    //               () =>
-                                                    //                   const AttendanceReport(),
-                                                    //               arguments: [
-                                                    //                   '4',
-                                                    //                   mDate
-                                                    //                       .toString(),
-                                                    //                   '0',
-                                                    //                   "Gospel Meeting"
-                                                    //                 ])
-                                                    //           : Get.rawSnackbar(
-                                                    //               snackPosition:
-                                                    //                   SnackPosition
-                                                    //                       .TOP,
-                                                    //               message:
-                                                    //                   'No attendance found in this meeting');
-                                                    //     },
-                                                    //     child: Padding(
-                                                    //       padding:
-                                                    //           const EdgeInsets
-                                                    //               .all(8.0),
-                                                    //       child: Text(
-                                                    //           controller
-                                                    //               .gospelMeeting
-                                                    //               .firstWhere(
-                                                    //                   (sunday) =>
-                                                    //                       sunday['districtID'].toString() ==
-                                                    //                       "4",
-                                                    //                   orElse:
-                                                    //                       () =>
-                                                    //                           {
-                                                    //                             "Absent": "0"
-                                                    //                           })[
-                                                    //                   'Absent']
-                                                    //               .toString(),
-                                                    //           style: TextStyle(
-                                                    //               decoration:
-                                                    //                   TextDecoration
-                                                    //                       .underline,
-                                                    //               decorationThickness:
-                                                    //                   2,
-                                                    //               decorationColor:
-                                                    //                   Colors
-                                                    //                       .green,
-                                                    //               color: Colors
-                                                    //                   .blue,
-                                                    //               fontFamily:
-                                                    //                   "Inter-Medium",
-                                                    //               fontWeight:
-                                                    //                   FontWeight
-                                                    //                       .bold,
-                                                    //               fontSize:
-                                                    //                   14)),
-                                                    //     ),
-                                                    //   )),
-                                                    //   DataCell(GestureDetector(
-                                                    //     onTap: () {
-                                                    //       var mDate = controller
-                                                    //               .gospelMeeting
-                                                    //               .isNotEmpty
-                                                    //           ? controller
-                                                    //               .gospelMeeting[
-                                                    //                   0][
-                                                    //                   'meetingDate']
-                                                    //               .toString()
-                                                    //           : controller
-                                                    //               .meetingDate
-                                                    //               .toString();
-                                                    //       controller
-                                                    //               .gospelMeeting
-                                                    //               .isNotEmpty
-                                                    //           ? Get.to(
-                                                    //               () =>
-                                                    //                   const AttendanceReport(),
-                                                    //               arguments: [
-                                                    //                   '3',
-                                                    //                   mDate
-                                                    //                       .toString(),
-                                                    //                   '0',
-                                                    //                   "Gospel Meeting"
-                                                    //                 ])
-                                                    //           : Get.rawSnackbar(
-                                                    //               snackPosition:
-                                                    //                   SnackPosition
-                                                    //                       .TOP,
-                                                    //               message:
-                                                    //                   'No attendance found in this meeting');
-                                                    //     },
-                                                    //     child: Padding(
-                                                    //       padding:
-                                                    //           const EdgeInsets
-                                                    //               .all(8.0),
-                                                    //       child: Text(
-                                                    //           controller
-                                                    //               .gospelMeeting
-                                                    //               .firstWhere(
-                                                    //                   (sunday) =>
-                                                    //                       sunday['districtID'].toString() ==
-                                                    //                       "3",
-                                                    //                   orElse:
-                                                    //                       () =>
-                                                    //                           {
-                                                    //                             "Absent": "0"
-                                                    //                           })[
-                                                    //                   'Absent']
-                                                    //               .toString(),
-                                                    //           style: TextStyle(
-                                                    //               decoration:
-                                                    //                   TextDecoration
-                                                    //                       .underline,
-                                                    //               decorationThickness:
-                                                    //                   2,
-                                                    //               decorationColor:
-                                                    //                   Colors
-                                                    //                       .green,
-                                                    //               color: Colors
-                                                    //                   .blue,
-                                                    //               fontFamily:
-                                                    //                   "Inter-Medium",
-                                                    //               fontWeight:
-                                                    //                   FontWeight
-                                                    //                       .bold,
-                                                    //               fontSize:
-                                                    //                   14)),
-                                                    //     ),
-                                                    //   )),
-                                                    //   DataCell(GestureDetector(
-                                                    //     onTap: () {
-                                                    //       var mDate = controller
-                                                    //               .gospelMeeting
-                                                    //               .isNotEmpty
-                                                    //           ? controller
-                                                    //               .gospelMeeting[
-                                                    //                   0][
-                                                    //                   'meetingDate']
-                                                    //               .toString()
-                                                    //           : controller
-                                                    //               .meetingDate
-                                                    //               .toString();
-                                                    //       controller
-                                                    //               .gospelMeeting
-                                                    //               .isNotEmpty
-                                                    //           ? Get.to(
-                                                    //               () =>
-                                                    //                   const AttendanceReport(),
-                                                    //               arguments: [
-                                                    //                   '2',
-                                                    //                   mDate
-                                                    //                       .toString(),
-                                                    //                   '0',
-                                                    //                   "Gospel Meeting"
-                                                    //                 ])
-                                                    //           : Get.rawSnackbar(
-                                                    //               snackPosition:
-                                                    //                   SnackPosition
-                                                    //                       .TOP,
-                                                    //               message:
-                                                    //                   'No attendance found in this meeting');
-                                                    //     },
-                                                    //     child: Padding(
-                                                    //       padding:
-                                                    //           const EdgeInsets
-                                                    //               .all(8.0),
-                                                    //       child: Text(
-                                                    //           controller
-                                                    //               .gospelMeeting
-                                                    //               .firstWhere(
-                                                    //                   (sunday) =>
-                                                    //                       sunday['districtID'].toString() ==
-                                                    //                       "2",
-                                                    //                   orElse:
-                                                    //                       () =>
-                                                    //                           {
-                                                    //                             "Absent": "0"
-                                                    //                           })[
-                                                    //                   'Absent']
-                                                    //               .toString(),
-                                                    //           style: TextStyle(
-                                                    //               decoration:
-                                                    //                   TextDecoration
-                                                    //                       .underline,
-                                                    //               decorationThickness:
-                                                    //                   2,
-                                                    //               decorationColor:
-                                                    //                   Colors
-                                                    //                       .green,
-                                                    //               color: Colors
-                                                    //                   .blue,
-                                                    //               fontFamily:
-                                                    //                   "Inter-Medium",
-                                                    //               fontWeight:
-                                                    //                   FontWeight
-                                                    //                       .bold,
-                                                    //               fontSize:
-                                                    //                   14)),
-                                                    //     ),
-                                                    //   )),
-                                                    //   DataCell(Padding(
-                                                    //     padding:
-                                                    //         const EdgeInsets
-                                                    //             .all(8.0),
-                                                    //     child: Text(
-                                                    //         controller
-                                                    //             .gospelMeeting
-                                                    //             .fold<int>(
-                                                    //                 0,
-                                                    //                 (sum, sunday) =>
-                                                    //                     sum +
-                                                    //                     int.parse(sunday['Absent']
-                                                    //                         .toString()))
-                                                    //             .toString(),
-                                                    //         style: TextStyle(
-                                                    //             color: Colors
-                                                    //                 .green,
-                                                    //             fontFamily:
-                                                    //                 "Inter-Medium",
-                                                    //             fontSize: 14,
-                                                    //             fontWeight:
-                                                    //                 FontWeight
-                                                    //                     .bold)),
-                                                    //   )),
-                                                    // ]),
+                                                    DataRow(cells: [
+                                                      DataCell(SizedBox(
+                                                        width: 100,
+                                                        child: Text(
+                                                            "Home Meeting",
+                                                            maxLines: 2,
+                                                            overflow:
+                                                            TextOverflow
+                                                                .ellipsis,
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .black,
+                                                                fontFamily:
+                                                                "Inter-Medium",
+                                                                fontSize: 14)),
+                                                      )),
+                                                      DataCell(GestureDetector(
+                                                        onTap: () {
+                                                          var mDate = controller
+                                                              .homeMeeting
+                                                              .isNotEmpty
+                                                              ? controller
+                                                              .homeMeeting[
+                                                          0][
+                                                          'meetingDate']
+                                                              .toString()
+                                                              : controller
+                                                              .meetingDate
+                                                              .toString();
+                                                          controller
+                                                              .homeMeeting
+                                                              .isNotEmpty
+                                                              ? Get.to(
+                                                                  () =>
+                                                              const AttendanceReport(),
+                                                              arguments: [
+                                                                '1',
+                                                                mDate
+                                                                    .toString(),
+                                                                '0',
+                                                                "Home Meeting"
+                                                              ])
+                                                              : Get.rawSnackbar(
+                                                              snackPosition:
+                                                              SnackPosition
+                                                                  .TOP,
+                                                              message:
+                                                              'No attendance found in this meeting');
+                                                        },
+                                                        child: Padding(
+                                                          padding:
+                                                          const EdgeInsets
+                                                              .all(8.0),
+                                                          child: Text(
+                                                              controller
+                                                                  .homeMeeting
+                                                                  .firstWhere(
+                                                                      (sunday) =>
+                                                                  sunday['districtID'].toString() ==
+                                                                      "1",
+                                                                  orElse:
+                                                                      () =>
+                                                                  {
+                                                                    "Absent": "0"
+                                                                  })[
+                                                              'Absent']
+                                                                  .toString(),
+                                                              style: TextStyle(
+                                                                  decoration:
+                                                                  TextDecoration
+                                                                      .underline,
+                                                                  decorationThickness:
+                                                                  2,
+                                                                  decorationColor:
+                                                                  Colors
+                                                                      .green,
+                                                                  color: Colors
+                                                                      .blue,
+                                                                  fontFamily:
+                                                                  "Inter-Medium",
+                                                                  fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                                  fontSize:
+                                                                  14)),
+                                                        ),
+                                                      )),
+                                                      DataCell(GestureDetector(
+                                                        onTap: () {
+                                                          var mDate = controller
+                                                              .homeMeeting
+                                                              .isNotEmpty
+                                                              ? controller
+                                                              .homeMeeting[
+                                                          0][
+                                                          'meetingDate']
+                                                              .toString()
+                                                              : controller
+                                                              .meetingDate
+                                                              .toString();
+                                                          controller
+                                                              .homeMeeting
+                                                              .isNotEmpty
+                                                              ? Get.to(
+                                                                  () =>
+                                                              const AttendanceReport(),
+                                                              arguments: [
+                                                                '4',
+                                                                mDate
+                                                                    .toString(),
+                                                                '0',
+                                                                "Home Meeting"
+                                                              ])
+                                                              : Get.rawSnackbar(
+                                                              snackPosition:
+                                                              SnackPosition
+                                                                  .TOP,
+                                                              message:
+                                                              'No attendance found in this meeting');
+                                                        },
+                                                        child: Padding(
+                                                          padding:
+                                                          const EdgeInsets
+                                                              .all(8.0),
+                                                          child: Text(
+                                                              controller
+                                                                  .homeMeeting
+                                                                  .firstWhere(
+                                                                      (sunday) =>
+                                                                  sunday['districtID'].toString() ==
+                                                                      "4",
+                                                                  orElse:
+                                                                      () =>
+                                                                  {
+                                                                    "Absent": "0"
+                                                                  })[
+                                                              'Absent']
+                                                                  .toString(),
+                                                              style: TextStyle(
+                                                                  decoration:
+                                                                  TextDecoration
+                                                                      .underline,
+                                                                  decorationThickness:
+                                                                  2,
+                                                                  decorationColor:
+                                                                  Colors
+                                                                      .green,
+                                                                  color: Colors
+                                                                      .blue,
+                                                                  fontFamily:
+                                                                  "Inter-Medium",
+                                                                  fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                                  fontSize:
+                                                                  14)),
+                                                        ),
+                                                      )),
+                                                      DataCell(GestureDetector(
+                                                        onTap: () {
+                                                          var mDate = controller
+                                                              .homeMeeting
+                                                              .isNotEmpty
+                                                              ? controller
+                                                              .homeMeeting[
+                                                          0][
+                                                          'meetingDate']
+                                                              .toString()
+                                                              : controller
+                                                              .meetingDate
+                                                              .toString();
+                                                          controller
+                                                              .homeMeeting
+                                                              .isNotEmpty
+                                                              ? Get.to(
+                                                                  () =>
+                                                              const AttendanceReport(),
+                                                              arguments: [
+                                                                '3',
+                                                                mDate
+                                                                    .toString(),
+                                                                '0',
+                                                                "Home Meeting"
+                                                              ])
+                                                              : Get.rawSnackbar(
+                                                              snackPosition:
+                                                              SnackPosition
+                                                                  .TOP,
+                                                              message:
+                                                              'No attendance found in this meeting');
+                                                        },
+                                                        child: Padding(
+                                                          padding:
+                                                          const EdgeInsets
+                                                              .all(8.0),
+                                                          child: Text(
+                                                              controller
+                                                                  .homeMeeting
+                                                                  .firstWhere(
+                                                                      (sunday) =>
+                                                                  sunday['districtID'].toString() ==
+                                                                      "3",
+                                                                  orElse:
+                                                                      () =>
+                                                                  {
+                                                                    "Absent": "0"
+                                                                  })[
+                                                              'Absent']
+                                                                  .toString(),
+                                                              style: TextStyle(
+                                                                  decoration:
+                                                                  TextDecoration
+                                                                      .underline,
+                                                                  decorationThickness:
+                                                                  2,
+                                                                  decorationColor:
+                                                                  Colors
+                                                                      .green,
+                                                                  color: Colors
+                                                                      .blue,
+                                                                  fontFamily:
+                                                                  "Inter-Medium",
+                                                                  fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                                  fontSize:
+                                                                  14)),
+                                                        ),
+                                                      )),
+                                                      DataCell(GestureDetector(
+                                                        onTap: () {
+                                                          var mDate = controller
+                                                              .homeMeeting
+                                                              .isNotEmpty
+                                                              ? controller
+                                                              .homeMeeting[
+                                                          0][
+                                                          'meetingDate']
+                                                              .toString()
+                                                              : controller
+                                                              .meetingDate
+                                                              .toString();
+                                                          controller
+                                                              .homeMeeting
+                                                              .isNotEmpty
+                                                              ? Get.to(
+                                                                  () =>
+                                                              const AttendanceReport(),
+                                                              arguments: [
+                                                                '2',
+                                                                mDate
+                                                                    .toString(),
+                                                                '0',
+                                                                "Home Meeting"
+                                                              ])
+                                                              : Get.rawSnackbar(
+                                                              snackPosition:
+                                                              SnackPosition
+                                                                  .TOP,
+                                                              message:
+                                                              'No attendance found in this meeting');
+                                                        },
+                                                        child: Padding(
+                                                          padding:
+                                                          const EdgeInsets
+                                                              .all(8.0),
+                                                          child: Text(
+                                                              controller
+                                                                  .homeMeeting
+                                                                  .firstWhere(
+                                                                      (sunday) =>
+                                                                  sunday['districtID'].toString() ==
+                                                                      "2",
+                                                                  orElse:
+                                                                      () =>
+                                                                  {
+                                                                    "Absent": "0"
+                                                                  })[
+                                                              'Absent']
+                                                                  .toString(),
+                                                              style: TextStyle(
+                                                                  decoration:
+                                                                  TextDecoration
+                                                                      .underline,
+                                                                  decorationThickness:
+                                                                  2,
+                                                                  decorationColor:
+                                                                  Colors
+                                                                      .green,
+                                                                  color: Colors
+                                                                      .blue,
+                                                                  fontFamily:
+                                                                  "Inter-Medium",
+                                                                  fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                                  fontSize:
+                                                                  14)),
+                                                        ),
+                                                      )),
+                                                      DataCell(Padding(
+                                                        padding:
+                                                        const EdgeInsets
+                                                            .all(8.0),
+                                                        child: Text(
+                                                            controller
+                                                                .updateAttendeesHomeTotalPercentage(
+                                                                'Absent', 'week'),
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .green,
+                                                                fontFamily:
+                                                                "Inter-Medium",
+                                                                fontSize: 14,
+                                                                fontWeight:
+                                                                FontWeight
+                                                                    .bold)),
+                                                      )),
+                                                    ]),
+                                                    DataRow(cells: [
+                                                      DataCell(SizedBox(
+                                                        width: 100,
+                                                        child: Text(
+                                                            "Gospel Meeting",
+                                                            maxLines: 2,
+                                                            overflow:
+                                                            TextOverflow
+                                                                .ellipsis,
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .black,
+                                                                fontFamily:
+                                                                "Inter-Medium",
+                                                                fontSize: 14)),
+                                                      )),
+                                                      DataCell(GestureDetector(
+                                                        onTap: () {
+                                                          var mDate = controller
+                                                              .gospelMeeting
+                                                              .isNotEmpty
+                                                              ? controller
+                                                              .gospelMeeting[
+                                                          0][
+                                                          'meetingDate']
+                                                              .toString()
+                                                              : controller
+                                                              .meetingDate
+                                                              .toString();
+                                                          controller
+                                                              .gospelMeeting
+                                                              .isNotEmpty
+                                                              ? Get.to(
+                                                                  () =>
+                                                              const AttendanceReport(),
+                                                              arguments: [
+                                                                '1',
+                                                                mDate
+                                                                    .toString(),
+                                                                '0',
+                                                                "Gospel Meeting"
+                                                              ])
+                                                              : Get.rawSnackbar(
+                                                              snackPosition:
+                                                              SnackPosition
+                                                                  .TOP,
+                                                              message:
+                                                              'No attendance found in this meeting');
+                                                        },
+                                                        child: Padding(
+                                                          padding:
+                                                          const EdgeInsets
+                                                              .all(8.0),
+                                                          child: Text(
+                                                              controller
+                                                                  .gospelMeeting
+                                                                  .firstWhere(
+                                                                      (sunday) =>
+                                                                  sunday['districtID'].toString() ==
+                                                                      "1",
+                                                                  orElse:
+                                                                      () =>
+                                                                  {
+                                                                    "Absent": "0"
+                                                                  })[
+                                                              'Absent']
+                                                                  .toString(),
+                                                              style: TextStyle(
+                                                                  decoration:
+                                                                  TextDecoration
+                                                                      .underline,
+                                                                  decorationThickness:
+                                                                  2,
+                                                                  decorationColor:
+                                                                  Colors
+                                                                      .green,
+                                                                  color: Colors
+                                                                      .blue,
+                                                                  fontFamily:
+                                                                  "Inter-Medium",
+                                                                  fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                                  fontSize:
+                                                                  14)),
+                                                        ),
+                                                      )),
+                                                      DataCell(GestureDetector(
+                                                        onTap: () {
+                                                          var mDate = controller
+                                                              .gospelMeeting
+                                                              .isNotEmpty
+                                                              ? controller
+                                                              .gospelMeeting[
+                                                          0][
+                                                          'meetingDate']
+                                                              .toString()
+                                                              : controller
+                                                              .meetingDate
+                                                              .toString();
+                                                          controller
+                                                              .gospelMeeting
+                                                              .isNotEmpty
+                                                              ? Get.to(
+                                                                  () =>
+                                                              const AttendanceReport(),
+                                                              arguments: [
+                                                                '4',
+                                                                mDate
+                                                                    .toString(),
+                                                                '0',
+                                                                "Gospel Meeting"
+                                                              ])
+                                                              : Get.rawSnackbar(
+                                                              snackPosition:
+                                                              SnackPosition
+                                                                  .TOP,
+                                                              message:
+                                                              'No attendance found in this meeting');
+                                                        },
+                                                        child: Padding(
+                                                          padding:
+                                                          const EdgeInsets
+                                                              .all(8.0),
+                                                          child: Text(
+                                                              controller
+                                                                  .gospelMeeting
+                                                                  .firstWhere(
+                                                                      (sunday) =>
+                                                                  sunday['districtID'].toString() ==
+                                                                      "4",
+                                                                  orElse:
+                                                                      () =>
+                                                                  {
+                                                                    "Absent": "0"
+                                                                  })[
+                                                              'Absent']
+                                                                  .toString(),
+                                                              style: TextStyle(
+                                                                  decoration:
+                                                                  TextDecoration
+                                                                      .underline,
+                                                                  decorationThickness:
+                                                                  2,
+                                                                  decorationColor:
+                                                                  Colors
+                                                                      .green,
+                                                                  color: Colors
+                                                                      .blue,
+                                                                  fontFamily:
+                                                                  "Inter-Medium",
+                                                                  fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                                  fontSize:
+                                                                  14)),
+                                                        ),
+                                                      )),
+                                                      DataCell(GestureDetector(
+                                                        onTap: () {
+                                                          var mDate = controller
+                                                              .gospelMeeting
+                                                              .isNotEmpty
+                                                              ? controller
+                                                              .gospelMeeting[
+                                                          0][
+                                                          'meetingDate']
+                                                              .toString()
+                                                              : controller
+                                                              .meetingDate
+                                                              .toString();
+                                                          controller
+                                                              .gospelMeeting
+                                                              .isNotEmpty
+                                                              ? Get.to(
+                                                                  () =>
+                                                              const AttendanceReport(),
+                                                              arguments: [
+                                                                '3',
+                                                                mDate
+                                                                    .toString(),
+                                                                '0',
+                                                                "Gospel Meeting"
+                                                              ])
+                                                              : Get.rawSnackbar(
+                                                              snackPosition:
+                                                              SnackPosition
+                                                                  .TOP,
+                                                              message:
+                                                              'No attendance found in this meeting');
+                                                        },
+                                                        child: Padding(
+                                                          padding:
+                                                          const EdgeInsets
+                                                              .all(8.0),
+                                                          child: Text(
+                                                              controller
+                                                                  .gospelMeeting
+                                                                  .firstWhere(
+                                                                      (sunday) =>
+                                                                  sunday['districtID'].toString() ==
+                                                                      "3",
+                                                                  orElse:
+                                                                      () =>
+                                                                  {
+                                                                    "Absent": "0"
+                                                                  })[
+                                                              'Absent']
+                                                                  .toString(),
+                                                              style: TextStyle(
+                                                                  decoration:
+                                                                  TextDecoration
+                                                                      .underline,
+                                                                  decorationThickness:
+                                                                  2,
+                                                                  decorationColor:
+                                                                  Colors
+                                                                      .green,
+                                                                  color: Colors
+                                                                      .blue,
+                                                                  fontFamily:
+                                                                  "Inter-Medium",
+                                                                  fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                                  fontSize:
+                                                                  14)),
+                                                        ),
+                                                      )),
+                                                      DataCell(GestureDetector(
+                                                        onTap: () {
+                                                          var mDate = controller
+                                                              .gospelMeeting
+                                                              .isNotEmpty
+                                                              ? controller
+                                                              .gospelMeeting[
+                                                          0][
+                                                          'meetingDate']
+                                                              .toString()
+                                                              : controller
+                                                              .meetingDate
+                                                              .toString();
+                                                          controller
+                                                              .gospelMeeting
+                                                              .isNotEmpty
+                                                              ? Get.to(
+                                                                  () =>
+                                                              const AttendanceReport(),
+                                                              arguments: [
+                                                                '2',
+                                                                mDate
+                                                                    .toString(),
+                                                                '0',
+                                                                "Gospel Meeting"
+                                                              ])
+                                                              : Get.rawSnackbar(
+                                                              snackPosition:
+                                                              SnackPosition
+                                                                  .TOP,
+                                                              message:
+                                                              'No attendance found in this meeting');
+                                                        },
+                                                        child: Padding(
+                                                          padding:
+                                                          const EdgeInsets
+                                                              .all(8.0),
+                                                          child: Text(
+                                                              controller
+                                                                  .gospelMeeting
+                                                                  .firstWhere(
+                                                                      (sunday) =>
+                                                                  sunday['districtID'].toString() ==
+                                                                      "2",
+                                                                  orElse:
+                                                                      () =>
+                                                                  {
+                                                                    "Absent": "0"
+                                                                  })[
+                                                              'Absent']
+                                                                  .toString(),
+                                                              style: TextStyle(
+                                                                  decoration:
+                                                                  TextDecoration
+                                                                      .underline,
+                                                                  decorationThickness:
+                                                                  2,
+                                                                  decorationColor:
+                                                                  Colors
+                                                                      .green,
+                                                                  color: Colors
+                                                                      .blue,
+                                                                  fontFamily:
+                                                                  "Inter-Medium",
+                                                                  fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                                  fontSize:
+                                                                  14)),
+                                                        ),
+                                                      )),
+                                                      DataCell(Padding(
+                                                        padding:
+                                                        const EdgeInsets
+                                                            .all(8.0),
+                                                        child: Text(
+                                                            controller
+                                                                .updateAttendeesGospelTotalPercentage(
+                                                                'Absent', 'week'),
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .green,
+                                                                fontFamily:
+                                                                "Inter-Medium",
+                                                                fontSize: 14,
+                                                                fontWeight:
+                                                                FontWeight
+                                                                    .bold)),
+                                                      )),
+                                                    ]),
+
                                                   ],
                                                 ),
                                               ],
