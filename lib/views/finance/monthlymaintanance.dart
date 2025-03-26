@@ -38,7 +38,10 @@ class MonthlyMaintenance extends StatelessWidget {
                     onTap: () {
                       Get.to(() => const AddDailyMaintenance());
                     },
-                    child: Icon(Icons.add, size: 40,),
+                    child: Icon(
+                      Icons.add,
+                      size: 40,
+                    ),
                   ),
                   SizedBox(
                     width: 15,
@@ -48,7 +51,7 @@ class MonthlyMaintenance extends StatelessWidget {
               body: SizedBox(
                 height: MediaQuery.of(context).size.height,
                 child: SingleChildScrollView(
-                   physics: ScrollPhysics(),
+                  physics: ScrollPhysics(),
                   child: Container(
                     padding: EdgeInsets.all(10),
                     margin: EdgeInsets.all(5),
@@ -94,7 +97,6 @@ class MonthlyMaintenance extends StatelessWidget {
                                     onChanged: (value) {
                                       controller.handleMonth(value);
                                       log(value.toString());
-
                                     }),
                               ),
                               GestureDetector(
@@ -233,15 +235,61 @@ class MonthlyMaintenance extends StatelessWidget {
                           ),
                         ),
                         SizedBox(
-                          height: 10,
+                          height: 20,
                         ),
-                        Container(
-                          child: Text(
-                            "Transaction History",
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontFamily: "Inter-Medium"),
-                          ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(
+                              child: Text(
+                                "Transaction History",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: "Inter-Medium"),
+                              ),
+                            ),
+                            Container(
+                              width: MediaQuery.of(context).size.width * 0.45,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(color: Colors.grey)),
+                              child: TextFormField(
+                                controller: controller.searchController,
+                                decoration: InputDecoration(
+                                  hintText: "Search by date, description",
+                                  hintStyle: TextStyle(fontSize: 12),
+                                  contentPadding:
+                                      EdgeInsets.only(bottom: 10, left: 10),
+                                  border: OutlineInputBorder(
+                                      borderSide: BorderSide.none),
+                                  suffixIcon:
+                                      controller.searchController.text.isEmpty
+                                          ? Icon(
+                                              Icons.search_outlined,
+                                              color: Colors.grey,
+                                            )
+                                          : GestureDetector(
+                                              onTap: () {
+                                                controller.loadMaintenanceHistory();
+                                                controller.searchController
+                                                    .clear(); // Clear the text
+                                                controller
+                                                    .update(); // Update the UI
+                                              },
+                                              child: Icon(
+                                                Icons.clear,
+                                                color: Colors.red,
+                                                size: 20,
+                                              ),
+                                            ),
+                                ),
+                                onChanged: (value){
+                                  controller.handleSearch(value);
+                                },
+                              ),
+                            )
+                          ],
                         ),
                         SizedBox(
                           height: 10,
@@ -329,62 +377,57 @@ class MonthlyMaintenance extends StatelessWidget {
                             ],
                             rows: controller.maintenanceHistory.isNotEmpty
                                 ? controller.maintenanceHistory
-                                .map((transaction) {
-                              return DataRow(cells: [
-                                DataCell(Text(
-                                  transaction['transaction_date']
-                                      .toString(),
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-
-                                    fontFamily: "Inter-Medium",
-                                  ),
-                                )),
-                                DataCell(Text(
-                                  transaction['transaction_type']
-                                      .toString(),
-                                  style: TextStyle(
-                                    color:
-                                    transaction['transaction_type'] ==
-                                        'credit'
-                                        ? Colors.green
-                                        : Colors.red,
-                                    fontFamily: "Inter-Medium",
-
-
-                                  ),
-                                )),
-                                DataCell(Text(
-                                  transaction['amount'].toString(),
-                                  style: TextStyle(
-                                    fontFamily: "Inter-Medium",
-
-                                  ),
-                                )),
-                                DataCell(Text(
-                                  transaction['description'],
-                                  style: TextStyle(
-                                    fontFamily: "Inter-Medium"
-                                  ),
-                                )),
-                              ]);
-                            }).toList()
+                                    .map((transaction) {
+                                    return DataRow(cells: [
+                                      DataCell(Text(
+                                        transaction['transaction_date']
+                                            .toString(),
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          fontFamily: "Inter-Medium",
+                                        ),
+                                      )),
+                                      DataCell(Text(
+                                        transaction['transaction_type']
+                                            .toString(),
+                                        style: TextStyle(
+                                          color:
+                                              transaction['transaction_type'] ==
+                                                      'credit'
+                                                  ? Colors.green
+                                                  : Colors.red,
+                                          fontFamily: "Inter-Medium",
+                                        ),
+                                      )),
+                                      DataCell(Text(
+                                        transaction['amount'].toString(),
+                                        style: TextStyle(
+                                          fontFamily: "Inter-Medium",
+                                        ),
+                                      )),
+                                      DataCell(Text(
+                                        transaction['description'],
+                                        style: TextStyle(
+                                            fontFamily: "Inter-Medium"),
+                                      )),
+                                    ]);
+                                  }).toList()
                                 : [
-                              DataRow(cells: [
-                                DataCell(Text(
-                                  "No records found",
-                                  style: TextStyle(
-                                    fontFamily: "Inter-Medium",
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                )),
-                                DataCell.empty,
-                                DataCell.empty,
-                                DataCell.empty,
-                              ]),
-                            ],
+                                    DataRow(cells: [
+                                      DataCell(Text(
+                                        "No records found",
+                                        style: TextStyle(
+                                          fontFamily: "Inter-Medium",
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      )),
+                                      DataCell.empty,
+                                      DataCell.empty,
+                                      DataCell.empty,
+                                    ]),
+                                  ],
                           ),
                         ),
                       ],

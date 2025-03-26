@@ -22,14 +22,14 @@ class SaintsController extends GetxController {
   bool isLoading = true;
   List saints = [];
   List districts = [
-    {"id": "0", "name": "--All--"},
+    {"id": "0", "name": "--All Areas--"},
     {"id": 1, "name": "AGP"},
     {"id": 2, "name": "GWK"},
     {"id": 3, "name": "AKP"},
     {"id": 4, "name": "Vizag City"}
   ];
   List saintTypes = [
-    {"id": "0", "name": "--All--"},
+    {"id": "0", "name": "--All Categories--"},
     {"id": 1, "name": "General Saint"},
     {"id": 2, "name": "Young working Saint"},
     {"id": 3, "name": "Collage Student"},
@@ -46,6 +46,8 @@ class SaintsController extends GetxController {
   dynamic argumentData = Get.arguments;
   String saintID = "";
   String saintName = "";
+  TextEditingController searchController = TextEditingController();
+  List tempSaints = [];
 
   @override
   onInit() {
@@ -83,6 +85,7 @@ class SaintsController extends GetxController {
         if (responseBody['status'].toString() == '200') {
           log("Saints $responseBody");
           saints = responseBody['saints'];
+          tempSaints = responseBody['saints'];
           totalSaints = responseBody['total'].toString();
           if (responseBody['total'].toString() != "0") {
             brothers = responseBody['counts']['brothers'];
@@ -203,5 +206,19 @@ class SaintsController extends GetxController {
       isLoading = false;
       update();
     });
+  }
+
+  handleSearch(String value) {
+    saints = [];
+    saints = tempSaints
+        .where((hist) =>
+            hist['name']
+                .toLowerCase()
+                .contains(searchController.text.toLowerCase()) ||
+            hist['district']
+                .toLowerCase()
+                .contains(searchController.text.toLowerCase()))
+        .toList();
+    update();
   }
 }

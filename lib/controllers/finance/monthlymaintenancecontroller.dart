@@ -10,11 +10,13 @@ class MonthlyMaintenanceController extends GetxController {
   List months = [];
   var monthList;
   List maintenanceHistory = [];
+  List tempMaintenanceHistory = [];
   String openingBalance = "0";
   String receivedAmount = "0";
   String expenseAmount = "0";
   String closingBalance = "0";
   int selectedMonth = DateTime.now().month;
+  TextEditingController searchController = TextEditingController();
 
   // List of month names
   List<String> monthNames = [
@@ -64,6 +66,7 @@ class MonthlyMaintenanceController extends GetxController {
         var responseBody = jsonDecode(success.body);
         if (responseBody['status'].toString() == '200') {
           maintenanceHistory = responseBody['history'];
+          tempMaintenanceHistory = responseBody['history'];
           openingBalance =
               responseBody['historyDetails']['opening_balance'] != null
                   ? responseBody['historyDetails']['opening_balance']
@@ -101,6 +104,20 @@ class MonthlyMaintenanceController extends GetxController {
   handleMonth(String? value) {
     selectedMonth = int.parse(value.toString());
     loadMaintenanceHistory();
+    update();
+  }
+
+  handleSearch(searchValue) {
+    maintenanceHistory = [];
+    maintenanceHistory = tempMaintenanceHistory
+        .where((hist) =>
+            hist['transaction_date']
+                .toLowerCase()
+                .contains(searchController.text.toLowerCase()) ||
+            hist['description']
+                .toLowerCase()
+                .contains(searchController.text.toLowerCase()))
+        .toList();
     update();
   }
 }

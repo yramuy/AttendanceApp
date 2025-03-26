@@ -311,6 +311,48 @@ class _SaintsState extends State<Saints> {
                                 ),
                               ),
                             ),
+                            Container(
+                              margin: EdgeInsets.all(10),
+                              width: MediaQuery.of(context).size.width * 1,
+                              height: 45,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(color: Colors.grey)),
+                              child: TextFormField(
+                                controller: controller.searchController,
+                                decoration: InputDecoration(
+                                  hintText: "Search by name, district",
+                                  hintStyle: TextStyle(fontSize: 14),
+                                  contentPadding:
+                                  EdgeInsets.only(bottom: 10, left: 10),
+                                  border: OutlineInputBorder(
+                                      borderSide: BorderSide.none),
+                                  suffixIcon:
+                                  controller.searchController.text.isEmpty
+                                      ? Icon(
+                                    Icons.search_outlined,
+                                    color: Colors.grey,
+                                  )
+                                      : GestureDetector(
+                                    onTap: () {
+                                      controller.loadSaints();
+                                      controller.searchController
+                                          .clear(); // Clear the text
+                                      controller
+                                          .update(); // Update the UI
+                                    },
+                                    child: Icon(
+                                      Icons.clear,
+                                      color: Colors.red,
+                                      size: 20,
+                                    ),
+                                  ),
+                                ),
+                                onChanged: (value){
+                                  controller.handleSearch(value);
+                                },
+                              ),
+                            ),
                             controller.saints.isNotEmpty
                                 ? ListView.builder(
                                     physics: const ScrollPhysics(),
