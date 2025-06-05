@@ -1,7 +1,6 @@
 import 'package:circle_nav_bar/circle_nav_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:badges/badges.dart';
 
 import '../../controllers/bottompages/bottomnavigationbarcontroller.dart';
 
@@ -23,7 +22,6 @@ class BottomNavigationTileScreen extends StatelessWidget {
               ),
               body: controller.bottomPages[controller.selectedIndex],
               bottomNavigationBar: CircleNavBar(
-
                 activeIcons: controller.activeIcons,
                 inactiveIcons: controller.inactiveIcons,
 

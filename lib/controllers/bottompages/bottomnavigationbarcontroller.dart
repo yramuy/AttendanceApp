@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:maintenanceapp/views/administrative/administrativehome.dart';
+import 'package:maintenanceapp/views/attendancerecord/attendancerecord.dart';
 import 'package:maintenanceapp/views/bottompages/mannas.dart';
 import 'package:maintenanceapp/views/bottompages/meetings.dart';
 import 'package:maintenanceapp/views/finance/financehome.dart';
@@ -49,14 +50,23 @@ class BottomNavigationBarController extends GetxController {
         const GeneralHome(),
         const FinanceHome(),
         const AdministrativeHome(),
+        const AttendanceRecord(),
         const MyProfile(),
       ];
-      bottomLabels = ["Home", "Attendance", "Finance", "Administrative", "Account"];
+      bottomLabels = [
+        "Home",
+        "Attendance",
+        "Finance",
+        "Admin",
+        "AR",
+        "Account",
+      ];
       activeIcons = [
         const Icon(Icons.home_outlined, color: Colors.deepPurple),
         const Icon(Icons.access_time_outlined, color: Colors.deepPurple),
         const Icon(Icons.currency_rupee, color: Colors.deepPurple),
         const Icon(Icons.person_3_outlined, color: Colors.deepPurple),
+        const Icon(Icons.access_time_outlined, color: Colors.deepPurple),
         const Icon(Icons.person_outlined, color: Colors.deepPurple),
       ];
       inactiveIcons = [
@@ -64,6 +74,7 @@ class BottomNavigationBarController extends GetxController {
         const Icon(Icons.access_time_outlined, color: Colors.grey),
         const Icon(Icons.currency_rupee, color: Colors.grey),
         const Icon(Icons.person_3_outlined, color: Colors.grey),
+        const Icon(Icons.access_time_outlined, color: Colors.grey),
         const Icon(Icons.person_outlined, color: Colors.grey),
       ];
 
@@ -136,41 +147,97 @@ class BottomNavigationBarController extends GetxController {
     update();
   }
 
+  // updateIndex(index) {
+  //   log('current selected index $index');
+  //   selectedIndex = index;
+  //   if (index == 0) {
+  //     appTitle = "Welcome to Church in Visakhapatnam";
+  //   } else if (index == 1) {
+  //     Utilities.navId = "1";
+  //     appTitle = "Attendance";
+  //   } else if (index == 2) {
+  //     if (userRole == "4") {
+  //       appTitle = "Account";
+  //     } else if (userRole == "3") {
+  //       Utilities.navId = "3";
+  //       appTitle = "Administration";
+  //     } else if (userRole == "2") {
+  //       Utilities.navId = "2";
+  //       appTitle = "Finance";
+  //     } else if (userRole == "1") {
+  //       Utilities.navId = "2";
+  //       appTitle = "Finance";
+  //     }
+  //   } else if (index == 3) {
+  //     if (userRole == "1") {
+  //       appTitle = "Administration";
+  //       Utilities.navId = "3";
+  //     } else if (userRole == "2") {
+  //       appTitle = "Account";
+  //     } else if (userRole == "3") {
+  //       appTitle = "Account";
+  //     }
+  //   } else if (index == 4 && userRole.toString() == "1") {
+  //     appTitle = "Attendance Record";
+  //   } else if (index == 5 && userRole.toString() == "1") {
+  //     appTitle = "Account";
+  //   }
+  //   update();
+  // }
+
   updateIndex(index) {
     log('current selected index $index');
     selectedIndex = index;
-    if (index == 0) {
-      appTitle = "Welcome to Church in Visakhapatnam";
-    } else if (index == 1) {
-      Utilities.navId = "1";
-      appTitle = "Attendance";
-    } else if (index == 2) {
-      if (userRole == "4") {
-        appTitle = "Account";
-      } else if (userRole == "3") {
-        Utilities.navId = "3";
-        appTitle = "Administration";
-      } else if (userRole == "2") {
-        Utilities.navId = "2";
-        appTitle = "Finance";
-      } else if (userRole == "1") {
-        Utilities.navId = "2";
-        appTitle = "Finance";
-      }
-    } else if (index == 3) {
-      if (userRole == "1") {
-        appTitle = "Administration";
-        Utilities.navId = "3";
-      } else if (userRole == "2") {
-        appTitle = "Account";
-      } else if (userRole == "3") {
-        appTitle = "Account";
-      }
-    } else if (index == 4) {
-      if (userRole == "1") {
-        appTitle = "Account";
-      }
+
+    switch (index) {
+      case 0:
+        appTitle = "Welcome to Church in Visakhapatnam";
+        break;
+
+      case 1:
+        Utilities.navId = "1";
+        appTitle = "Attendance";
+        break;
+
+      case 2:
+        switch (userRole) {
+          case "4":
+            appTitle = "Account";
+            break;
+          case "3":
+            Utilities.navId = "3";
+            appTitle = "Administration";
+            break;
+          case "2":
+          case "1":
+            Utilities.navId = "2";
+            appTitle = "Finance";
+            break;
+        }
+        break;
+
+      case 3:
+        if (userRole == "1") {
+          Utilities.navId = "3";
+          appTitle = "Administration";
+        } else if (userRole == "2" || userRole == "3") {
+          appTitle = "Account";
+        }
+        break;
+
+      case 4:
+        if (userRole == "1") {
+          appTitle = "Attendance Record";
+        }
+        break;
+
+      case 5:
+        if (userRole == "1") {
+          appTitle = "Account";
+        }
+        break;
     }
+
     update();
   }
 
