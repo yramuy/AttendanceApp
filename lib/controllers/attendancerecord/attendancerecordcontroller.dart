@@ -29,7 +29,6 @@ class AttendanceRecordController extends GetxController {
   int checkboxStartIndex = 4;
 
   // Each row has 3 booleans (Sunday, Tuesday, Friday)
-  List<List<bool>> checkboxes = [];
   bool isChecked = false;
   Map<int, bool> isFruitBearing = {};
   Map<int, bool> isShepherding = {};
@@ -63,7 +62,6 @@ class AttendanceRecordController extends GetxController {
     weekDates = List.generate(7, (index) {
       DateTime day = monday.add(Duration(days: index));
       return DateFormat("MM-dd-yyy").format(day);
-      // DateFormat('yyyy-MM-dd').format(day);
     });
 
     print("weekDates $weekDates");
@@ -94,6 +92,19 @@ class AttendanceRecordController extends GetxController {
     update();
   }
 
+  handleSaintAttendance(saintID, headerTypeValue, headerType, headerTypeText) {
+    var body = jsonEncode({
+      "district_id": districtId,
+      "saint_id": saintID,
+      "header_type": headerType,
+      "header_type_text": headerTypeText,
+      "header_type_value": headerTypeValue ? '1' : '0'
+    });
+
+    log("Body $body");
+    update();
+  }
+
   loadSaints() async {
     log("District $districtId");
     if (selectedIndex == 0) {
@@ -116,12 +127,7 @@ class AttendanceRecordController extends GetxController {
             isLoading = false;
           }
 
-          log("Saints $saints");
-
-          checkboxes =
-              List.generate(saints.length, (_) => [false, false, false]);
-
-          // isLoading = false;
+          log("Saints $saints"); // isLoading = false;
           // Get.rawSnackbar(
           //     snackPosition: SnackPosition.TOP,
           //     message: responseBody['message'].toString());

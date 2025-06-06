@@ -79,7 +79,7 @@ class _AttendanceRecordState extends State<AttendanceRecord>
                           margin: EdgeInsets.all(10),
                           child: Table(
                             border: TableBorder.all(color: Colors.black),
-                            defaultColumnWidth: const FixedColumnWidth(100),
+                            defaultColumnWidth: const FixedColumnWidth(80),
                             children: [
                               // Header row
                               TableRow(
@@ -142,6 +142,11 @@ class _AttendanceRecordState extends State<AttendanceRecord>
                                       onChanged: (bool? value) {
                                         controller.isFruitBearing[index] =
                                             value!;
+                                        controller.handleSaintAttendance(
+                                            person['id'],
+                                            value,
+                                            1,
+                                            'Going out for fruit bearing');
                                         print(controller.isFruitBearing[index]);
                                         controller.update();
                                       },
@@ -153,6 +158,11 @@ class _AttendanceRecordState extends State<AttendanceRecord>
                                       onChanged: (bool? value) {
                                         controller.isShepherding[index] =
                                             value!;
+                                        controller.handleSaintAttendance(
+                                            person['id'],
+                                            value,
+                                            2,
+                                            "Going out for shepherding");
                                         print(controller.isShepherding[index]);
                                         controller.update();
                                       },
