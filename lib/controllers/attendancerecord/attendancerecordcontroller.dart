@@ -10,6 +10,7 @@ class AttendanceRecordController extends GetxController {
   final List<String> headers = [
     'Sno',
     'Saint Name',
+    'Classification',
     'Category',
     'Service',
     'Shephred',
@@ -216,7 +217,10 @@ class AttendanceRecordController extends GetxController {
             hist['name']
                 .toLowerCase()
                 .contains(searchController.text.toLowerCase()) ||
-            hist['district']
+            hist['classificationName']
+                .toLowerCase()
+                .contains(searchController.text.toLowerCase()) ||
+            hist['saintType']
                 .toLowerCase()
                 .contains(searchController.text.toLowerCase()))
         .toList();
