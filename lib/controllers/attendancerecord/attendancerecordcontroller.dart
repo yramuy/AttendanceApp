@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:jiffy/jiffy.dart';
 import '../../apiservice/restapi.dart';
 import 'package:intl/intl.dart';
 
@@ -41,7 +43,9 @@ class AttendanceRecordController extends GetxController {
   int selectedIndex = 0;
   bool isLoading = false;
   List weekDates = [];
-
+  String currentDate = Jiffy(DateTime.now()).format('yyyy-MM-dd');
+  TextEditingController searchController = TextEditingController();
+  List tempSaints = [];
   @override
   void onInit() {
     super.onInit();
@@ -61,7 +65,7 @@ class AttendanceRecordController extends GetxController {
 
     weekDates = List.generate(7, (index) {
       DateTime day = monday.add(Duration(days: index));
-      return DateFormat("MM-dd-yyy").format(day);
+      return DateFormat("yyyy-MM-dd").format(day);
     });
 
     print("weekDates $weekDates");
@@ -92,17 +96,71 @@ class AttendanceRecordController extends GetxController {
     update();
   }
 
-  handleSaintAttendance(saintID, headerTypeValue, headerType, headerTypeText) {
+  handleSaintAttendance(
+      saintID, headerTypeValue, headerType, headerTypeText, saintTypeId) async {
     var body = jsonEncode({
       "district_id": districtId,
       "saint_id": saintID,
       "header_type": headerType,
       "header_type_text": headerTypeText,
-      "header_type_value": headerTypeValue ? '1' : '0'
+      "header_type_value": headerTypeValue ? '1' : '0',
+      "meeting_date": meetingDate(headerType, weekDates),
+      "category_id": saintTypeId
+    });
+    update();
+
+    await ApiService.post("saveAttendanceSheet", body).then((success) {
+      if (success.statusCode == 200) {
+        var responseBody = jsonDecode(success.body);
+        if (responseBody['status'].toString() == '200') {
+          log("responseBody $responseBody");
+          loadSaints();
+          // saints = responseBody['saints'];
+          // if (selectedIndex == 0) {
+          //   isLoading = false;
+          // }
+
+          log("Saints $saints"); // isLoading = false;
+          // Get.rawSnackbar(
+          //     snackPosition: SnackPosition.TOP,
+          //     message: responseBody['message'].toString());
+          update();
+        } else {
+          // if (selectedIndex == 0) {
+          //   isLoading = false;
+          // }
+          Get.rawSnackbar(
+              snackPosition: SnackPosition.TOP,
+              message: responseBody['message'].toString());
+        }
+      } else {
+        Get.rawSnackbar(
+            snackPosition: SnackPosition.TOP,
+            message: 'Something went wrong, Please retry later');
+      }
+      update();
     });
 
     log("Body $body");
-    update();
+  }
+
+  meetingDate(headerType, weekDates) {
+    var meetingDate;
+    switch (headerType) {
+      case 4:
+        meetingDate = weekDates[4];
+        break;
+      case 7:
+        meetingDate = weekDates[1];
+        break;
+      case 8:
+        meetingDate = weekDates[6];
+        break;
+      default:
+        meetingDate = "${weekDates[0]} to ${weekDates[6]}";
+    }
+
+    return meetingDate;
   }
 
   loadSaints() async {
@@ -113,7 +171,7 @@ class AttendanceRecordController extends GetxController {
     final body = jsonEncode({
       "districtId": districtId.toString(),
       "typeId": typeId,
-      "date": "",
+      "date": currentDate,
       "meetingType": ""
     });
     log("Encode Body $body");
@@ -123,6 +181,7 @@ class AttendanceRecordController extends GetxController {
         if (responseBody['status'].toString() == '200') {
           // log("responseBody $responseBody");
           saints = responseBody['saints'];
+          tempSaints = responseBody['saints'];
           if (selectedIndex == 0) {
             isLoading = false;
           }
@@ -150,40 +209,17 @@ class AttendanceRecordController extends GetxController {
     update();
   }
 
-  loadData() {
-    // saints = scontroller.saints;
+  handleSearch(String value) {
+    saints = [];
+    saints = tempSaints
+        .where((hist) =>
+            hist['name']
+                .toLowerCase()
+                .contains(searchController.text.toLowerCase()) ||
+            hist['district']
+                .toLowerCase()
+                .contains(searchController.text.toLowerCase()))
+        .toList();
     update();
   }
-  //   return DataColumn(
-  //     label: Container(
-  //       decoration: BoxDecoration(
-  //         border: Border.all(color: Colors.black26),
-  //       ),
-  //       padding: EdgeInsets.all(8),
-  //       child: Text(
-  //         text,
-  //         style: TextStyle(
-  //             color: Colors.black,
-  //             fontFamily: "Inter-Medium",
-  //             fontSize: 14,
-  //             fontWeight: FontWeight.bold),
-  //       ),
-  //     ),
-  //   );
-  // }
-
-  // DataCell buildCell(String text) {
-  //   return DataCell(
-  //     Container(
-  //       decoration: BoxDecoration(
-  //         border: Border.all(color: Colors.black26),
-  //       ),
-  //       padding: EdgeInsets.all(8),
-  //       child: Text(
-  //         text,
-  //         style: TextStyle(fontSize: 13),
-  //       ),
-  //     ),
-  //   );
-  // }
 }

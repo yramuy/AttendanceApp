@@ -73,7 +73,7 @@ class LifeStudyQuestionListController extends GetxController {
     currentDate = (await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
-      firstDate: DateTime.now(),
+      firstDate: DateTime(2000), // Accept past dates from the year 2000
       lastDate: DateTime(2030),
     ))!;
     meetingDate = Jiffy(currentDate).format('yyyy-MM-dd');
@@ -82,29 +82,67 @@ class LifeStudyQuestionListController extends GetxController {
     update();
   }
 
+  // handleLifeStudyQnsShare(lifeStudy) async {
+  //   log("Life Study $lifeStudy");
+
+  //   String multiMsg =
+  //       "Praise the Lord Saints \n\n${lifeStudy['meetingDate'].toString()} on Lord's Table Meeting ${lifeStudy['life_study_title'].toString()} Questions & Answers\n\n";
+
+  //   Set<String> addedMessages = {}; // Track added message headings
+
+  //   for (int i = 0; i < lifeStudy['lifeStudyQns'].length; i++) {
+  //     String currentMessage =
+  //         lifeStudy['lifeStudyQns'][i]['message'].toString();
+
+  //     if (lifeStudy['message_1'].toString() == currentMessage ||
+  //         lifeStudy['message_2'].toString() == currentMessage) {
+  //       // Add message heading only if it's not already added
+  //       if (!addedMessages.contains(currentMessage)) {
+  //         multiMsg += "$currentMessage th Message\n";
+  //         addedMessages.add(currentMessage);
+  //       }
+
+  //       multiMsg +=
+  //           "  ${lifeStudy['lifeStudyQns'][i]['question']} . ${lifeStudy['lifeStudyQns'][i]['saintName']}\n";
+  //     }
+  //   }
+
+  //   await Share.share(multiMsg);
+  // }
+
   handleLifeStudyQnsShare(lifeStudy) async {
     log("Life Study $lifeStudy");
 
     String multiMsg =
         "Praise the Lord Saints \n\n${lifeStudy['meetingDate'].toString()} on Lord's Table Meeting ${lifeStudy['life_study_title'].toString()} Questions & Answers\n\n";
 
-    Set<String> addedMessages = {}; // Track added message headings
+    // Filter questions that match message_1 or message_2
+    List<dynamic> filteredQns = lifeStudy['lifeStudyQns'].where((q) {
+      return q['message'].toString() == lifeStudy['message_1'].toString() ||
+          q['message'].toString() == lifeStudy['message_2'].toString();
+    }).toList();
 
-    for (int i = 0; i < lifeStudy['lifeStudyQns'].length; i++) {
-      String currentMessage =
-          lifeStudy['lifeStudyQns'][i]['message'].toString();
+    // Sort by message first, then by question_no
+    filteredQns.sort((a, b) {
+      int messageCompare =
+          a['message'].toString().compareTo(b['message'].toString());
+      if (messageCompare != 0) return messageCompare;
+      return int.parse(a['question'].toString())
+          .compareTo(int.parse(b['question'].toString()));
+    });
 
-      if (lifeStudy['message_1'].toString() == currentMessage ||
-          lifeStudy['message_2'].toString() == currentMessage) {
-        // Add message heading only if it's not already added
-        if (!addedMessages.contains(currentMessage)) {
-          multiMsg += "$currentMessage th Message\n";
-          addedMessages.add(currentMessage);
-        }
+    Set<String> addedMessages = {};
 
-        multiMsg +=
-            "  ${lifeStudy['lifeStudyQns'][i]['question']} . ${lifeStudy['lifeStudyQns'][i]['saintName']}\n";
+    for (var q in filteredQns) {
+      String currentMessage = q['message'].toString();
+
+      // Add message heading only if it's not already added
+      if (!addedMessages.contains(currentMessage)) {
+        multiMsg += "$currentMessage th Message\n";
+        addedMessages.add(currentMessage);
       }
+
+      multiMsg += "  ${q['question']} . ${q['saintName']}\n";
     }
 
     await Share.share(multiMsg);

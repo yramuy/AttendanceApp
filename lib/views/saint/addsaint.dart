@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:maintenanceapp/controllers/saints/addsaintcontroller.dart';
-import 'package:maintenanceapp/views/saint/saints.dart';
 import 'package:maintenanceapp/widgets/constants.dart';
 
 class AddSaint extends StatefulWidget {
@@ -152,7 +151,8 @@ class _AddSaintState extends State<AddSaint> {
                                 controller: controller.mobile,
                                 keyboardType: TextInputType.phone,
                                 inputFormatters: [
-                                  FilteringTextInputFormatter.allow(RegExp(r'^\+?[0-9]*$')), // Allow only numbers and + at start
+                                  FilteringTextInputFormatter.allow(RegExp(
+                                      r'^\+?[0-9]*$')), // Allow only numbers and + at start
                                 ],
                                 decoration: InputDecoration(
                                   contentPadding: const EdgeInsets.only(
@@ -173,9 +173,9 @@ class _AddSaintState extends State<AddSaint> {
                                 validator: (value) {
                                   if (value!.isEmpty) {
                                     return "Mobile number is required";
-                                  } else if(value.toString().length < 10) {
+                                  } else if (value.toString().length < 10) {
                                     return "The mobile number should be exactly 10 digits long.";
-                                  } else if(value.toString().length > 15) {
+                                  } else if (value.toString().length > 15) {
                                     return "A mobile number is allowed up to 14 digits, including the country code.";
                                   }
 
@@ -374,7 +374,7 @@ class _AddSaintState extends State<AddSaint> {
                                 items: controller.roles.map((e) {
                                   log("RoleID is ${controller.roleId}");
                                   return DropdownMenuItem(
-                                    value: e['id'].toString(),
+                                    value: e['config_id'].toString(),
                                     child: Text(e['name'].toString()),
                                   );
                                 }).toList(),
@@ -401,10 +401,6 @@ class _AddSaintState extends State<AddSaint> {
                             ),
                             Container(
                               width: MediaQuery.of(context).size.width,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  border:
-                                      Border.all(color: Colors.grey, width: 1)),
                               child: DropdownButtonFormField(
                                 // value: controller.districtId,
                                 value: controller.districtId.toString() != '0'
@@ -413,14 +409,31 @@ class _AddSaintState extends State<AddSaint> {
                                 isExpanded: true,
                                 isDense: true,
                                 hint: const Text("--Select--"),
-                                decoration: const InputDecoration(
-                                    contentPadding:
-                                        EdgeInsets.only(left: 10, bottom: 10),
-                                    border: OutlineInputBorder(
-                                        borderSide: BorderSide.none)),
+                                decoration: InputDecoration(
+                                  errorBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                      borderSide: const BorderSide(
+                                          color: Colors.red, width: 1)),
+                                  border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                      borderSide: const BorderSide(
+                                          color: Color(0xFFd2d2d2),
+                                          width: 1.5)),
+                                  focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                      borderSide: const BorderSide(
+                                          color: Color(0xFFd2d2d2),
+                                          width: 1.5)),
+                                  enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                      borderSide: const BorderSide(
+                                          color: Color(0xFFd2d2d2),
+                                          width: 1.5)),
+                                ),
+
                                 items: controller.districts.map((e) {
                                   return DropdownMenuItem(
-                                    value: e['id'].toString(),
+                                    value: e['config_id'].toString(),
                                     child: Text(e['name'].toString()),
                                   );
                                 }).toList(),
@@ -429,7 +442,7 @@ class _AddSaintState extends State<AddSaint> {
                                   controller.update();
                                 },
                                 validator: (value) {
-                                  if (value == "") {
+                                  if (controller.districtId.toString() == "0") {
                                     return "District is required";
                                   }
 
@@ -440,17 +453,13 @@ class _AddSaintState extends State<AddSaint> {
                             const Padding(
                               padding: EdgeInsets.all(10),
                               child: Text(
-                                "Saint Category",
+                                "Category",
                                 style: TextStyle(
                                     fontSize: 16, color: Colors.black),
                               ),
                             ),
                             Container(
                               width: MediaQuery.of(context).size.width,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  border:
-                                      Border.all(color: Colors.grey, width: 1)),
                               child: DropdownButtonFormField(
                                 // value: controller.saintType,
                                 value: controller.saintType.toString() != '0'
@@ -458,14 +467,30 @@ class _AddSaintState extends State<AddSaint> {
                                     : null, // Default to null if no valid selection
                                 isExpanded: true,
                                 hint: const Text("--Select--"),
-                                decoration: const InputDecoration(
-                                    contentPadding:
-                                        EdgeInsets.only(left: 10, bottom: 10),
-                                    border: OutlineInputBorder(
-                                        borderSide: BorderSide.none)),
+                                decoration: InputDecoration(
+                                  errorBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                      borderSide: const BorderSide(
+                                          color: Colors.red, width: 1)),
+                                  border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                      borderSide: const BorderSide(
+                                          color: Color(0xFFd2d2d2),
+                                          width: 1.5)),
+                                  focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                      borderSide: const BorderSide(
+                                          color: Color(0xFFd2d2d2),
+                                          width: 1.5)),
+                                  enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                      borderSide: const BorderSide(
+                                          color: Color(0xFFd2d2d2),
+                                          width: 1.5)),
+                                ),
                                 items: controller.saintTypes.map((e) {
                                   return DropdownMenuItem(
-                                    value: e['id'].toString(),
+                                    value: e['config_id'].toString(),
                                     child: Text(e['name'].toString()),
                                   );
                                 }).toList(),
@@ -473,8 +498,67 @@ class _AddSaintState extends State<AddSaint> {
                                   controller.saintType = value.toString();
                                 },
                                 validator: (value) {
-                                  if (value.toString() == "--Select--") {
-                                    return "Saint Type is required";
+                                  if (controller.saintType.toString() == "0") {
+                                    return "Category is required";
+                                  }
+
+                                  return null;
+                                },
+                              ),
+                            ),
+                            const Padding(
+                              padding: EdgeInsets.all(10),
+                              child: Text(
+                                "Clasification",
+                                style: TextStyle(
+                                    fontSize: 16, color: Colors.black),
+                              ),
+                            ),
+                            Container(
+                              width: MediaQuery.of(context).size.width,
+                              child: DropdownButtonFormField(
+                                // value: controller.saintType,
+                                value: controller.classificationID.toString() !=
+                                        '0'
+                                    ? controller.classificationID.toString()
+                                    : null, // Default to null if no valid selection
+                                isExpanded: true,
+                                hint: const Text("--Select--"),
+                                decoration: InputDecoration(
+                                  errorBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                      borderSide: const BorderSide(
+                                          color: Colors.red, width: 1)),
+                                  border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                      borderSide: const BorderSide(
+                                          color: Color(0xFFd2d2d2),
+                                          width: 1.5)),
+                                  focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                      borderSide: const BorderSide(
+                                          color: Color(0xFFd2d2d2),
+                                          width: 1.5)),
+                                  enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                      borderSide: const BorderSide(
+                                          color: Color(0xFFd2d2d2),
+                                          width: 1.5)),
+                                ),
+                                items: controller.clasifications.map((e) {
+                                  return DropdownMenuItem(
+                                    value: e['config_id'].toString(),
+                                    child: Text(e['name'].toString()),
+                                  );
+                                }).toList(),
+                                onChanged: (value) {
+                                  controller.classificationID =
+                                      value.toString();
+                                },
+                                validator: (value) {
+                                  if (controller.classificationID.toString() ==
+                                      "0") {
+                                    return "Classification is required";
                                   }
 
                                   return null;

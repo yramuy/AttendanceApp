@@ -24,33 +24,18 @@ class AddSaintController extends GetxController {
   TextEditingController username = TextEditingController();
   String districtId = "0";
   String roleId = '4';
-  String saintType = '1';
+  String saintType = '0';
   String? createdBy;
   String? saintID = '0';
   String? userID = '0';
   String? saintStatus = '1';
   int? age;
   bool showPassword = true;
-  List districts = [
-    {"id": 1, "name": "AGP"},
-    {"id": 2, "name": "GWK"},
-    {"id": 3, "name": "AKP"},
-    {"id": 4, "name": "Vizag City"}
-  ];
-  List saintTypes = [
-    {"id": 1, "name": "General Saint"},
-    {"id": 2, "name": "Young working Saint"},
-    {"id": 3, "name": "Collage Student"},
-    {"id": 6, "name": "Teenager"},
-    {"id": 4, "name": "Children"},
-    {"id": 5, "name": "Dormant Saint"}
-  ];
-
-  List roles = [
-    {"id": 2, "name": "Finance"},
-    {"id": 3, "name": "Administration"},
-    {"id": 4, "name": "User"}
-  ];
+  String classificationID = "0";
+  List saintTypes = [];
+  List roles = [];
+  List districts = [];
+  List clasifications = [];
 
   List status = [
     {"id": 1, "name": "Regular"},
@@ -64,6 +49,7 @@ class AddSaintController extends GetxController {
   void onInit() {
     // TODO: implement onInit
     loadLoginData();
+    loadDropdownData();
     super.onInit();
   }
 
@@ -85,11 +71,75 @@ class AddSaintController extends GetxController {
       username.text = argumentData['user_name'].toString();
       userID = argumentData['user_id'].toString();
       saintStatus = argumentData['saint_status'].toString();
+      classificationID = argumentData['classification'].toString() == 'null' ||
+              argumentData['classification'].toString() == '0'
+          ? '0'
+          : argumentData['classification'].toString();
+
       update();
     }
 
-
     update();
+  }
+
+  Future<void> loadDropdownData() async {
+    try {
+      final responses = await Future.wait([
+        ApiService.get("masterData?dropdownID=1&featureID=1&isActive=1"),
+        ApiService.get("masterData?dropdownID=2&featureID=1&isActive=1"),
+        ApiService.get("masterData?dropdownID=3&featureID=1&isActive=1"),
+        ApiService.get("masterData?dropdownID=4&featureID=1&isActive=1"),
+      ]);
+
+      final firstResponse = responses[0];
+      final secondResponse = responses[1];
+      final thirdResponse = responses[2];
+      final fourthResponse = responses[3];
+
+      if (firstResponse.statusCode == 200) {
+        final data = jsonDecode(firstResponse.body);
+        clasifications = data['masterData'];
+        log("clasifications: $clasifications");
+      } else {
+        _showErrorSnackbar();
+      }
+
+      if (secondResponse.statusCode == 200) {
+        final data = jsonDecode(secondResponse.body);
+        districts = data['masterData'];
+        log("districts: $districts");
+      } else {
+        _showErrorSnackbar();
+      }
+
+      if (thirdResponse.statusCode == 200) {
+        final data = jsonDecode(thirdResponse.body);
+        saintTypes = data['masterData'];
+        log("saintTypes: $saintTypes");
+      } else {
+        _showErrorSnackbar();
+      }
+
+      if (fourthResponse.statusCode == 200) {
+        final data = jsonDecode(fourthResponse.body);
+        roles = data['masterData'];
+        log("roles: $roles");
+      } else {
+        _showErrorSnackbar();
+      }
+    } catch (e) {
+      log("Error in loadDropdownData: $e");
+      _showErrorSnackbar();
+    }
+
+    update(); // Call once after all updates
+  }
+
+  void _showErrorSnackbar() {
+    Get.rawSnackbar(
+      snackPosition: SnackPosition.TOP,
+      message: 'Something went wrong, Please retry later',
+    );
   }
 
   handleRadioButton(value) {
@@ -105,7 +155,7 @@ class AddSaintController extends GetxController {
       lastDate: DateTime.now(),
     ))!;
     dob = Jiffy(currentDate).format('yyyy-MM-dd');
-  //if the user has selected a date
+    //if the user has selected a date
 
     handleAge();
 
@@ -150,7 +200,8 @@ class AddSaintController extends GetxController {
       "password": password.text,
       "saintStatus": saintStatus,
       "user_role_id": roleId,
-      "created_by": createdBy
+      "created_by": createdBy,
+      'classification': classificationID
     });
 
     if (kDebugMode) {
