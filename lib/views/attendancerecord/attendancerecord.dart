@@ -62,6 +62,44 @@ class _AttendanceRecordState extends State<AttendanceRecord>
                             ],
                           )),
                     ),
+                    // Container(
+                    //   width: 300,
+                    //   margin: EdgeInsets.all(10),
+                    //   decoration: BoxDecoration(
+                    //       borderRadius: BorderRadius.circular(10),
+                    //       border: Border.all(color: Colors.blue),
+                    //       color: Colors.white),
+                    //   child: GestureDetector(
+                    //     onTap: () {
+                    //       controller.datePicker(context);
+                    //     },
+                    //     child: Row(
+                    //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //       children: [
+                    //         Padding(
+                    //           padding: const EdgeInsets.all(10.0),
+                    //           child: Text(
+                    //             controller.meetingDate1,
+                    //             textAlign: TextAlign.center,
+                    //             style: TextStyle(
+                    //                 fontSize: 14,
+                    //                 color: Colors.black,
+                    //                 fontFamily: "Inter-Medium"),
+                    //           ),
+                    //         ),
+                    //         IconButton(
+                    //             iconSize: 25,
+                    //             onPressed: () {
+                    //               controller.datePicker(context);
+                    //             },
+                    //             icon: const Icon(
+                    //               Icons.calendar_month_rounded,
+                    //               color: Color(0xff005F01),
+                    //             ))
+                    //       ],
+                    //     ),
+                    //   ),
+                    // ),
                     Container(
                       margin: EdgeInsets.only(left: 10),
                       padding: EdgeInsets.all(5),
@@ -115,8 +153,15 @@ class _AttendanceRecordState extends State<AttendanceRecord>
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          Text("Record Count : ", style: TextStyle(fontSize: 16),),
-                          Text("${controller.saints.length}", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),)
+                          Text(
+                            "Record Count : ",
+                            style: TextStyle(fontSize: 16),
+                          ),
+                          Text(
+                            "${controller.saints.length}",
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold),
+                          )
                         ],
                       ),
                     ),
