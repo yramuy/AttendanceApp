@@ -50,7 +50,6 @@ class BottomNavigationBarController extends GetxController {
         const GeneralHome(),
         const FinanceHome(),
         const AdministrativeHome(),
-        const AttendanceRecord(),
         const MyProfile(),
       ];
       bottomLabels = [
@@ -58,7 +57,6 @@ class BottomNavigationBarController extends GetxController {
         "Attendance",
         "Finance",
         "Admin",
-        "AR",
         "Account",
       ];
       activeIcons = [
@@ -66,7 +64,6 @@ class BottomNavigationBarController extends GetxController {
         const Icon(Icons.access_time_outlined, color: Colors.deepPurple),
         const Icon(Icons.currency_rupee, color: Colors.deepPurple),
         const Icon(Icons.person_3_outlined, color: Colors.deepPurple),
-        const Icon(Icons.access_time_outlined, color: Colors.deepPurple),
         const Icon(Icons.person_outlined, color: Colors.deepPurple),
       ];
       inactiveIcons = [
@@ -74,7 +71,6 @@ class BottomNavigationBarController extends GetxController {
         const Icon(Icons.access_time_outlined, color: Colors.grey),
         const Icon(Icons.currency_rupee, color: Colors.grey),
         const Icon(Icons.person_3_outlined, color: Colors.grey),
-        const Icon(Icons.access_time_outlined, color: Colors.grey),
         const Icon(Icons.person_outlined, color: Colors.grey),
       ];
 

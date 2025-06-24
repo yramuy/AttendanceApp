@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:maintenanceapp/controllers/general/generalhomecontroller.dart';
 import 'package:maintenanceapp/views/attendance/attendance.dart';
 import 'package:maintenanceapp/views/attendance/attendancelist.dart';
+import 'package:maintenanceapp/views/attendancerecord/attendancerecord.dart';
 import 'package:maintenanceapp/views/lifestudy/assignlifestudyquestions.dart';
 import 'package:maintenanceapp/views/lifestudy/lifestudyquestionlist.dart';
 import 'package:maintenanceapp/views/meetingschedule/meetingschedule.dart';
@@ -145,6 +146,9 @@ class _GeneralHomeState extends State<GeneralHome> {
                                                 controller.userID.toString() == "18") {
                                               Get.to(() =>
                                                   const MonthlyMaintenance());
+                                            } else if (controller.submenus[index]['id'].toString() == "54") {
+                                              Get.to(() =>
+                                                  const AttendanceRecord());
                                             }
                                           },
                                           child: Card(

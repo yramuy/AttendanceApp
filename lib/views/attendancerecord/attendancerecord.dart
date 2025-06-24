@@ -17,6 +17,24 @@ class _AttendanceRecordState extends State<AttendanceRecord>
     return GetBuilder<AttendanceRecordController>(
       init: AttendanceRecordController(),
       builder: (controller) => Scaffold(
+        appBar: AppBar(
+          title: const Text(
+            "Attendance Sheet",
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          ),
+          backgroundColor: const Color(0xFF2c2cff),
+          centerTitle: true,
+          iconTheme: const IconThemeData(color: Colors.white),
+          leading: GestureDetector(
+            onTap: () {
+              Get.back();
+            },
+            child: const Icon(
+              Icons.arrow_back_ios,
+              size: 30,
+            ),
+          ),
+        ),
         body: controller.isLoading
             ? Center(
                 child: Column(
@@ -62,44 +80,44 @@ class _AttendanceRecordState extends State<AttendanceRecord>
                             ],
                           )),
                     ),
-                    // Container(
-                    //   width: 300,
-                    //   margin: EdgeInsets.all(10),
-                    //   decoration: BoxDecoration(
-                    //       borderRadius: BorderRadius.circular(10),
-                    //       border: Border.all(color: Colors.blue),
-                    //       color: Colors.white),
-                    //   child: GestureDetector(
-                    //     onTap: () {
-                    //       controller.datePicker(context);
-                    //     },
-                    //     child: Row(
-                    //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    //       children: [
-                    //         Padding(
-                    //           padding: const EdgeInsets.all(10.0),
-                    //           child: Text(
-                    //             controller.meetingDate1,
-                    //             textAlign: TextAlign.center,
-                    //             style: TextStyle(
-                    //                 fontSize: 14,
-                    //                 color: Colors.black,
-                    //                 fontFamily: "Inter-Medium"),
-                    //           ),
-                    //         ),
-                    //         IconButton(
-                    //             iconSize: 25,
-                    //             onPressed: () {
-                    //               controller.datePicker(context);
-                    //             },
-                    //             icon: const Icon(
-                    //               Icons.calendar_month_rounded,
-                    //               color: Color(0xff005F01),
-                    //             ))
-                    //       ],
-                    //     ),
-                    //   ),
-                    // ),
+                    Container(
+                      width: MediaQuery.of(context).size.width * 1,
+                      margin: EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: Colors.blue),
+                          color: Colors.white),
+                      child: GestureDetector(
+                        onTap: () {
+                          controller.datePicker(context);
+                        },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Text(
+                                controller.meetingDate,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.black,
+                                    fontFamily: "Inter-Medium"),
+                              ),
+                            ),
+                            IconButton(
+                                iconSize: 25,
+                                onPressed: () {
+                                  controller.datePicker(context);
+                                },
+                                icon: const Icon(
+                                  Icons.calendar_month_rounded,
+                                  color: Color(0xff005F01),
+                                ))
+                          ],
+                        ),
+                      ),
+                    ),
                     Container(
                       margin: EdgeInsets.only(left: 10),
                       padding: EdgeInsets.all(5),
@@ -532,6 +550,44 @@ class _AttendanceRecordState extends State<AttendanceRecord>
                                             width: 60,
                                             child: Text(
                                               "Lords Table Meeting",
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(fontSize: 8),
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                      Column(
+                                        children: [
+                                          Checkbox(
+                                            value: (attendanceSheet != null &&
+                                                    attendanceSheet is Map &&
+                                                    attendanceSheet
+                                                        .containsKey('9') &&
+                                                    attendanceSheet['9']
+                                                            .toString() ==
+                                                        '1')
+                                                ? true
+                                                : false,
+                                            onChanged: (bool? value) {
+                                              controller.isTableMeeting[index] =
+                                                  value!;
+                                              controller.handleSaintAttendance(
+                                                  person['id'],
+                                                  value,
+                                                  9,
+                                                  "Brothers Meeting",
+                                                  person['saintTypeId']);
+                                              print(controller
+                                                  .isTableMeeting[index]);
+                                              controller.update();
+                                            },
+                                          ),
+                                          SizedBox(
+                                            width: 60,
+                                            child: Text(
+                                              "Brothers Meeting",
                                               maxLines: 2,
                                               overflow: TextOverflow.ellipsis,
                                               textAlign: TextAlign.center,

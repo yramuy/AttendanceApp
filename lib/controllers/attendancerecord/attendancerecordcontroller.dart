@@ -22,6 +22,7 @@ class AttendanceRecordController extends GetxController {
     'Life Study M2',
     'Prayer Meeting',
     'Lords Table Meeting',
+    'Brothers Meeting',
   ];
 
   List saints = [];
@@ -44,14 +45,15 @@ class AttendanceRecordController extends GetxController {
   int selectedIndex = 0;
   bool isLoading = false;
   List weekDates = [];
-  String currentDate = Jiffy(DateTime.now()).format('yyyy-MM-dd');
+  String meetingDate = Jiffy(DateTime.now()).format('yyyy-MM-dd');
+  late DateTime currentDate;
   TextEditingController searchController = TextEditingController();
   List tempSaints = [];
   @override
   void onInit() {
     super.onInit();
     updateAttendanceSheet(selectedIndex);
-    getCurrentWeekDates();
+    getCurrentWeekDates('0');
     // print(currentWeek[0]); // prints yyyy-MM-dd
     // for (var date in currentWeek) {
     //   print(date.toString().split(' ')[0]); // prints yyyy-MM-dd
@@ -59,15 +61,41 @@ class AttendanceRecordController extends GetxController {
     loadSaints();
   }
 
-  getCurrentWeekDates() {
-    DateTime now = DateTime.now();
-    int currentWeekday = now.weekday; // 1 = Monday, 7 = Sunday
-    DateTime monday = now.subtract(Duration(days: currentWeekday - 1));
+  datePicker(BuildContext context) async {
+    currentDate = (await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(1947),
+      lastDate: DateTime.now(),
+    ))!;
+    meetingDate = Jiffy(currentDate).format('yyyy-MM-dd');
+    getCurrentWeekDates('1');
+    loadSaints();
+    update();
+  }
 
-    weekDates = List.generate(7, (index) {
-      DateTime day = monday.add(Duration(days: index));
-      return DateFormat("yyyy-MM-dd").format(day);
-    });
+  getCurrentWeekDates(value) {
+    if (value.toString() == '0') {
+      DateTime now = DateTime.now();
+      int currentWeekday = now.weekday; // 1 = Monday, 7 = Sunday
+      DateTime monday = now.subtract(Duration(days: currentWeekday - 1));
+
+      weekDates = List.generate(7, (index) {
+        DateTime day = monday.add(Duration(days: index));
+        return DateFormat("yyyy-MM-dd").format(day);
+      });
+    } else {
+      DateTime now = DateTime.parse(meetingDate);
+      int currentWeekday = now.weekday; // 1 = Monday, 7 = Sunday
+      DateTime monday = now.subtract(Duration(days: currentWeekday - 1));
+
+      weekDates = List.generate(7, (index) {
+        DateTime day = monday.add(Duration(days: index));
+        return DateFormat("yyyy-MM-dd").format(day);
+      });
+    }
+
+    update();
 
     print("weekDates $weekDates");
     // return weekDates;
@@ -105,7 +133,7 @@ class AttendanceRecordController extends GetxController {
       "header_type": headerType,
       "header_type_text": headerTypeText,
       "header_type_value": headerTypeValue ? '1' : '0',
-      "meeting_date": meetingDate(headerType, weekDates),
+      "meeting_date": getMeetingDate(headerType, weekDates),
       "category_id": saintTypeId
     });
     update();
@@ -145,7 +173,7 @@ class AttendanceRecordController extends GetxController {
     log("Body $body");
   }
 
-  meetingDate(headerType, weekDates) {
+  getMeetingDate(headerType, weekDates) {
     var meetingDate;
     switch (headerType) {
       case 4:
@@ -156,6 +184,9 @@ class AttendanceRecordController extends GetxController {
         break;
       case 8:
         meetingDate = weekDates[6];
+        break;
+      case 9:
+        meetingDate = weekDates[0];
         break;
       default:
         meetingDate = "${weekDates[0]} to ${weekDates[6]}";
@@ -172,7 +203,7 @@ class AttendanceRecordController extends GetxController {
     final body = jsonEncode({
       "districtId": districtId.toString(),
       "typeId": typeId,
-      "date": currentDate,
+      "date": meetingDate,
       "meetingType": ""
     });
     log("Encode Body $body");
