@@ -49,6 +49,8 @@ class AttendanceRecordController extends GetxController {
   late DateTime currentDate;
   TextEditingController searchController = TextEditingController();
   List tempSaints = [];
+  Map<String, dynamic> weeklyAttendanceCounts = {}; // Fix the type
+
   @override
   void onInit() {
     super.onInit();
@@ -125,6 +127,38 @@ class AttendanceRecordController extends GetxController {
     update();
   }
 
+  loadWeeklyAttendanceData() async {
+    final body = jsonEncode(
+        {"districtID": districtId.toString(), "weekDates": weekDates});
+    log("Encode Body $body");
+    await ApiService.post("weeklyAttendanceTotal", body).then((success) {
+      if (success.statusCode == 200) {
+        var responseBody = jsonDecode(success.body);
+        if (responseBody['status'].toString() == '200') {
+          // log("responseBody $responseBody");
+          weeklyAttendanceCounts = responseBody['weeklyAttendanceCounts'];
+
+          log("weeklyAttendanceCounts ${weeklyAttendanceCounts['GoingOutforFruitBearing'].toString()}"); // isLoading = false;
+
+          update();
+        } else {
+          if (selectedIndex == 0) {
+            isLoading = false;
+          }
+          Get.rawSnackbar(
+              snackPosition: SnackPosition.TOP,
+              message: responseBody['message'].toString());
+        }
+      } else {
+        Get.rawSnackbar(
+            snackPosition: SnackPosition.TOP,
+            message: 'Something went wrong, Please retry later');
+      }
+      update();
+    });
+    update();
+  }
+
   handleSaintAttendance(
       saintID, headerTypeValue, headerType, headerTypeText, saintTypeId) async {
     var body = jsonEncode({
@@ -144,20 +178,8 @@ class AttendanceRecordController extends GetxController {
         if (responseBody['status'].toString() == '200') {
           log("responseBody $responseBody");
           loadSaints();
-          // saints = responseBody['saints'];
-          // if (selectedIndex == 0) {
-          //   isLoading = false;
-          // }
-
-          log("Saints $saints"); // isLoading = false;
-          // Get.rawSnackbar(
-          //     snackPosition: SnackPosition.TOP,
-          //     message: responseBody['message'].toString());
           update();
         } else {
-          // if (selectedIndex == 0) {
-          //   isLoading = false;
-          // }
           Get.rawSnackbar(
               snackPosition: SnackPosition.TOP,
               message: responseBody['message'].toString());
@@ -217,6 +239,8 @@ class AttendanceRecordController extends GetxController {
           if (selectedIndex == 0) {
             isLoading = false;
           }
+
+          loadWeeklyAttendanceData();
 
           log("Saints $saints"); // isLoading = false;
           // Get.rawSnackbar(
