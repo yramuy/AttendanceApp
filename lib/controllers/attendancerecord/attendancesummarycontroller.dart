@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 import '../../apiservice/restapi.dart';
 
@@ -19,16 +20,55 @@ class AttendanceSummaryController extends GetxController {
     'Brothers Meeting',
   ];
   List districts = [];
-  String Gofb = '0';
+  int Gofb = 0;
+  String monthName = "";
+  int currentMonthWeeks = 0;
 
   @override
   void onInit() {
     // TODO: implement onInit
     super.onInit();
     loadDropdownData();
+    getCurrentMonthName();
+    getWeeksInCurrentMonth();
   }
 
-  Future<void> loadDropdownData() async {
+  getWeeksInCurrentMonth() {
+    final now = DateTime.now();
+
+    // First day of the current month
+    final firstDayOfMonth = DateTime(now.year, now.month, 1);
+
+    // Last day of the current month
+    final lastDayOfMonth = DateTime(now.year, now.month + 1, 0);
+
+    // Weekday (1 = Monday, 7 = Sunday)
+    final firstWeekday = firstDayOfMonth.weekday;
+    final lastDate = lastDayOfMonth.day;
+
+    // Days in first week
+    final daysInFirstWeek = 8 - firstWeekday;
+
+    // Remaining days after first week
+    final remainingDays = lastDate - daysInFirstWeek;
+
+    // Total full weeks after the first week
+    final fullWeeks = (remainingDays / 7).ceil();
+
+    // Total weeks = 1 (first partial week) + full weeks
+    currentMonthWeeks = fullWeeks;
+
+    update();
+  }
+
+  getCurrentMonthName() {
+    final now = DateTime.now();
+    monthName = DateFormat('MMMM').format(now); // e.g., "June"
+    print('Current month: $monthName');
+    update();
+  }
+
+  loadDropdownData() async {
     try {
       final responses = await Future.wait([
         ApiService.get("masterData?dropdownID=2&featureID=1&isActive=1"),
@@ -71,27 +111,89 @@ class AttendanceSummaryController extends GetxController {
 
       final data = jsonDecode(firstResponse.body);
 
-      if (headerTypeID.toString() == '1') {
-        Gofb = data['monthlyAttendanceCounts'];
-        update();
+      final attendanceCnt = data['monthlyAttendanceCounts'];
+
+      if (attendanceCnt.toString() == '0') {
+        return 0;
+      } else {
+        double avg = attendanceCnt / currentMonthWeeks;
+        int rounded = avg.round();
+
+        log("avg $avg");
+
+        log("rounded $rounded");
+
+        return rounded;
       }
-
-      // updateTotalByType(headerTypeID, data['monthlyAttendanceCounts']);
-
-      log('monthlyAttendanceTotal ${data['monthlyAttendanceCounts']}');
-
-      return data['monthlyAttendanceCounts'];
     } catch (e) {
       log("Error in loadDropdownData: $e");
       _showErrorSnackbar();
     }
-    // update();
   }
 
-  updateTotalByType(typeID, count) {
-    if (typeID.toString() == '1') {
-      Gofb = count;
+  getMonthlyTotal(headerTypeID) async {
+    try {
+      final responses = await Future.wait([
+        ApiService.get("monthlyTotal?headerTypeID=${headerTypeID}"),
+      ]);
+
+      final firstResponse = responses[0];
+
+      final data = jsonDecode(firstResponse.body);
+
+      final attendanceCnt = data['total'];
+
+      if (attendanceCnt.toString() == '0') {
+        return 0;
+      } else {
+        double avg = int.parse(attendanceCnt) / currentMonthWeeks;
+        int rounded = avg.round();
+
+        log("avg $avg");
+
+        log("rounded $rounded");
+
+        return rounded;
+      }
+    } catch (e) {
+      log("Error in loadDropdownData: $e");
+      _showErrorSnackbar();
     }
-    update();
   }
+
+  // getMonthlyTotal(headerTypeID) async {
+  //   try {
+  //     final responses = await Future.wait([
+  //       ApiService.get("monthlyTotal?headerTypeID=${headerTypeID}"),
+  //     ]);
+
+  //     final response = responses[0];
+
+  //     final result = jsonDecode(response.body);
+
+  //     final totalCnt = result['total'];
+
+  //     if (totalCnt == null || totalCnt.toString() == '0') {
+  //       log("totalCnt is null or 0");
+  //       return 0;
+  //     }
+
+  //     if (currentMonthWeeks == null || currentMonthWeeks == 0) {
+  //       log("currentMonthWeeks is null or 0");
+  //       return 0;
+  //     }
+
+  //     double totalAvg = totalCnt / currentMonthWeeks;
+  //     int totalRounded = totalAvg.round();
+
+  //     log("TotalAvg $totalAvg");
+  //     log("Total Rounded $totalRounded");
+
+  //     return totalRounded;
+  //   } catch (e) {
+  //     log("Error in loadDropdownData: $e");
+  //     _showErrorSnackbar();
+  //   }
+  //   // update();
+  // }
 }
