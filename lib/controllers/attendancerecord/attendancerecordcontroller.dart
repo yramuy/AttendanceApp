@@ -50,12 +50,15 @@ class AttendanceRecordController extends GetxController {
   TextEditingController searchController = TextEditingController();
   List tempSaints = [];
   Map<String, dynamic> weeklyAttendanceCounts = {}; // Fix the type
+  List clasifications = [];
+  String classificationID = "0";
 
   @override
   void onInit() {
     super.onInit();
     updateAttendanceSheet(selectedIndex);
     getCurrentWeekDates('0');
+    loadDropdownData();
     // print(currentWeek[0]); // prints yyyy-MM-dd
     // for (var date in currentWeek) {
     //   print(date.toString().split(' ')[0]); // prints yyyy-MM-dd
@@ -226,7 +229,8 @@ class AttendanceRecordController extends GetxController {
       "districtId": districtId.toString(),
       "typeId": typeId,
       "date": meetingDate,
-      "meetingType": ""
+      "meetingType": "",
+      "classificationID": classificationID
     });
     log("Encode Body $body");
     await ApiService.post("saints", body).then((success) {
@@ -263,6 +267,35 @@ class AttendanceRecordController extends GetxController {
       update();
     });
     update();
+  }
+
+  Future<void> loadDropdownData() async {
+    try {
+      final responses = await Future.wait(
+          [ApiService.get("masterData?dropdownID=1&featureID=1&isActive=1")]);
+
+      final firstResponse = responses[0];
+
+      if (firstResponse.statusCode == 200) {
+        final data = jsonDecode(firstResponse.body);
+        clasifications = data['masterData'];
+        log("clasifications: $clasifications");
+      } else {
+        _showErrorSnackbar();
+      }
+    } catch (e) {
+      log("Error in loadDropdownData: $e");
+      _showErrorSnackbar();
+    }
+
+    update(); // Call once after all updates
+  }
+
+  void _showErrorSnackbar() {
+    Get.rawSnackbar(
+      snackPosition: SnackPosition.TOP,
+      message: 'Something went wrong, Please retry later',
+    );
   }
 
   handleSearch(String value) {
