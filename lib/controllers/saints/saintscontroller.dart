@@ -76,7 +76,8 @@ class SaintsController extends GetxController {
       "districtId": districtId.toString(),
       "typeId": typeId,
       "date": "",
-      "meetingType": ""
+      "meetingType": "",
+      "classificationID": ""
     });
     log("Encode Body $body");
     await ApiService.post("saints", body).then((success) {

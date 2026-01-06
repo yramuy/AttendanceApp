@@ -401,6 +401,67 @@ class _AddSaintState extends State<AddSaint> {
                               const Padding(
                                 padding: EdgeInsets.all(10),
                                 child: Text(
+                                  "Location",
+                                  style: TextStyle(
+                                      fontSize: 16, color: Colors.black),
+                                ),
+                              ),
+                              Container(
+                                width: MediaQuery.of(context).size.width,
+                                child: DropdownButtonFormField(
+                                  // value: controller.districtId,
+                                  value: controller.locationID.toString() != ''
+                                      ? controller.locationID.toString()
+                                      : null, // Default to null if no valid selection
+                                  isExpanded: true,
+                                  isDense: true,
+                                  hint: const Text("--Select--"),
+                                  decoration: InputDecoration(
+                                    errorBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                        borderSide: const BorderSide(
+                                            color: Colors.red, width: 1)),
+                                    border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                        borderSide: const BorderSide(
+                                            color: Color(0xFFd2d2d2),
+                                            width: 1.5)),
+                                    focusedBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                        borderSide: const BorderSide(
+                                            color: Color(0xFFd2d2d2),
+                                            width: 1.5)),
+                                    enabledBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                        borderSide: const BorderSide(
+                                            color: Color(0xFFd2d2d2),
+                                            width: 1.5)),
+                                  ),
+
+                                  items: controller.locations.map((e) {
+                                    return DropdownMenuItem(
+                                      value: e['id'].toString(),
+                                      child: Text(e['name'].toString()),
+                                    );
+                                  }).toList(),
+                                  onChanged: (value) {
+                                    controller.locationID = value.toString();
+                                    controller.loadDistricts(value);
+                                    controller.update();
+                                  },
+                                  validator: (value) {
+                                    if (controller.locationID.toString() ==
+                                        "") {
+                                      return "Location is required";
+                                    }
+
+                                    return null;
+                                  },
+                                ),
+                              ),
+                              const Padding(
+                                padding: EdgeInsets.all(10),
+                                child: Text(
                                   "Districts",
                                   style: TextStyle(
                                       fontSize: 16, color: Colors.black),

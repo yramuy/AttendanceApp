@@ -36,6 +36,8 @@ class AddSaintController extends GetxController {
   List roles = [];
   List districts = [];
   List clasifications = [];
+  List locations = [];
+  String locationID = "";
 
   List status = [
     {"id": 1, "name": "Regular"},
@@ -66,6 +68,7 @@ class AddSaintController extends GetxController {
       dob = argumentData['dob'].toString();
       gender = argumentData['gender'].toString() == 'Male' ? '1' : '2';
       districtId = argumentData['districtId'].toString();
+      locationID = argumentData['locationId'].toString();
       saintType = argumentData['saintTypeId'].toString();
       roleId = argumentData['user_role_id'].toString();
       username.text = argumentData['user_name'].toString();
@@ -75,6 +78,7 @@ class AddSaintController extends GetxController {
               argumentData['classification'].toString() == '0'
           ? '0'
           : argumentData['classification'].toString();
+      loadDistricts(argumentData['locationId']);
 
       update();
     }
@@ -89,12 +93,14 @@ class AddSaintController extends GetxController {
         ApiService.get("masterData?dropdownID=2&featureID=1&isActive=1"),
         ApiService.get("masterData?dropdownID=3&featureID=1&isActive=1"),
         ApiService.get("masterData?dropdownID=4&featureID=1&isActive=1"),
+        ApiService.get("locations"),
       ]);
 
       final firstResponse = responses[0];
-      final secondResponse = responses[1];
+      // final secondResponse = responses[1];
       final thirdResponse = responses[2];
       final fourthResponse = responses[3];
+      final fifthResponse = responses[4];
 
       if (firstResponse.statusCode == 200) {
         final data = jsonDecode(firstResponse.body);
@@ -104,13 +110,13 @@ class AddSaintController extends GetxController {
         _showErrorSnackbar();
       }
 
-      if (secondResponse.statusCode == 200) {
-        final data = jsonDecode(secondResponse.body);
-        districts = data['masterData'];
-        log("districts: $districts");
-      } else {
-        _showErrorSnackbar();
-      }
+      // if (secondResponse.statusCode == 200) {
+      //   final data = jsonDecode(secondResponse.body);
+      //   districts = data['masterData'];
+      //   log("districts: $districts");
+      // } else {
+      //   _showErrorSnackbar();
+      // }
 
       if (thirdResponse.statusCode == 200) {
         final data = jsonDecode(thirdResponse.body);
@@ -124,6 +130,14 @@ class AddSaintController extends GetxController {
         final data = jsonDecode(fourthResponse.body);
         roles = data['masterData'];
         log("roles: $roles");
+      } else {
+        _showErrorSnackbar();
+      }
+
+      if (fifthResponse.statusCode == 200) {
+        final data = jsonDecode(fifthResponse.body);
+        locations = data['locations'];
+        log("locations: $locations");
       } else {
         _showErrorSnackbar();
       }
@@ -193,6 +207,7 @@ class AddSaintController extends GetxController {
       "mobile": mobile.text,
       "gender": gender,
       "dob": dob,
+      "location_id": locationID,
       "district": districtId,
       "saintType": saintType,
       "age": age,
@@ -229,5 +244,28 @@ class AddSaintController extends GetxController {
       }
       update();
     });
+  }
+
+  Future<void> loadDistricts(String? value) async {
+    try {
+      final responses = await Future.wait([
+        ApiService.get("districts?location_id=$value"),
+      ]);
+
+      final response = responses[0];
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        districts = data['districts'];
+        log("districts: $districts");
+      } else {
+        _showErrorSnackbar();
+      }
+    } catch (e) {
+      log("Error in loadDropdownData: $e");
+      _showErrorSnackbar();
+    }
+
+    update();
   }
 }

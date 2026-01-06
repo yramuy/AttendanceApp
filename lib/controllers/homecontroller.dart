@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:maintenanceapp/apiservice/restapi.dart';
+import 'package:maintenanceapp/helpers/utilities.dart';
 import 'package:maintenanceapp/views/loginscreen.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
@@ -93,6 +94,9 @@ class HomeController extends GetxController {
       log("argumentData123 ${argumentData}");
       meetingDate = argumentData;
     }
+
+    log("Location ID 98 : ${Utilities.locationID}");
+    log("Location Name 99 : ${Utilities.locationName}");
     getLastSunday();
     loadMeetingAttendance();
     loadSaints();
@@ -287,7 +291,8 @@ class HomeController extends GetxController {
       "districtId": districtId.toString(),
       "typeId": "",
       "date": meetingDate.toString(),
-      "meetingType": meetingTypeId.toString()
+      "meetingType": meetingTypeId.toString(),
+      "classificationID": ""
     });
     log("Encode Body $body");
     await ApiService.post("saints", body).then((success) {

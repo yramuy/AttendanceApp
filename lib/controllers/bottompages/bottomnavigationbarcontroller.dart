@@ -5,21 +5,18 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:maintenanceapp/views/administrative/administrativehome.dart';
-import 'package:maintenanceapp/views/attendancerecord/attendancerecord.dart';
-import 'package:maintenanceapp/views/bottompages/mannas.dart';
-import 'package:maintenanceapp/views/bottompages/meetings.dart';
 import 'package:maintenanceapp/views/finance/financehome.dart';
 import 'package:maintenanceapp/views/general/generalhome.dart';
 import 'package:maintenanceapp/views/loginscreen.dart';
 import 'package:maintenanceapp/views/myprofile.dart';
+import 'package:maintenanceapp/views/settings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../helpers/utilities.dart';
-import '../../views/bottompages/prayerrequests.dart';
 import '../../views/homescreen.dart';
 
 class BottomNavigationBarController extends GetxController {
-  String appTitle = "Welcome to Church in Visakhapatnam";
+  String appTitle = Utilities.locationName.toString();
   int selectedIndex = 0;
   List bottomPages = [];
   String userRole = "";
@@ -34,6 +31,7 @@ class BottomNavigationBarController extends GetxController {
   @override
   void onInit() {
     // TODO: implement onInit
+
     setData();
     super.onInit();
   }
@@ -51,6 +49,7 @@ class BottomNavigationBarController extends GetxController {
         const FinanceHome(),
         const AdministrativeHome(),
         const MyProfile(),
+        const Settings()
       ];
       bottomLabels = [
         "Home",
@@ -58,6 +57,7 @@ class BottomNavigationBarController extends GetxController {
         "Finance",
         "Admin",
         "Account",
+        "Settings"
       ];
       activeIcons = [
         const Icon(Icons.home_outlined, color: Colors.deepPurple),
@@ -65,6 +65,7 @@ class BottomNavigationBarController extends GetxController {
         const Icon(Icons.currency_rupee, color: Colors.deepPurple),
         const Icon(Icons.person_3_outlined, color: Colors.deepPurple),
         const Icon(Icons.person_outlined, color: Colors.deepPurple),
+        const Icon(Icons.settings, color: Colors.deepPurple),
       ];
       inactiveIcons = [
         const Icon(Icons.home_outlined, color: Colors.grey),
@@ -72,6 +73,7 @@ class BottomNavigationBarController extends GetxController {
         const Icon(Icons.currency_rupee, color: Colors.grey),
         const Icon(Icons.person_3_outlined, color: Colors.grey),
         const Icon(Icons.person_outlined, color: Colors.grey),
+        const Icon(Icons.settings, color: Colors.grey),
       ];
 
       update();
@@ -81,6 +83,7 @@ class BottomNavigationBarController extends GetxController {
         const GeneralHome(),
         const FinanceHome(),
         const MyProfile(),
+        const FinanceHome(),
       ];
       bottomLabels = ["Home", "Attendance", "Finance", "Account"];
       activeIcons = [
@@ -187,7 +190,7 @@ class BottomNavigationBarController extends GetxController {
 
     switch (index) {
       case 0:
-        appTitle = "Welcome to Church in Visakhapatnam";
+        appTitle = Utilities.locationName.toString();
         break;
 
       case 1:
@@ -222,15 +225,11 @@ class BottomNavigationBarController extends GetxController {
         break;
 
       case 4:
-        if (userRole == "1") {
-          appTitle = "Attendance Record";
-        }
+        appTitle = "Account";
         break;
 
       case 5:
-        if (userRole == "1") {
-          appTitle = "Account";
-        }
+        appTitle = "Settings";
         break;
     }
 

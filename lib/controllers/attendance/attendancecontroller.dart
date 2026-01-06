@@ -60,7 +60,8 @@ class AttendanceController extends GetxController {
       "districtId": districtId,
       "typeId": categoryId,
       "date": meetingDate,
-      "meetingType": meetingTypeId
+      "meetingType": meetingTypeId,
+      "classificationID": ""
     });
     log("Encode Body $body");
     await ApiService.post("saints", body).then((success) {

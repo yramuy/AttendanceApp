@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:lite_rolling_switch/lite_rolling_switch.dart';
 import 'package:maintenanceapp/controllers/attendance/attendancecontroller.dart';
 import 'package:maintenanceapp/views/attendance/attendancelist.dart';
 

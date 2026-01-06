@@ -68,137 +68,156 @@ class _GeneralHomeState extends State<GeneralHome> {
                               children: [
                                 Container(
                                     padding: EdgeInsets.all(8),
-                                    child: GridView.builder(
+                                    margin: EdgeInsets.all(8),
+                                    child: ListView.builder(
                                       shrinkWrap: true,
-                                      gridDelegate:
-                                          const SliverGridDelegateWithFixedCrossAxisCount(
-                                              crossAxisCount: 3,
-                                              crossAxisSpacing: 2,
-                                              mainAxisSpacing: 2,
-                                              childAspectRatio: 1),
+                                      // gridDelegate:
+                                      //     const SliverGridDelegateWithFixedCrossAxisCount(
+                                      //         crossAxisCount: 3,
+                                      //         crossAxisSpacing: 2,
+                                      //         mainAxisSpacing: 2,
+                                      //         childAspectRatio: 1),
+                                      physics: ScrollPhysics(),
                                       itemCount: controller.submenus.length,
                                       itemBuilder:
                                           (BuildContext context, index) {
                                         // var menuData = jsonDecode(controller.menus.toString());
-                                        return GestureDetector(
-                                          onTap: () {
-                                            if (controller.submenus[index]['id'].toString() == "12" ||
-                                                controller.submenus[index]['id'].toString() ==
-                                                    "20" ||
-                                                controller.submenus[index]['id'].toString() ==
-                                                    "22" ||
-                                                controller.submenus[index]['id'].toString() ==
-                                                    "40") {
-                                              Get.to(() => const Saints(),
-                                                  arguments: {
-                                                    "id": 0,
-                                                    "name": "",
-                                                    "email": "",
-                                                    "mobile": "",
-                                                    "dob": "",
-                                                    "age": "",
-                                                    "gender": "",
-                                                    "district": "0",
-                                                    "saintType": "0",
-                                                    "user_name": ""
-                                                  });
-                                            } else if (controller.submenus[index]['id'].toString() == "13" ||
-                                                controller.submenus[index]['id'].toString() ==
-                                                    "21" ||
-                                                controller.submenus[index]['id'].toString() ==
-                                                    "23" ||
-                                                controller.submenus[index]['id'].toString() ==
-                                                    "41") {
-                                              Get.to(() => const AddSaint(),
-                                                  arguments: {
-                                                    "id": 0,
-                                                    "name": "",
-                                                    "email": "",
-                                                    "mobile": "",
-                                                    "dob": "",
-                                                    "age": "",
-                                                    "gender": "",
-                                                    "district": "0",
-                                                    "saintType": "0",
-                                                    "user_name": ""
-                                                  });
-                                            } else if (controller.submenus[index]['id'].toString() == "16" ||
-                                                controller.submenus[index]['id'].toString() ==
-                                                    "26" ||
-                                                controller.submenus[index]['id']
-                                                        .toString() ==
-                                                    "32" ||
-                                                controller.submenus[index]['id']
-                                                        .toString() ==
-                                                    "44") {
-                                              Get.to(() => Attendance());
-                                            } else if (controller.submenus[index]['id'].toString() == "17" ||
-                                                controller.submenus[index]['id']
-                                                        .toString() ==
-                                                    "27" ||
-                                                controller.submenus[index]['id']
-                                                        .toString() ==
-                                                    "33" ||
-                                                controller.submenus[index]['id']
-                                                        .toString() ==
-                                                    "45") {
-                                              Get.to(() => AttendanceList());
-                                            } else if (controller.submenus[index]['id'].toString() == "53" &&
-                                                controller.userID.toString() == "18") {
-                                              Get.to(() =>
-                                                  const MonthlyMaintenance());
-                                            } else if (controller.submenus[index]['id'].toString() == "54") {
-                                              Get.to(() =>
-                                                  const AttendanceSummary());
-                                            } else if (controller.submenus[index]['id'].toString() == "55") {
-                                              Get.to(() =>
-                                                  const AttendanceRecord());
-                                            }
-                                          },
-                                          child: Card(
-                                            shadowColor: Colors.black,
-                                            elevation: 5,
-                                            child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                const SizedBox(
-                                                  height: 10,
+                                        return Container(
+                                          margin: EdgeInsets.only(bottom: 10),
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              if (controller.submenus[index]['id'].toString() == "12" ||
+                                                  controller.submenus[index]['id'].toString() ==
+                                                      "20" ||
+                                                  controller.submenus[index]['id'].toString() ==
+                                                      "22" ||
+                                                  controller.submenus[index]['id'].toString() ==
+                                                      "40") {
+                                                Get.to(() => const Saints(),
+                                                    arguments: {
+                                                      "id": 0,
+                                                      "name": "",
+                                                      "email": "",
+                                                      "mobile": "",
+                                                      "dob": "",
+                                                      "age": "",
+                                                      "gender": "",
+                                                      "district": "0",
+                                                      "saintType": "0",
+                                                      "user_name": ""
+                                                    });
+                                              } else if (controller.submenus[index]['id'].toString() == "13" ||
+                                                  controller.submenus[index]['id'].toString() ==
+                                                      "21" ||
+                                                  controller.submenus[index]['id'].toString() ==
+                                                      "23" ||
+                                                  controller.submenus[index]['id'].toString() ==
+                                                      "41") {
+                                                Get.to(() => const AddSaint(),
+                                                    arguments: {
+                                                      "id": 0,
+                                                      "name": "",
+                                                      "email": "",
+                                                      "mobile": "",
+                                                      "dob": "",
+                                                      "age": "",
+                                                      "gender": "",
+                                                      "district": "0",
+                                                      "saintType": "0",
+                                                      "user_name": ""
+                                                    });
+                                              } else if (controller.submenus[index]['id'].toString() == "16" ||
+                                                  controller.submenus[index]['id'].toString() ==
+                                                      "26" ||
+                                                  controller.submenus[index]['id']
+                                                          .toString() ==
+                                                      "32" ||
+                                                  controller.submenus[index]['id']
+                                                          .toString() ==
+                                                      "44") {
+                                                Get.to(() => Attendance());
+                                              } else if (controller.submenus[index]['id'].toString() == "17" ||
+                                                  controller.submenus[index]['id']
+                                                          .toString() ==
+                                                      "27" ||
+                                                  controller.submenus[index]['id']
+                                                          .toString() ==
+                                                      "33" ||
+                                                  controller.submenus[index]['id']
+                                                          .toString() ==
+                                                      "45") {
+                                                Get.to(() => AttendanceList());
+                                              } else if (controller.submenus[index]['id'].toString() == "53" &&
+                                                  controller.userID.toString() == "18") {
+                                                Get.to(() =>
+                                                    const MonthlyMaintenance());
+                                              } else if (controller.submenus[index]['id'].toString() == "54") {
+                                                Get.to(() =>
+                                                    const AttendanceSummary());
+                                              } else if (controller.submenus[index]['id'].toString() == "55") {
+                                                Get.to(() =>
+                                                    const AttendanceRecord());
+                                              }
+                                            },
+                                            child: Card(
+                                              shadowColor: Colors.black,
+                                              elevation: 5,
+                                              child: Container(
+                                                padding: EdgeInsets.all(10),
+                                                margin: EdgeInsets.all(10),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Row(
+                                                      children: [
+                                                        CircleAvatar(
+                                                          radius: 25,
+                                                          foregroundImage:
+                                                              NetworkImage(
+                                                                  controller
+                                                                      .submenus[
+                                                                          index][
+                                                                          'img_path']
+                                                                      .toString(),
+                                                                  scale: 40),
+                                                        ),
+                                                        SizedBox(
+                                                          width: 20,
+                                                        ),
+                                                        Text(
+                                                          controller
+                                                              .submenus[index]
+                                                                  ['name']
+                                                              .toString(),
+                                                          maxLines: 1,
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          style: const TextStyle(
+                                                              color: Colors.blue,
+                                                              fontSize: 14,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    Container(
+                                                      child: Icon(
+                                                        Icons
+                                                            .arrow_forward_ios_rounded,
+                                                        color: Colors.blueAccent,
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
-                                                CircleAvatar(
-                                                  radius: 30,
-                                                  foregroundImage: NetworkImage(
-                                                      controller.submenus[index]
-                                                              ['img_path']
-                                                          .toString(),
-                                                      scale: 40),
-                                                ),
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(5.0),
-                                                  child: Text(
-                                                    controller.submenus[index]
-                                                            ['name']
-                                                        .toString(),
-                                                    maxLines: 1,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    style: const TextStyle(
-                                                        color: Colors.blue,
-                                                        fontSize: 12,
-                                                        fontWeight:
-                                                            FontWeight.bold),
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                  height: 10,
-                                                )
-                                              ],
+                                              ),
                                             ),
                                           ),
                                         );
                                       },
-                                    ))
+                                    )),
                               ],
                             ),
                           )

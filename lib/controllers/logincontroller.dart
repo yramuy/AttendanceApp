@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:maintenanceapp/helpers/utilities.dart';
 import 'package:maintenanceapp/views/bottompages/bottomnavigationbar.dart';
 import 'package:maintenanceapp/views/homescreen.dart';
 import 'package:maintenanceapp/views/loginscreen.dart';
@@ -53,10 +54,22 @@ class LoginController extends GetxController {
     pref.setString("name", response["data"]['name'].toString());
     pref.setString("userName", response["data"]['username'].toString());
     pref.setString("roleName", response["data"]['role_name'].toString());
+    pref.setString("location_id", response["data"]['location_id'].toString());
+    pref.setString(
+        "location_name", response["data"]['location_name'].toString());
+    pref.setString("saint_id", response["data"]['saint_id'].toString());
     pref.setString("roleID", response["data"]['role_id'].toString());
     pref.setString("userMob", response["data"]['mobile_number'].toString());
     pref.setString("email", response["data"]['email'].toString());
     pref.setString("imagePath", response["data"]['image_path'].toString());
     pref.setBool("isLogin", true);
+
+    updateLocation(response);
+  }
+
+  updateLocation(response) {
+    Utilities.locationID = response["data"]['location_id'].toString();
+    Utilities.locationName = response["data"]['location_name'].toString();
+    update();
   }
 }

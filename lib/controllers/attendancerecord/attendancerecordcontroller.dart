@@ -175,11 +175,13 @@ class AttendanceRecordController extends GetxController {
     });
     update();
 
+    log("Body123 $body");
+
     await ApiService.post("saveAttendanceSheet", body).then((success) {
       if (success.statusCode == 200) {
         var responseBody = jsonDecode(success.body);
         if (responseBody['status'].toString() == '200') {
-          log("responseBody $responseBody");
+          // log("responseBody $responseBody");
           loadSaints();
           update();
         } else {
@@ -195,7 +197,7 @@ class AttendanceRecordController extends GetxController {
       update();
     });
 
-    log("Body $body");
+    // log("Body $body");
   }
 
   getMeetingDate(headerType, weekDates) {
@@ -232,7 +234,7 @@ class AttendanceRecordController extends GetxController {
       "meetingType": "",
       "classificationID": classificationID
     });
-    log("Encode Body $body");
+    // log("Encode Body $body");
     await ApiService.post("saints", body).then((success) {
       if (success.statusCode == 200) {
         var responseBody = jsonDecode(success.body);
@@ -246,7 +248,7 @@ class AttendanceRecordController extends GetxController {
 
           loadWeeklyAttendanceData();
 
-          log("Saints $saints"); // isLoading = false;
+          // log("Saints $saints"); // isLoading = false;
           // Get.rawSnackbar(
           //     snackPosition: SnackPosition.TOP,
           //     message: responseBody['message'].toString());

@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:maintenanceapp/views/administrative/administrativehome.dart';
+import 'package:maintenanceapp/views/bottompages/bottomnavigationbar.dart';
 import 'package:maintenanceapp/views/finance/financehome.dart';
 import 'package:maintenanceapp/views/general/generalhome.dart';
+import 'package:maintenanceapp/views/homescreen.dart';
 
 class Utilities {
   static dynamic dynMenudata;
   static String? navId;
+  static String? locationID;
+  static String? locationName;
 
   static mainNavigateUrl(navId, context) {
     if (navId == '1') {
@@ -17,4 +21,5 @@ class Utilities {
       Get.to(() => const AdministrativeHome());
     }
   }
+
 }
