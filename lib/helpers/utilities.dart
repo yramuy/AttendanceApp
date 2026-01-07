@@ -9,8 +9,10 @@ import 'package:maintenanceapp/views/homescreen.dart';
 class Utilities {
   static dynamic dynMenudata;
   static String? navId;
-  static String? locationID;
-  static String? locationName;
+  static String locationID = "";
+  static String locationName = "";
+  static String loginLocationID = "";
+  static String loginLocationName = "";
 
   static mainNavigateUrl(navId, context) {
     if (navId == '1') {

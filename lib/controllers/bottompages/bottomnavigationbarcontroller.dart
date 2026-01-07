@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:animated_notch_bottom_bar/animated_notch_bottom_bar/animated_notch_bottom_bar.dart';
@@ -12,6 +13,7 @@ import 'package:maintenanceapp/views/myprofile.dart';
 import 'package:maintenanceapp/views/settings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../apiservice/restapi.dart';
 import '../../helpers/utilities.dart';
 import '../../views/homescreen.dart';
 
@@ -23,6 +25,11 @@ class BottomNavigationBarController extends GetxController {
   List<String> bottomLabels = [];
   List<Widget> inactiveIcons = [];
   List<Widget> activeIcons = [];
+  String locID = "";
+  String locName = "";
+  List locations = [];
+  bool isLoading = false;
+  bool isLocation = false;
 
   /// Controller to handle bottom nav bar and also handles initial page
   final NotchBottomBarController controller =
@@ -31,9 +38,48 @@ class BottomNavigationBarController extends GetxController {
   @override
   void onInit() {
     // TODO: implement onInit
-
     setData();
+    loadLocations();
     super.onInit();
+  }
+
+  loadLocations() async {
+    isLoading = true;
+    await ApiService.get('locations').then((success) {
+      if (success.statusCode == 200) {
+        var responseBody = jsonDecode(success.body);
+        if (responseBody['status'].toString() == '200') {
+          locations = responseBody['locations'];
+          update();
+        } else {
+          Get.rawSnackbar(
+              snackPosition: SnackPosition.TOP,
+              message: responseBody['message'].toString());
+          update();
+        }
+      } else {
+        Get.rawSnackbar(
+            snackPosition: SnackPosition.TOP,
+            message: 'Something went wrong, Please retry later');
+        update();
+      }
+    });
+
+    isLoading = false;
+    update();
+
+    log("Locations $locations");
+  }
+
+  updateLocation(id, name) {
+    isLoading = true;
+    Utilities.locationID = id;
+    Utilities.locationName = name;
+    log("Location ID28 : $id");
+
+    updateIndex(0);
+
+    update();
   }
 
   setData() async {
@@ -41,6 +87,19 @@ class BottomNavigationBarController extends GetxController {
     log("Role ID");
     log(prefs.getString('roleID').toString());
     userRole = prefs.getString('roleID').toString();
+    Utilities.loginLocationID = prefs.getString('location_id').toString();
+    Utilities.loginLocationName = prefs.getString('location_name').toString();
+    update();
+
+    if (Utilities.locationID.toString().isEmpty ||
+        Utilities.locationID.toString() == "") {
+      Utilities.locationID = prefs.getString('location_id').toString();
+      Utilities.locationName = prefs.getString('location_name').toString();
+      updateIndex(0);
+      update();
+    }
+
+    update();
 
     if (userRole.toString() == "1") {
       bottomPages = [
@@ -49,7 +108,7 @@ class BottomNavigationBarController extends GetxController {
         const FinanceHome(),
         const AdministrativeHome(),
         const MyProfile(),
-        const Settings()
+        // const Settings()
       ];
       bottomLabels = [
         "Home",
@@ -57,7 +116,7 @@ class BottomNavigationBarController extends GetxController {
         "Finance",
         "Admin",
         "Account",
-        "Settings"
+        // "Settings"
       ];
       activeIcons = [
         const Icon(Icons.home_outlined, color: Colors.deepPurple),
@@ -65,7 +124,7 @@ class BottomNavigationBarController extends GetxController {
         const Icon(Icons.currency_rupee, color: Colors.deepPurple),
         const Icon(Icons.person_3_outlined, color: Colors.deepPurple),
         const Icon(Icons.person_outlined, color: Colors.deepPurple),
-        const Icon(Icons.settings, color: Colors.deepPurple),
+        // const Icon(Icons.settings, color: Colors.deepPurple),
       ];
       inactiveIcons = [
         const Icon(Icons.home_outlined, color: Colors.grey),
@@ -73,7 +132,7 @@ class BottomNavigationBarController extends GetxController {
         const Icon(Icons.currency_rupee, color: Colors.grey),
         const Icon(Icons.person_3_outlined, color: Colors.grey),
         const Icon(Icons.person_outlined, color: Colors.grey),
-        const Icon(Icons.settings, color: Colors.grey),
+        // const Icon(Icons.settings, color: Colors.grey),
       ];
 
       update();
@@ -146,44 +205,6 @@ class BottomNavigationBarController extends GetxController {
     update();
   }
 
-  // updateIndex(index) {
-  //   log('current selected index $index');
-  //   selectedIndex = index;
-  //   if (index == 0) {
-  //     appTitle = "Welcome to Church in Visakhapatnam";
-  //   } else if (index == 1) {
-  //     Utilities.navId = "1";
-  //     appTitle = "Attendance";
-  //   } else if (index == 2) {
-  //     if (userRole == "4") {
-  //       appTitle = "Account";
-  //     } else if (userRole == "3") {
-  //       Utilities.navId = "3";
-  //       appTitle = "Administration";
-  //     } else if (userRole == "2") {
-  //       Utilities.navId = "2";
-  //       appTitle = "Finance";
-  //     } else if (userRole == "1") {
-  //       Utilities.navId = "2";
-  //       appTitle = "Finance";
-  //     }
-  //   } else if (index == 3) {
-  //     if (userRole == "1") {
-  //       appTitle = "Administration";
-  //       Utilities.navId = "3";
-  //     } else if (userRole == "2") {
-  //       appTitle = "Account";
-  //     } else if (userRole == "3") {
-  //       appTitle = "Account";
-  //     }
-  //   } else if (index == 4 && userRole.toString() == "1") {
-  //     appTitle = "Attendance Record";
-  //   } else if (index == 5 && userRole.toString() == "1") {
-  //     appTitle = "Account";
-  //   }
-  //   update();
-  // }
-
   updateIndex(index) {
     log('current selected index $index');
     selectedIndex = index;
@@ -228,10 +249,12 @@ class BottomNavigationBarController extends GetxController {
         appTitle = "Account";
         break;
 
-      case 5:
-        appTitle = "Settings";
-        break;
+      // case 5:
+      //   appTitle = "Settings";
+      //   break;
     }
+
+    isLoading = false;
 
     update();
   }

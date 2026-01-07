@@ -90,13 +90,13 @@ class HomeController extends GetxController {
 
   @override
   void onInit() {
+    updateLocationData();
+
     if (argumentData != null) {
       log("argumentData123 ${argumentData}");
       meetingDate = argumentData;
     }
 
-    log("Location ID 98 : ${Utilities.locationID}");
-    log("Location Name 99 : ${Utilities.locationName}");
     getLastSunday();
     loadMeetingAttendance();
     loadSaints();
@@ -125,6 +125,13 @@ class HomeController extends GetxController {
     pageTimer.cancel();
     pageController.dispose();
     super.dispose();
+  }
+
+  updateLocationData() async {
+
+
+    log("Location ID 98 : ${Utilities.locationID}");
+    log("Location Name 99 : ${Utilities.locationName}");
   }
 
   Future<pw.Font> loadCustomFont() async {
@@ -949,12 +956,12 @@ class HomeController extends GetxController {
                       "$gmTotal"
                     ],
                     [
-                    "Home Meeting",
-                    "$agpHm",
-                    "$cityHm",
-                    "$akpHm",
-                    "$gwkHm",
-                    "$hmTotal"
+                      "Home Meeting",
+                      "$agpHm",
+                      "$cityHm",
+                      "$akpHm",
+                      "$gwkHm",
+                      "$hmTotal"
                     ],
                     [
                       "Gospel Meeting",

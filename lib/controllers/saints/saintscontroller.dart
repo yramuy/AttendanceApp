@@ -2,8 +2,11 @@ import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:maintenanceapp/helpers/utilities.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../apiservice/restapi.dart';
+import '../bottompages/bottomnavigationbarcontroller.dart';
 
 class SaintsController extends GetxController {
   String districtId = "0";
@@ -48,6 +51,7 @@ class SaintsController extends GetxController {
   String saintName = "";
   TextEditingController searchController = TextEditingController();
   List tempSaints = [];
+  bool isLocation = false;
 
   @override
   onInit() {
@@ -77,7 +81,8 @@ class SaintsController extends GetxController {
       "typeId": typeId,
       "date": "",
       "meetingType": "",
-      "classificationID": ""
+      "classificationID": "",
+      "locationId": Utilities.locationID
     });
     log("Encode Body $body");
     await ApiService.post("saints", body).then((success) {

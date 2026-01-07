@@ -5,9 +5,6 @@ import 'package:get/get.dart';
 import 'package:maintenanceapp/apiservice/restapi.dart';
 import 'package:maintenanceapp/controllers/bottompages/bottomnavigationbarcontroller.dart';
 import 'package:maintenanceapp/helpers/utilities.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
-import '../views/bottompages/bottomnavigationbar.dart';
 
 class SettingsController extends GetxController {
   List locations = [];
@@ -29,20 +26,11 @@ class SettingsController extends GetxController {
     Utilities.locationID = id;
     Utilities.locationName = name;
     log("Location ID28 : $id");
-    isLoading = false;
+
     bnc.updateIndex(0);
+    isLoading = false;
     update();
   }
-
-  // loadLoginData() async {
-  //   SharedPreferences pref = await SharedPreferences.getInstance();
-  //
-  //   if (Utilities.locationID.toString() ==
-  //       pref.getString('location_id').toString()) {
-  //     isLocation = true;
-  //     update();
-  //   }
-  // }
 
   loadLocations() async {
     isLoading = true;
