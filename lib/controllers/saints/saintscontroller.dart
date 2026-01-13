@@ -56,24 +56,24 @@ class SaintsController extends GetxController {
   @override
   onInit() {
     // TODO: implement onInit
-    updateArguments();
-    log("argumentData123 ${argumentData['district']}");
-    log("argumentDatasaintType ${argumentData['saintType']}");
+    // updateArguments();
+    // log("argumentData123 ${argumentData['district']}");
+    // log("argumentDatasaintType ${argumentData['saintType']}");
     loadSaints();
     super.onInit();
   }
 
-  updateArguments() {
-    districtId = argumentData['district'].toString();
-    typeId = argumentData['saintType'].toString();
-
-    if (argumentData['saintType'].toString() != '0') {
-      handleOnchange();
-    }
-
-    log("calling updateArgument ${argumentData['saintType'].toString()}");
-    update();
-  }
+  // updateArguments() {
+  //   districtId = argumentData['district'].toString();
+  //   typeId = argumentData['saintType'].toString();
+  //
+  //   if (argumentData['saintType'].toString() != '0') {
+  //     handleOnchange();
+  //   }
+  //
+  //   log("calling updateArgument ${argumentData['saintType'].toString()}");
+  //   update();
+  // }
 
   loadSaints() async {
     final body = jsonEncode({

@@ -5,6 +5,7 @@ import 'package:animated_notch_bottom_bar/animated_notch_bottom_bar/animated_not
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:maintenanceapp/controllers/saints/saintscontroller.dart';
 import 'package:maintenanceapp/views/administrative/administrativehome.dart';
 import 'package:maintenanceapp/views/finance/financehome.dart';
 import 'package:maintenanceapp/views/general/generalhome.dart';
@@ -16,6 +17,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../apiservice/restapi.dart';
 import '../../helpers/utilities.dart';
 import '../../views/homescreen.dart';
+import '../homecontroller.dart';
 
 class BottomNavigationBarController extends GetxController {
   String appTitle = Utilities.locationName.toString();
@@ -78,6 +80,9 @@ class BottomNavigationBarController extends GetxController {
     log("Location ID28 : $id");
 
     updateIndex(0);
+    // ✅ get existing controller
+    final HomeController homeController = Get.find<HomeController>();
+    homeController.loadSaints();
 
     update();
   }

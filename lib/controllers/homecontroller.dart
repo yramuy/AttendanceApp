@@ -18,6 +18,8 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
+import '../views/saint/saints.dart';
+
 class HomeController extends GetxController {
   String title = "HOME";
   var RoleId;
@@ -87,6 +89,10 @@ class HomeController extends GetxController {
 
   List absentees = [];
   List lordsDayAbsentees = [];
+  List areaWiseSaints = [];
+  List categoryWiseSaints = [];
+  List<String> cwDistricts = [];
+  List<String> categories = [];
 
   @override
   void onInit() {
@@ -128,8 +134,6 @@ class HomeController extends GetxController {
   }
 
   updateLocationData() async {
-
-
     log("Location ID 98 : ${Utilities.locationID}");
     log("Location Name 99 : ${Utilities.locationName}");
   }
@@ -151,6 +155,54 @@ class HomeController extends GetxController {
     loadMeetingAttendance();
     loadSaints();
     update();
+  }
+
+  buildColumns() {
+    return areaWiseSaints.map((item) {
+      return DataColumn(
+        label: Text(
+          item['area'].toString(),
+          style: const TextStyle(
+            color: Colors.black,
+            fontFamily: "Inter-Medium",
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      );
+    }).toList();
+  }
+
+  buildRows() {
+    return [
+      DataRow(
+        cells: areaWiseSaints.map((item) {
+          return DataCell(
+            GestureDetector(
+              onTap: () {
+                Get.to(
+                  () => const Saints(),
+                  arguments: {
+                    "district": item['area'].toString(), // or map id here
+                    "saintType": "0",
+                  },
+                );
+              },
+              child: Text(
+                item['count'].toString(),
+                style: const TextStyle(
+                  color: Colors.blue,
+                  fontFamily: "Inter-Medium",
+                  fontSize: 16,
+                  decoration: TextDecoration.underline,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          );
+        }).toList(),
+      ),
+    ];
   }
 
   loadWeekdayCounts() {
@@ -299,7 +351,8 @@ class HomeController extends GetxController {
       "typeId": "",
       "date": meetingDate.toString(),
       "meetingType": meetingTypeId.toString(),
-      "classificationID": ""
+      "classificationID": "",
+      "locationId": Utilities.locationID
     });
     log("Encode Body $body");
     await ApiService.post("saints", body).then((success) {
@@ -318,10 +371,14 @@ class HomeController extends GetxController {
           akpChildCount = responseBody['counts']['akpChildCnt'];
           cityChildCount = responseBody['counts']['cityChildCnt'];
           totalChildren = responseBody['counts']['childrens'];
+          areaWiseSaints = responseBody['areaWiseSaints'];
+          categoryWiseSaints = responseBody['categoryWiseSaints'];
           // dormantSaints = responseBody['counts']['dormantSaints'];
+          log("areaWiseSaints ${areaWiseSaints}");
           getAllMeetingsAbsentees();
           log("Total Saints ${responseBody['total'].toString()}");
           isLoading = false;
+          updateCategoryWiseSaints();
           update();
         } else {
           Get.rawSnackbar(
@@ -336,6 +393,45 @@ class HomeController extends GetxController {
       update();
     });
     update();
+  }
+
+  updateCategoryWiseSaints() {
+    // -------------------------------
+    // Extract districts
+    // -------------------------------
+    cwDistricts = categoryWiseSaints.map<String>((e) => e['district'].toString()).toList();
+
+    // -------------------------------
+    // Extract unique categories
+    // -------------------------------
+    Set<String> categorySet = {};
+    for (var d in categoryWiseSaints) {
+      for (var c in d['categories']) {
+        categorySet.add(c['category']);
+      }
+    }
+    categories = categorySet.toList();
+
+    update();
+  }
+
+  // -------------------------------
+  // Helper: get count
+  // -------------------------------
+  int getCategoryCount(String district, String category) {
+    final dist = categoryWiseSaints.firstWhere(
+          (e) => e['district'] == district,
+      orElse: () => null,
+    );
+
+    if (dist == null) return 0;
+
+    final cat = dist['categories'].firstWhere(
+          (c) => c['category'] == category,
+      orElse: () => null,
+    );
+
+    return cat == null ? 0 : int.parse(cat['count'].toString());
   }
 
   getAllMeetingsAbsentees() {
