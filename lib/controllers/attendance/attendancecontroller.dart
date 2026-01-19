@@ -8,18 +8,13 @@ import 'package:maintenanceapp/controllers/attendance/attendancelistcontroller.d
 import 'package:maintenanceapp/views/attendance/attendancelist.dart';
 
 import '../../apiservice/restapi.dart';
+import '../../helpers/utilities.dart';
 
 class AttendanceController extends GetxController {
   var isToggled = {};
   Map<int, String> statusID = {};
   List saints = [];
-  List districts = [
-    {"id": "", "name": "-- All --"},
-    {"id": 1, "name": "AGP"},
-    {"id": 2, "name": "GWK"},
-    {"id": 3, "name": "AKP"},
-    {"id": 4, "name": "Vizag City"}
-  ];
+  List districts = [];
   List status = [
     {"id": "", "name": "-- Select --"},
     {"id": 1, "name": "Present"},
@@ -52,7 +47,38 @@ class AttendanceController extends GetxController {
   void onInit() {
     // TODO: implement onInit
     loadSaints();
+    loadDistricts(Utilities.locationID);
     super.onInit();
+  }
+
+  Future<void> loadDistricts(String? value) async {
+    try {
+      final responses = await Future.wait([
+        ApiService.get("districts?location_id=$value"),
+      ]);
+
+      final response = responses[0];
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        districts = data['districts'];
+        log("districts: $districts");
+      } else {
+        _showErrorSnackbar();
+      }
+    } catch (e) {
+      log("Error in loadDropdownData: $e");
+      _showErrorSnackbar();
+    }
+
+    update();
+  }
+
+  void _showErrorSnackbar() {
+    Get.rawSnackbar(
+      snackPosition: SnackPosition.TOP,
+      message: 'Something went wrong, Please retry later',
+    );
   }
 
   loadSaints() async {
@@ -61,7 +87,8 @@ class AttendanceController extends GetxController {
       "typeId": categoryId,
       "date": meetingDate,
       "meetingType": meetingTypeId,
-      "classificationID": ""
+      "classificationID": "",
+      "locationId": Utilities.locationID
     });
     log("Encode Body $body");
     await ApiService.post("saints", body).then((success) {
@@ -71,8 +98,8 @@ class AttendanceController extends GetxController {
           log("Saints $responseBody");
           saints = responseBody['saints'];
           total = responseBody['total'];
-          present = responseBody['counts']['present'];
-          absent = responseBody['counts']['absent'];
+          present = responseBody['counts']['present'].toString();
+          absent = responseBody['counts']['absent'].toString();
           log("Total Saints ${responseBody['total'].toString()}");
           isLoading = false;
           update();
@@ -143,7 +170,8 @@ class AttendanceController extends GetxController {
       'attendance': value.toString(),
       'meetingDate': meetingDate,
       'meetingTypeId': meetingTypeId,
-      'categoryId': categoryId.toString()
+      'categoryId': categoryId.toString(),
+      'location_id': Utilities.locationID
     });
 
     log("body $body");

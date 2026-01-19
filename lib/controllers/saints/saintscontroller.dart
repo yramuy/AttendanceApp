@@ -24,13 +24,7 @@ class SaintsController extends GetxController {
   bool type = false;
   bool isLoading = true;
   List saints = [];
-  List districts = [
-    {"id": "0", "name": "--All Areas--"},
-    {"id": 1, "name": "AGP"},
-    {"id": 2, "name": "GWK"},
-    {"id": 3, "name": "AKP"},
-    {"id": 4, "name": "Vizag City"}
-  ];
+  List districts = [];
   List saintTypes = [
     {"id": "0", "name": "--All Categories--"},
     {"id": 1, "name": "General Saint"},
@@ -59,8 +53,42 @@ class SaintsController extends GetxController {
     // updateArguments();
     // log("argumentData123 ${argumentData['district']}");
     // log("argumentDatasaintType ${argumentData['saintType']}");
+
     loadSaints();
+    loadDistricts(Utilities.locationID);
     super.onInit();
+  }
+
+  Future<void> loadDistricts(String? value) async {
+    try {
+      final responses = await Future.wait([
+        ApiService.get("districts?location_id=$value"),
+      ]);
+
+      final response = responses[0];
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        districts = data['districts'];
+
+        log("districts: $districts");
+        update();
+      } else {
+        _showErrorSnackbar();
+      }
+    } catch (e) {
+      log("Error in loadDropdownData: $e");
+      _showErrorSnackbar();
+    }
+
+    update();
+  }
+
+  void _showErrorSnackbar() {
+    Get.rawSnackbar(
+      snackPosition: SnackPosition.TOP,
+      message: 'Something went wrong, Please retry later',
+    );
   }
 
   // updateArguments() {

@@ -7,17 +7,12 @@ import 'package:get/get.dart';
 import 'package:jiffy/jiffy.dart';
 
 import '../../apiservice/restapi.dart';
+import '../../helpers/utilities.dart';
 
 class AttendanceListController extends GetxController {
   dynamic argumentData = Get.arguments;
   List saints = [];
-  List districts = [
-    {"id": "", "name": "-- All --"},
-    {"id": 1, "name": "AGP"},
-    {"id": 2, "name": "GWK"},
-    {"id": 3, "name": "AKP"},
-    {"id": 4, "name": "Vizag City"}
-  ];
+  List districts = [];
   List meetingTypes = [
     {"id": "", "name": "-- Select --"},
     {"id": 1, "name": "Lords Table Meeting"},
@@ -44,7 +39,37 @@ class AttendanceListController extends GetxController {
       meetingDate = argumentData[1];
     }
     loadSaints();
+    loadDistricts(Utilities.locationID);
     super.onInit();
+  }
+  Future<void> loadDistricts(String? value) async {
+    try {
+      final responses = await Future.wait([
+        ApiService.get("districts?location_id=$value"),
+      ]);
+
+      final response = responses[0];
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        districts = data['districts'];
+        log("districts: $districts");
+      } else {
+        _showErrorSnackbar();
+      }
+    } catch (e) {
+      log("Error in loadDropdownData: $e");
+      _showErrorSnackbar();
+    }
+
+    update();
+  }
+
+  void _showErrorSnackbar() {
+    Get.rawSnackbar(
+      snackPosition: SnackPosition.TOP,
+      message: 'Something went wrong, Please retry later',
+    );
   }
 
   handleMeetingType(String value) {
@@ -78,7 +103,8 @@ class AttendanceListController extends GetxController {
       "typeId": "",
       "date": meetingDate.toString(),
       "meetingType": meetingTypeId.toString(),
-      "classificationID": ""
+      "classificationID": "",
+      "locationId": Utilities.locationID
     });
     log("Encode Body $body");
     await ApiService.post("saints", body).then((success) {
@@ -88,8 +114,8 @@ class AttendanceListController extends GetxController {
           log("Saints $responseBody");
           saints = responseBody['saints'];
           total = responseBody['total'];
-          present = responseBody['counts']['present'];
-          absent = responseBody['counts']['absent'];
+          present = responseBody['counts']['present'].toString();
+          absent = responseBody['counts']['absent'].toString();
           log("Total Saints ${responseBody['total'].toString()}");
           isLoading = false;
           update();

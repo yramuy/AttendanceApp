@@ -92,36 +92,45 @@ class _SaintsState extends State<Saints> {
                           children: [
                             Row(
                               children: [
-                                Expanded(
-                                  child: Container(
-                                    padding: const EdgeInsets.all(10),
-                                    height: 70,
-                                    child: DropdownButtonFormField(
-                                      isDense: true,
-                                      isExpanded: true,
-                                      hint: const Text("All Districts"),
-                                      value: controller.districtId,
-                                      decoration: InputDecoration(
-                                        contentPadding: const EdgeInsets.only(
-                                            left: 10, right: 10),
+                                Container(
+                                  // padding: EdgeInsets.all(5),
+                                  margin: EdgeInsets.all(5),
+                                  height: 50,
+                                  width: MediaQuery.of(context).size.width * 0.4,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      border: Border.all(color: Colors.grey),
+                                      color: Colors.white),
+                                  child: DropdownButtonFormField(
+                                    // value: controller.districtId,
+                                    value: controller.districtId.toString() != '0'
+                                        ? controller.districtId.toString()
+                                        : null, // Default to null if no valid selection
+                                    isExpanded: true,
+                                    isDense: true,
+                                    hint: const Text("--Select District--"),
+                                    decoration: const InputDecoration(
+                                        contentPadding: EdgeInsets.only(left: 10),
                                         border: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10)),
-                                      ),
-                                      items: controller.districts.map((e) {
-                                        return DropdownMenuItem(
-                                          value: e['id'].toString(),
-                                          child: Text(e['name'].toString()),
-                                        );
-                                      }).toList(),
-                                      onChanged: (value) {
-                                        controller.districtId =
-                                            value.toString();
-                                        controller.handleOnchange();
-                                        controller.update();
-                                        print(value.toString());
-                                      },
-                                    ),
+                                            borderSide: BorderSide.none)),
+                                    items: controller.districts.map((e) {
+                                      return DropdownMenuItem(
+                                        value: e['config_id'].toString(),
+                                        child: Text(e['name'].toString()),
+                                      );
+                                    }).toList(),
+                                    onChanged: (value) {
+                                      controller.districtId = value.toString();
+                                      controller.loadSaints();
+                                      controller.update();
+                                    },
+                                    validator: (value) {
+                                      if (value == "") {
+                                        return "District is required";
+                                      }
+
+                                      return null;
+                                    },
                                   ),
                                 ),
                                 const SizedBox(

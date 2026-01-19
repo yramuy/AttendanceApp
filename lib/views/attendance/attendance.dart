@@ -156,7 +156,7 @@ class _AttendanceState extends State<Attendance> {
                                           borderSide: BorderSide.none)),
                                   items: ac.districts.map((e) {
                                     return DropdownMenuItem(
-                                      value: e['id'].toString(),
+                                      value: e['config_id'].toString(),
                                       child: Text(e['name'].toString()),
                                     );
                                   }).toList(),

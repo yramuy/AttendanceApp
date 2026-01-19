@@ -93,6 +93,9 @@ class HomeController extends GetxController {
   List categoryWiseSaints = [];
   List<String> cwDistricts = [];
   List<String> categories = [];
+  List meetingAttendance = [];
+  List<String> meetingTypeDistricts = [];
+  List<String> meetingTypes = [];
 
   @override
   void onInit() {
@@ -108,6 +111,7 @@ class HomeController extends GetxController {
     loadSaints();
     getMenus();
     loadCategoryWiseSaints();
+    loadPresentAbsentAttendance();
 
     pageTimer = Timer.periodic(const Duration(seconds: 3), (Timer timer) {
       if (pageController.hasClients) {
@@ -154,6 +158,7 @@ class HomeController extends GetxController {
     loadWeekdayCounts();
     loadMeetingAttendance();
     loadSaints();
+    loadPresentAbsentAttendance();
     update();
   }
 
@@ -395,45 +400,6 @@ class HomeController extends GetxController {
     update();
   }
 
-  updateCategoryWiseSaints() {
-    // -------------------------------
-    // Extract districts
-    // -------------------------------
-    cwDistricts = categoryWiseSaints.map<String>((e) => e['district'].toString()).toList();
-
-    // -------------------------------
-    // Extract unique categories
-    // -------------------------------
-    Set<String> categorySet = {};
-    for (var d in categoryWiseSaints) {
-      for (var c in d['categories']) {
-        categorySet.add(c['category']);
-      }
-    }
-    categories = categorySet.toList();
-
-    update();
-  }
-
-  // -------------------------------
-  // Helper: get count
-  // -------------------------------
-  int getCategoryCount(String district, String category) {
-    final dist = categoryWiseSaints.firstWhere(
-          (e) => e['district'] == district,
-      orElse: () => null,
-    );
-
-    if (dist == null) return 0;
-
-    final cat = dist['categories'].firstWhere(
-          (c) => c['category'] == category,
-      orElse: () => null,
-    );
-
-    return cat == null ? 0 : int.parse(cat['count'].toString());
-  }
-
   getAllMeetingsAbsentees() {
     absentees = [];
     lordsDayAbsentees = [];
@@ -513,6 +479,95 @@ class HomeController extends GetxController {
     update();
   }
 
+  loadPresentAbsentAttendance() async {
+    final body = jsonEncode({
+      "locationId": Utilities.locationID,
+      "district": districtId.toString(),
+      "date": meetingDate.toString(),
+      'attendanceType': attendanceType.toString()
+    });
+    log("Encode Body $body");
+    await ApiService.post("loadMeetingPresentAbsent", body).then((success) {
+      if (success.statusCode == 200) {
+        var responseBody = jsonDecode(success.body);
+        if (responseBody['status'].toString() == '200') {
+          log("meetingAttendance Meetings $responseBody");
+          meetingAttendance = responseBody['attendance'];
+          extractDistrictsMeetingTypes();
+          update();
+        } else {
+          Get.rawSnackbar(
+              snackPosition: SnackPosition.TOP,
+              message: responseBody['message'].toString());
+        }
+      } else {
+        Get.rawSnackbar(
+            snackPosition: SnackPosition.TOP,
+            message: 'Something went wrong, Please retry later');
+      }
+      update();
+    });
+    update();
+  }
+
+  extractDistrictsMeetingTypes() {
+    // -------------------------------
+    // Extract districts
+    // -------------------------------
+    meetingTypeDistricts =
+        meetingAttendance.map<String>((e) => e['district'].toString()).toList();
+
+    // -------------------------------
+    // Extract unique categories
+    // -------------------------------
+    Set<String> meetingTypeSet = {};
+    for (var d in meetingAttendance) {
+      for (var c in d['meetingTypes']) {
+        meetingTypeSet.add(c['meetingType']);
+      }
+    }
+    meetingTypes = meetingTypeSet.toList();
+
+    update();
+  }
+
+  // -------------------------------
+  // Helper: get count
+  // -------------------------------
+  int getMeetingAttendanceCount(String district, String meetingType) {
+    final dist = meetingAttendance.firstWhere(
+      (e) => e['district'] == district,
+      orElse: () => null,
+    );
+
+    if (dist == null) return 0;
+
+    final mt = dist['meetingTypes'].firstWhere(
+      (c) => c['meetingType'] == meetingType,
+      orElse: () => null,
+    );
+
+    return mt == null ? 0 : int.parse(mt['present'].toString());
+  }
+
+  // Helper: get count
+  // -------------------------------
+  int getMeetingAbsentCount(String district, String meetingType) {
+    final dist = meetingAttendance.firstWhere(
+      (e) => e['district'] == district,
+      orElse: () => null,
+    );
+
+    if (dist == null) return 0;
+
+    final mt = dist['meetingTypes'].firstWhere(
+      (c) => c['meetingType'] == meetingType,
+      orElse: () => null,
+    );
+
+    return mt == null ? 0 : int.parse(mt['absent'].toString());
+  }
+
   loadCategoryWiseSaints() async {
     await ApiService.get("categoryWiseSaints").then((success) {
       if (success.statusCode == 200) {
@@ -540,6 +595,47 @@ class HomeController extends GetxController {
       update();
     });
     update();
+  }
+
+  updateCategoryWiseSaints() {
+    // -------------------------------
+    // Extract districts
+    // -------------------------------
+    cwDistricts = categoryWiseSaints
+        .map<String>((e) => e['district'].toString())
+        .toList();
+
+    // -------------------------------
+    // Extract unique categories
+    // -------------------------------
+    Set<String> categorySet = {};
+    for (var d in categoryWiseSaints) {
+      for (var c in d['categories']) {
+        categorySet.add(c['category']);
+      }
+    }
+    categories = categorySet.toList();
+
+    update();
+  }
+
+  // -------------------------------
+  // Helper: get count
+  // -------------------------------
+  int getCategoryCount(String district, String category) {
+    final dist = categoryWiseSaints.firstWhere(
+      (e) => e['district'] == district,
+      orElse: () => null,
+    );
+
+    if (dist == null) return 0;
+
+    final cat = dist['categories'].firstWhere(
+      (c) => c['category'] == category,
+      orElse: () => null,
+    );
+
+    return cat == null ? 0 : int.parse(cat['count'].toString());
   }
 
   updateAttendeesSunTotalPercentage(key, reportType) {
@@ -891,31 +987,105 @@ class HomeController extends GetxController {
     var gwkAGsm = getAbsentByDistrict(gospelMeeting, "2", reportType);
     var gsmATotal = updateAttendeesGospelTotalPercentage('Absent', reportType);
 
-    var agpPChildLtm =
-        getPresentAbsentByDistrict(sundayMeeting, "1", "childPresent");
-    var cityPChildLtm =
-        getPresentAbsentByDistrict(sundayMeeting, "4", "childPresent");
-    var akpPChildLtm =
-        getPresentAbsentByDistrict(sundayMeeting, "3", "childPresent");
-    var gwkPChildLtm =
-        getPresentAbsentByDistrict(sundayMeeting, "2", "childPresent");
-    var ltmPChildTotal = updateChildTotal('childPresent');
-
-    var agpAChildLtm =
-        getPresentAbsentByDistrict(sundayMeeting, "1", "childAbsent");
-    var cityAChildLtm =
-        getPresentAbsentByDistrict(sundayMeeting, "4", "childAbsent");
-    var akpAChildLtm =
-        getPresentAbsentByDistrict(sundayMeeting, "3", "childAbsent");
-    var gwkAChildLtm =
-        getPresentAbsentByDistrict(sundayMeeting, "2", "childAbsent");
-    var ltmAChildTotal = updateChildTotal('childAbsent');
 
     String monthName = Jiffy(meetingDate, 'yyyy-MM-dd').format('MMMM');
 
     String reportTitle = reportType.toString() == 'week'
         ? "$meetingDate Week"
         : "$monthName Month";
+
+
+
+    int getCount(district, category) {
+      final districtData = categoryWiseSaints.firstWhere(
+            (e) => e['district'] == district,
+        orElse: () => null,
+      );
+
+      if (districtData == null) return 0;
+
+      final catData = districtData['categories'].firstWhere(
+            (c) => c['category'] == category,
+        orElse: () => null,
+      );
+
+      return catData == null ? 0 : catData['count'];
+    }
+
+    final List<String> districts =
+    categoryWiseSaints.map((e) => e['district'].toString()).toList();
+
+    final List<String> headers = ["Category", ...districts, "Total"];
+
+    final List<List<String>> tableData = categories.map((category) {
+      int rowTotal = 0;
+
+      final List<String> row = [category];
+
+      for (var district in districts) {
+        final count = getCount(district, category);
+        rowTotal += count;
+        row.add(count.toString());
+      }
+
+      row.add(rowTotal.toString());
+      return row;
+    }).toList();
+
+// ---------- Build Headers ----------
+    List<String> buildHeaders() {
+      return [
+        'Meetings',
+        ...meetingAttendance.map((d) => d['district'].toString()).toList(),
+        'Total',
+        'Percentage (%)',
+      ];
+    }
+
+
+
+    // ---------- Build Rows ----------
+    List<List<String>> buildRows({required bool isPresent}) {
+      final List meetingTypes = meetingAttendance.first['meetingTypes'];
+
+
+      return meetingTypes.map<List<String>>((meeting) {
+        int total = 0;
+        int oppositeTotal = 0;
+
+        List<String> row = [
+          meeting['meetingType'].toString(),
+        ];
+
+        for (var district in meetingAttendance) {
+          final mt = district['meetingTypes'].firstWhere(
+                (m) => m['meetingType'] == meeting['meetingType'],
+          );
+
+          final int value = isPresent ? mt['present'] : mt['absent'];
+          final int opposite =
+          isPresent ? mt['absent'] : mt['present'];
+
+          total += value;
+          oppositeTotal += opposite;
+
+          row.add(value.toString());
+        }
+
+        var totalSaints = areaWiseSaints[0]['count'];
+
+        log("totalSaints $totalSaints");
+
+        final int grandTotal = total + oppositeTotal;
+        final double percentage =
+        totalSaints == 0 ? 0 : (total / totalSaints) * 100;
+
+        row.add(total.toString());
+        row.add('${percentage.toStringAsFixed(2)}%');
+
+        return row;
+      }).toList();
+    }
 
     // Create a PDF document
 
@@ -928,206 +1098,71 @@ class HomeController extends GetxController {
             child: pw.Column(
               crossAxisAlignment: pw.CrossAxisAlignment.start,
               children: [
-                pw.Text("$reportTitle Report",
-                    style: pw.TextStyle(
-                        fontSize: 30, fontWeight: pw.FontWeight.bold)),
+                pw.Text(
+                  "$reportTitle Report",
+                  style: pw.TextStyle(
+                    fontSize: 30,
+                    fontWeight: pw.FontWeight.bold,
+                  ),
+                ),
                 pw.SizedBox(height: 20),
-                pw.Text("Area wise saints",
-                    style: pw.TextStyle(
-                        fontSize: 24, fontWeight: pw.FontWeight.bold)),
+
+                pw.Text(
+                  "Area wise saints",
+                  style: pw.TextStyle(
+                    fontSize: 24,
+                    fontWeight: pw.FontWeight.bold,
+                  ),
+                ),
                 pw.SizedBox(height: 10),
+
                 pw.Table.fromTextArray(
-                  headers: ["Total Saints", "Agp", "City", "AKP", "Gwk"],
-                  data: [
-                    [
-                      "$total",
-                      "$agpCount",
-                      "$cityCount",
-                      "$akpCount",
-                      "$gwkCount"
-                    ]
-                  ],
+                  headers: ["Area", "Count"],
+                  data: areaWiseSaints.map<List<String>>((item) {
+                    return [
+                      item['area'].toString(),
+                      item['count'].toString(),
+                    ];
+                  }).toList(),
                   headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold),
                   headerAlignment: pw.Alignment.center,
                   cellAlignment: pw.Alignment.center,
                 ),
+
                 pw.SizedBox(height: 20),
                 pw.Text("Category wise saints",
                     style: pw.TextStyle(
                         fontSize: 24, fontWeight: pw.FontWeight.bold)),
                 pw.SizedBox(height: 20),
                 pw.Table.fromTextArray(
-                  headers: ["Category", "Agp", "City", "AKP", "Gwk", "Total"],
-                  data: [
-                    [
-                      "General Saints",
-                      "$agpGs",
-                      "$cityGs",
-                      "$akpGs",
-                      "$gwkGs",
-                      "$gsTotal"
-                    ],
-                    [
-                      "Young Working Saints",
-                      "$agpYws",
-                      "$cityYws",
-                      "$akpYws",
-                      "$gwkYws",
-                      "$ywsTotal"
-                    ],
-                    [
-                      "College Students",
-                      "$agpCs",
-                      "$cityCs",
-                      "$akpCs",
-                      "$gwkCs",
-                      "$csTotal"
-                    ],
-                    [
-                      "Teenagers",
-                      "$agpTng",
-                      "$cityTng",
-                      "$akpTng",
-                      "$gwkTng",
-                      "$tngTotal"
-                    ],
-                    [
-                      "Children",
-                      "$agpChild",
-                      "$cityChild",
-                      "$akpChild",
-                      "$gwkChild",
-                      "$childTotal"
-                    ],
-                    [
-                      "Dormant Saints",
-                      "$agpDs",
-                      "$cityDs",
-                      "$akpDs",
-                      "$gwkDs",
-                      "$dsTotal"
-                    ],
-                  ],
+                  headers: headers,
+                  data: tableData,
                   headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold),
                   headerAlignment: pw.Alignment.center,
                   cellAlignment: pw.Alignment.center,
                 ),
-                pw.SizedBox(height: 20),
+                pw.SizedBox(height: 50),
+                // =================== ATTENDEES ===================
                 pw.Text("Attendees",
                     style: pw.TextStyle(
                         fontSize: 24, fontWeight: pw.FontWeight.bold)),
                 pw.SizedBox(height: 10),
                 pw.Table.fromTextArray(
-                  headers: [
-                    "Meetings",
-                    "Agp",
-                    "City",
-                    "AKP",
-                    "Gwk",
-                    "Total(%)"
-                  ],
-                  data: [
-                    [
-                      "Lord's Table Meeting",
-                      "$agpLtm",
-                      "$cityLtm",
-                      "$akpLtm",
-                      "$gwkLtm",
-                      "$ltmTotal"
-                    ],
-                    [
-                      "Prayer Meeting",
-                      "$agpPm",
-                      "$cityPm",
-                      "$akpPm",
-                      "$gwkPm",
-                      "$pmTotal"
-                    ],
-                    [
-                      "Group Meeting",
-                      "$agpGm",
-                      "$cityGm",
-                      "$akpGm",
-                      "$gwkGm",
-                      "$gmTotal"
-                    ],
-                    [
-                      "Home Meeting",
-                      "$agpHm",
-                      "$cityHm",
-                      "$akpHm",
-                      "$gwkHm",
-                      "$hmTotal"
-                    ],
-                    [
-                      "Gospel Meeting",
-                      "$agpGsm",
-                      "$cityGsm",
-                      "$akpGsm",
-                      "$gwkGsm",
-                      "$gsmTotal"
-                    ]
-                  ],
+                  headers: buildHeaders(),
+                  data: buildRows(isPresent: true),
                   headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold),
                   headerAlignment: pw.Alignment.center,
                   cellAlignment: pw.Alignment.center,
                 ),
                 pw.SizedBox(height: 20),
+                // =================== ABSENTEES ===================
                 pw.Text("Absentees",
                     style: pw.TextStyle(
                         fontSize: 24, fontWeight: pw.FontWeight.bold)),
                 pw.SizedBox(height: 10),
                 pw.Table.fromTextArray(
-                  headers: [
-                    "Meetings",
-                    "Agp",
-                    "City",
-                    "AKP",
-                    "Gwk",
-                    "Total(%)"
-                  ],
-                  data: [
-                    [
-                      "Lord's Table Meeting",
-                      "$agpAbLtm",
-                      "$cityALtm",
-                      "$akpLAtm",
-                      "$gwkLAtm",
-                      "$ltmATotal"
-                    ],
-                    [
-                      "Prayer Meeting",
-                      "$agpAPm",
-                      "$cityAPm",
-                      "$akpAPm",
-                      "$gwkAPm",
-                      "$pmATotal"
-                    ],
-                    [
-                      "Group Meeting",
-                      "$agpAGm",
-                      "$cityAGm",
-                      "$akpAGm",
-                      "$gwkAGm",
-                      "$gmATotal"
-                    ],
-                    [
-                      "Home Meeting",
-                      "$agpAHm",
-                      "$cityAHm",
-                      "$akpAHm",
-                      "$gwkAHm",
-                      "$hmATotal"
-                    ],
-                    [
-                      "Gospel Meeting",
-                      "$agpAGsm",
-                      "$cityAGsm",
-                      "$akpAGsm",
-                      "$gwkAGsm",
-                      "$gsmATotal"
-                    ],
-                  ],
+                  headers: buildHeaders(),
+                  data: buildRows(isPresent: false),
                   headerStyle: pw.TextStyle(
                       font: customFont, fontWeight: pw.FontWeight.bold),
                   headerAlignment: pw.Alignment.center,

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:maintenanceapp/controllers/saints/saintscontroller.dart';
+import 'package:maintenanceapp/helpers/utilities.dart';
 import 'package:maintenanceapp/views/saint/saints.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -37,7 +38,7 @@ class AddSaintController extends GetxController {
   List districts = [];
   List clasifications = [];
   List locations = [];
-  String locationID = "";
+  String locationID = Utilities.locationID;
 
   List status = [
     {"id": 1, "name": "Regular"},
@@ -52,6 +53,7 @@ class AddSaintController extends GetxController {
     // TODO: implement onInit
     loadLoginData();
     loadDropdownData();
+    loadDistricts(locationID);
     super.onInit();
   }
 

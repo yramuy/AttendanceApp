@@ -83,6 +83,7 @@ class BottomNavigationBarController extends GetxController {
     // ✅ get existing controller
     final HomeController homeController = Get.find<HomeController>();
     homeController.loadSaints();
+    homeController.loadPresentAbsentAttendance();
 
     update();
   }
