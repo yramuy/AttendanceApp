@@ -9,6 +9,7 @@ import 'package:maintenanceapp/views/attendancerecord/attendancesummary.dart';
 import 'package:maintenanceapp/views/saint/addsaint.dart';
 import 'package:maintenanceapp/views/saint/saints.dart';
 import '../../widgets/constants.dart';
+import '../attendance/weeklyreport.dart';
 import '../finance/monthlymaintanance.dart';
 
 class GeneralHome extends StatefulWidget {
@@ -117,6 +118,8 @@ class _GeneralHomeState extends State<GeneralHome> {
                                       Get.to(() => const AttendanceSummary());
                                     } else if (menuId == "55") {
                                       Get.to(() => const AttendanceRecord());
+                                    } else if (menuId == "56") {
+                                      Get.to(() => const WeeklyReport());
                                     }
                                   },
                                   child: Card(

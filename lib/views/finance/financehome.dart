@@ -83,9 +83,11 @@ class _FinanceHomeState extends State<FinanceHome> {
                                             Get.to(
                                                 () => const PaymentHistory());
                                           } else if (controller.submenus[index]
-                                                      ['id']
-                                                  .toString() ==
-                                              "53") {
+                                                          ['id']
+                                                      .toString() ==
+                                                  "53" &&
+                                              controller.userId.toString() ==
+                                                  "448") {
                                             Get.to(() =>
                                                 const MonthlyMaintenance());
                                           }

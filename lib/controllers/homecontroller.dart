@@ -41,13 +41,13 @@ class HomeController extends GetxController {
   final PageController pageController = PageController();
   late Timer pageTimer;
 
-  List districts = [
-    {"id": "", "name": "All Districts"},
-    {"id": 1, "name": "AGP"},
-    {"id": 2, "name": "GWK"},
-    {"id": 3, "name": "AKP"},
-    {"id": 4, "name": "City"}
-  ];
+  // List districts = [
+  //   {"id": "", "name": "All Districts"},
+  //   {"id": 1, "name": "AGP"},
+  //   {"id": 2, "name": "GWK"},
+  //   {"id": 3, "name": "AKP"},
+  //   {"id": 4, "name": "City"}
+  // ];
   String districtId = "0";
   String meetingTypeId = "0";
   String meetingDate = Jiffy(DateTime.now()).format('yyyy-MM-dd');
@@ -96,6 +96,7 @@ class HomeController extends GetxController {
   List meetingAttendance = [];
   List<String> meetingTypeDistricts = [];
   List<String> meetingTypes = [];
+  List monthlyAttendance = [];
 
   @override
   void onInit() {
@@ -107,11 +108,10 @@ class HomeController extends GetxController {
     }
 
     getLastSunday();
-    loadMeetingAttendance();
     loadSaints();
     getMenus();
     loadCategoryWiseSaints();
-    loadPresentAbsentAttendance();
+    loadPresentAbsentAttendance('weekly');
 
     pageTimer = Timer.periodic(const Duration(seconds: 3), (Timer timer) {
       if (pageController.hasClients) {
@@ -156,9 +156,8 @@ class HomeController extends GetxController {
     ))!;
     meetingDate = Jiffy(currentDate).format('yyyy-MM-dd');
     loadWeekdayCounts();
-    loadMeetingAttendance();
     loadSaints();
-    loadPresentAbsentAttendance();
+    loadPresentAbsentAttendance('weekly');
     update();
   }
 
@@ -378,9 +377,7 @@ class HomeController extends GetxController {
           totalChildren = responseBody['counts']['childrens'];
           areaWiseSaints = responseBody['areaWiseSaints'];
           categoryWiseSaints = responseBody['categoryWiseSaints'];
-          // dormantSaints = responseBody['counts']['dormantSaints'];
           log("areaWiseSaints ${areaWiseSaints}");
-          getAllMeetingsAbsentees();
           log("Total Saints ${responseBody['total'].toString()}");
           isLoading = false;
           updateCategoryWiseSaints();
@@ -400,91 +397,12 @@ class HomeController extends GetxController {
     update();
   }
 
-  getAllMeetingsAbsentees() {
-    absentees = [];
-    lordsDayAbsentees = [];
-    var sno1 = 1;
-    var sno2 = 1;
-    for (int i = 0; i < saints.length; i++) {
-      var meetingAttendance = saints[i]['meetingAttendance'];
-      if (meetingAttendance['sundayMeeting'].toString() == '0' &&
-          meetingAttendance['tuesdayMeeting'].toString() == '0' &&
-          meetingAttendance['fridayMeeting'].toString() == '0') {
-        var absentsEncode = jsonEncode({
-          "sno": sno1++,
-          "name": saints[i]['name'].toString(),
-          "district": saints[i]['district'].toString()
-        });
-
-        var absentsDecode = jsonDecode(absentsEncode);
-
-        absentees.add(absentsDecode);
-      }
-      if (meetingAttendance['sundayMeeting'].toString() == '0') {
-        var absentsEncode = jsonEncode({
-          "sno": sno2++,
-          "name": saints[i]['name'].toString(),
-          "district": saints[i]['district'].toString()
-        });
-
-        var absentsDecode = jsonDecode(absentsEncode);
-
-        lordsDayAbsentees.add(absentsDecode);
-      }
-
-      // log("MeetingAttendance $meetingAttendance");
-      // var absents = jsonEncode({});
-    }
-
-    log("Absentees $absentees");
-    log("lordsDayAbsentees $lordsDayAbsentees");
-    // log("Absentees Saints $saints");
-  }
-
-  loadMeetingAttendance() async {
-    final body = jsonEncode({
-      "district": districtId.toString(),
-      "date": meetingDate.toString(),
-      'attendanceType': attendanceType.toString()
-    });
-    log("Encode Body $body");
-    await ApiService.post("meetingAttendance", body).then((success) {
-      if (success.statusCode == 200) {
-        var responseBody = jsonDecode(success.body);
-        if (responseBody['status'].toString() == '200') {
-          log("Attendance Meetings $responseBody");
-          sundayMeeting = responseBody['sundayMeeting'];
-          tuesdayMeeting = responseBody['tuesdayMeeting'];
-          fridayMeeting = responseBody['fridayMeeting'];
-          homeMeeting = responseBody['homeMeeting'];
-          gospelMeeting = responseBody['gospelMeeting'];
-          var counts = loadWeekdayCounts();
-          tuesday = counts['Tuesday'];
-          friday = counts['Friday'];
-          sunday = counts['Sunday'];
-          isLoading = false;
-          update();
-        } else {
-          Get.rawSnackbar(
-              snackPosition: SnackPosition.TOP,
-              message: responseBody['message'].toString());
-        }
-      } else {
-        Get.rawSnackbar(
-            snackPosition: SnackPosition.TOP,
-            message: 'Something went wrong, Please retry later');
-      }
-      update();
-    });
-    update();
-  }
-
-  loadPresentAbsentAttendance() async {
+  loadPresentAbsentAttendance(type) async {
     final body = jsonEncode({
       "locationId": Utilities.locationID,
       "district": districtId.toString(),
       "date": meetingDate.toString(),
-      'attendanceType': attendanceType.toString()
+      'attendanceType': type.toString()
     });
     log("Encode Body $body");
     await ApiService.post("loadMeetingPresentAbsent", body).then((success) {
@@ -492,8 +410,15 @@ class HomeController extends GetxController {
         var responseBody = jsonDecode(success.body);
         if (responseBody['status'].toString() == '200') {
           log("meetingAttendance Meetings $responseBody");
-          meetingAttendance = responseBody['attendance'];
-          extractDistrictsMeetingTypes();
+          if (type.toString() == "weekly") {
+            meetingAttendance = responseBody['attendance'];
+            extractDistrictsMeetingTypes();
+          } else {
+            monthlyAttendance = responseBody['attendance'];
+            generateMonthReport(type);
+
+          }
+
           update();
         } else {
           Get.rawSnackbar(
@@ -608,6 +533,7 @@ class HomeController extends GetxController {
     // -------------------------------
     // Extract unique categories
     // -------------------------------
+
     Set<String> categorySet = {};
     for (var d in categoryWiseSaints) {
       for (var c in d['categories']) {
@@ -638,355 +564,10 @@ class HomeController extends GetxController {
     return cat == null ? 0 : int.parse(cat['count'].toString());
   }
 
-  updateAttendeesSunTotalPercentage(key, reportType) {
-    if (reportType.toString() == 'week') {
-      var sundayTotal = sundayMeeting.fold<int>(
-          0,
-          (sum, sunday) =>
-              sum + (int.tryParse(sunday['$key'].toString()) ?? 0));
-
-      log("sundayTotal $sundayTotal");
-
-// Ensure `total` is a valid number
-      double parsedTotal = double.tryParse(total) ?? 0;
-      if (parsedTotal == 0) {
-        log("Warning: Total is zero, avoiding division by zero.");
-        return "${sundayTotal.toString()} (0%)";
-      }
-
-// Calculate percentage safely
-      double percentage = (sundayTotal / parsedTotal) * 100;
-      int finalPercentage = percentage.isFinite ? percentage.round() : 0;
-
-      var totalPercentage = "${sundayTotal.toString()} (${finalPercentage}%)";
-      return totalPercentage;
-    } else {
-      var sundayTotal = sundayMeetingMonth.fold<int>(
-          0,
-          (sum, sunday) =>
-              sum + (int.tryParse(sunday['$key'].toString()) ?? 0));
-
-      log("sundayTotal $sundayTotal");
-
-      return sundayTotal;
-    }
-  }
-
-  updateAttendeesTuesTotalPercentage(key, reportType) {
-    if (reportType.toString() == 'week') {
-      var tuesTotal = tuesdayMeeting.fold<int>(
-          0,
-          (sum, sunday) =>
-              sum + (int.tryParse(sunday['$key'].toString()) ?? 0));
-
-      log("tuesTotal $tuesTotal");
-
-// Ensure `total` is a valid number
-      double parsedTotal = double.tryParse(total) ?? 0;
-      if (parsedTotal == 0) {
-        log("Warning: Total is zero, avoiding division by zero.");
-        return "${tuesTotal.toString()} (0%)";
-      }
-
-// Calculate percentage safely
-      double percentage = (tuesTotal / parsedTotal) * 100;
-      log("percentage $percentage");
-
-// Ensure percentage is finite before rounding
-      int finalPercentage = percentage.isFinite ? percentage.round() : 0;
-      var totalPercentage = "${tuesTotal.toString()} (${finalPercentage}%)";
-      return totalPercentage;
-    } else {
-      var tuesTotal = tuesdayMeetingMonth.fold<int>(
-          0,
-          (sum, sunday) =>
-              sum + (int.tryParse(sunday['$key'].toString()) ?? 0));
-
-      log("Tuesday month total $tuesTotal");
-
-      return tuesTotal;
-    }
-  }
-
-  updateAttendeesFriTotalPercentage(key, reportType) {
-    if (reportType.toString() == 'week') {
-      var fridayTotal = fridayMeeting.fold<int>(
-          0,
-          (sum, sunday) =>
-              sum + (int.tryParse(sunday['$key'].toString()) ?? 0));
-
-      log("fridayTotal $fridayTotal");
-
-// Ensure `total` is a valid number
-      double parsedTotal = double.tryParse(total) ?? 0;
-      if (parsedTotal == 0) {
-        log("Warning: Total is zero, avoiding division by zero.");
-        return "${fridayTotal.toString()} (0%)";
-      }
-
-// Calculate percentage safely
-      double percentage = (fridayTotal / parsedTotal) * 100;
-      int finalPercentage = percentage.isFinite ? percentage.round() : 0;
-
-      var totalPercentage = "${fridayTotal.toString()} (${finalPercentage}%)";
-      return totalPercentage;
-    } else {
-      var fridayTotal = fridayMeetingMonth.fold<int>(
-          0,
-          (sum, sunday) =>
-              sum + (int.tryParse(sunday['$key'].toString()) ?? 0));
-
-      log("fridayTotal $fridayTotal");
-
-      return fridayTotal;
-    }
-  }
-
-  updateAttendeesHomeTotalPercentage(key, reportType) {
-    if (reportType.toString() == 'week') {
-      var fridayTotal = homeMeeting.fold<int>(
-          0,
-          (sum, sunday) =>
-              sum + (int.tryParse(sunday['$key'].toString()) ?? 0));
-
-      log("fridayTotal $fridayTotal");
-
-// Ensure `total` is a valid number
-      double parsedTotal = double.tryParse(total) ?? 0;
-      if (parsedTotal == 0) {
-        log("Warning: Total is zero, avoiding division by zero.");
-        return "${fridayTotal.toString()} (0%)";
-      }
-
-// Calculate percentage safely
-      double percentage = (fridayTotal / parsedTotal) * 100;
-      int finalPercentage = percentage.isFinite ? percentage.round() : 0;
-
-      var totalPercentage = "${fridayTotal.toString()} (${finalPercentage}%)";
-      return totalPercentage;
-    } else {
-      var fridayTotal = fridayMeetingMonth.fold<int>(
-          0,
-          (sum, sunday) =>
-              sum + (int.tryParse(sunday['$key'].toString()) ?? 0));
-
-      log("fridayTotal $fridayTotal");
-
-      return fridayTotal;
-    }
-  }
-
-  updateAttendeesGospelTotalPercentage(key, reportType) {
-    if (reportType.toString() == 'week') {
-      var fridayTotal = gospelMeeting.fold<int>(
-          0,
-          (sum, sunday) =>
-              sum + (int.tryParse(sunday['$key'].toString()) ?? 0));
-
-      log("fridayTotal $fridayTotal");
-
-// Ensure `total` is a valid number
-      double parsedTotal = double.tryParse(total) ?? 0;
-      if (parsedTotal == 0) {
-        log("Warning: Total is zero, avoiding division by zero.");
-        return "${fridayTotal.toString()} (0%)";
-      }
-
-// Calculate percentage safely
-      double percentage = (fridayTotal / parsedTotal) * 100;
-      int finalPercentage = percentage.isFinite ? percentage.round() : 0;
-
-      var totalPercentage = "${fridayTotal.toString()} (${finalPercentage}%)";
-      return totalPercentage;
-    } else {
-      var fridayTotal = fridayMeetingMonth.fold<int>(
-          0,
-          (sum, sunday) =>
-              sum + (int.tryParse(sunday['$key'].toString()) ?? 0));
-
-      log("fridayTotal $fridayTotal");
-
-      return fridayTotal;
-    }
-  }
-
   generateReport(reportType) async {
-    log("Tuesdays $tuesday");
-    log("Fridays $friday");
-    log("Sundays $sunday");
 
     final pdf = pw.Document();
     final customFont = await loadCustomFont();
-
-    var ltmTotal;
-    var ltmATotal;
-    var ltmAvg;
-    var ltmPercentage;
-    var saintTotal = int.parse(total.toString()) * 4;
-    var ltmMAAvg;
-    var ltmMAPercentage;
-
-    var agpGs = getCountByDistrict(generalSaints, "1");
-    var gwkGs = getCountByDistrict(generalSaints, "2");
-    var akpGs = getCountByDistrict(generalSaints, "3");
-    var cityGs = getCountByDistrict(generalSaints, "4");
-
-    var agpYws = getCountByDistrict(workingSaints, "1");
-    var gwkYws = getCountByDistrict(workingSaints, "2");
-    var akpYws = getCountByDistrict(workingSaints, "3");
-    var cityYws = getCountByDistrict(workingSaints, "4");
-
-    var agpCs = getCountByDistrict(youngOne, "1");
-    var gwkCs = getCountByDistrict(youngOne, "2");
-    var akpCs = getCountByDistrict(youngOne, "3");
-    var cityCs = getCountByDistrict(youngOne, "4");
-
-    var agpTng = getCountByDistrict(teenagers, "1");
-    var gwkTng = getCountByDistrict(teenagers, "2");
-    var akpTng = getCountByDistrict(teenagers, "3");
-    var cityTng = getCountByDistrict(teenagers, "4");
-
-    var agpChild = getCountByDistrict(children, "1");
-    var gwkChild = getCountByDistrict(children, "2");
-    var akpChild = getCountByDistrict(children, "3");
-    var cityChild = getCountByDistrict(children, "4");
-
-    var agpDs = getCountByDistrict(dormantSaints, "1");
-    var gwkDs = getCountByDistrict(dormantSaints, "2");
-    var akpDs = getCountByDistrict(dormantSaints, "3");
-    var cityDs = getCountByDistrict(dormantSaints, "4");
-
-    var gsTotal = getTotalCount(generalSaints);
-    var ywsTotal = getTotalCount(workingSaints);
-    var csTotal = getTotalCount(youngOne);
-    var tngTotal = getTotalCount(teenagers);
-    var childTotal = getTotalCount(children);
-    var dsTotal = getTotalCount(dormantSaints);
-
-    var agpLtm = getPresentByDistrict(sundayMeeting, "1", reportType);
-    var cityLtm = getPresentByDistrict(sundayMeeting, "4", reportType);
-    var akpLtm = getPresentByDistrict(sundayMeeting, "3", reportType);
-    var gwkLtm = getPresentByDistrict(sundayMeeting, "2", reportType);
-
-    if (reportType.toString() == 'week') {
-      ltmTotal = updateAttendeesSunTotalPercentage('Present', reportType);
-    } else {
-      ltmTotal =
-          updateAttendeesSunTotalPercentage('monthlyPresent', reportType);
-      double ltmAvgTotal = ltmTotal / sunday;
-      ltmAvg = ltmAvgTotal.round();
-      double ltmPer = (ltmTotal / saintTotal) * 100;
-      ltmPercentage = ltmPer.round();
-    }
-
-    var agpPm = getPresentByDistrict(tuesdayMeeting, "1", reportType);
-    var cityPm = getPresentByDistrict(tuesdayMeeting, "4", reportType);
-    var akpPm = getPresentByDistrict(tuesdayMeeting, "3", reportType);
-    var gwkPm = getPresentByDistrict(tuesdayMeeting, "2", reportType);
-    var pmTotal;
-    var pmAvg;
-    var pmPercentage;
-    if (reportType.toString() == 'week') {
-      pmTotal = updateAttendeesTuesTotalPercentage('Present', reportType);
-    } else {
-      pmTotal =
-          updateAttendeesTuesTotalPercentage('monthlyPresent', reportType);
-      double pmAvgTotal = pmTotal / tuesday;
-      pmAvg = pmAvgTotal.round();
-      double pmPer = (pmTotal / saintTotal) * 100;
-      pmPercentage = pmPer;
-    }
-
-    var agpGm = getPresentByDistrict(fridayMeeting, "1", reportType);
-    var cityGm = getPresentByDistrict(fridayMeeting, "4", reportType);
-    var akpGm = getPresentByDistrict(fridayMeeting, "3", reportType);
-    var gwkGm = getPresentByDistrict(fridayMeeting, "2", reportType);
-
-    var gmTotal;
-    var gmAvg;
-    var gmPercentage;
-    if (reportType.toString() == 'week') {
-      gmTotal = updateAttendeesFriTotalPercentage('Present', reportType);
-    } else {
-      gmTotal = updateAttendeesFriTotalPercentage('monthlyPresent', reportType);
-      double gmAvgTotal = gmTotal / friday;
-      gmAvg = gmAvgTotal.round();
-      double gmPer = (gmTotal / saintTotal) * 100;
-      gmPercentage = gmPer;
-    }
-
-    var agpHm = getPresentByDistrict(homeMeeting, "1", reportType);
-    var cityHm = getPresentByDistrict(homeMeeting, "4", reportType);
-    var akpHm = getPresentByDistrict(homeMeeting, "3", reportType);
-    var gwkHm = getPresentByDistrict(homeMeeting, "2", reportType);
-
-    var hmTotal;
-    if (reportType.toString() == 'week') {
-      hmTotal = updateAttendeesHomeTotalPercentage('Present', reportType);
-    } else {
-      gmTotal = updateAttendeesFriTotalPercentage('monthlyPresent', reportType);
-      double gmAvgTotal = gmTotal / friday;
-      gmAvg = gmAvgTotal.round();
-      double gmPer = (gmTotal / saintTotal) * 100;
-      gmPercentage = gmPer;
-    }
-
-    var agpGsm = getPresentByDistrict(gospelMeeting, "1", reportType);
-    var cityGsm = getPresentByDistrict(gospelMeeting, "4", reportType);
-    var akpGsm = getPresentByDistrict(gospelMeeting, "3", reportType);
-    var gwkGsm = getPresentByDistrict(gospelMeeting, "2", reportType);
-
-    var gsmTotal;
-    if (reportType.toString() == 'week') {
-      gsmTotal = updateAttendeesGospelTotalPercentage('Present', reportType);
-    } else {
-      gmTotal = updateAttendeesFriTotalPercentage('monthlyPresent', reportType);
-      double gmAvgTotal = gmTotal / friday;
-      gmAvg = gmAvgTotal.round();
-      double gmPer = (gmTotal / saintTotal) * 100;
-      gmPercentage = gmPer;
-    }
-
-    var agpAbLtm = getAbsentByDistrict(sundayMeeting, "1", reportType);
-    var cityALtm = getAbsentByDistrict(sundayMeeting, "4", reportType);
-    var akpLAtm = getAbsentByDistrict(sundayMeeting, "3", reportType);
-    var gwkLAtm = getAbsentByDistrict(sundayMeeting, "2", reportType);
-
-    if (reportType.toString() == 'week') {
-      ltmATotal = updateAttendeesSunTotalPercentage('Absent', reportType);
-    } else {
-      ltmATotal =
-          updateAttendeesSunTotalPercentage('monthlyAbsent', reportType);
-      double ltmMAAvgTotal = ltmATotal / sunday;
-      ltmMAAvg = ltmMAAvgTotal.round();
-      double ltmMAPer = (ltmMAAvgTotal / saintTotal) * 100;
-      ltmMAPercentage = ltmMAPer;
-    }
-
-    var agpAPm = getAbsentByDistrict(tuesdayMeeting, "1", reportType);
-    var cityAPm = getAbsentByDistrict(tuesdayMeeting, "4", reportType);
-    var akpAPm = getAbsentByDistrict(tuesdayMeeting, "3", reportType);
-    var gwkAPm = getAbsentByDistrict(tuesdayMeeting, "2", reportType);
-    var pmATotal = updateAttendeesTuesTotalPercentage('Absent', reportType);
-
-    var agpAGm = getAbsentByDistrict(fridayMeeting, "1", reportType);
-    var cityAGm = getAbsentByDistrict(fridayMeeting, "4", reportType);
-    var akpAGm = getAbsentByDistrict(fridayMeeting, "3", reportType);
-    var gwkAGm = getAbsentByDistrict(fridayMeeting, "2", reportType);
-    var gmATotal = updateAttendeesFriTotalPercentage('Absent', reportType);
-
-    var agpAHm = getAbsentByDistrict(homeMeeting, "1", reportType);
-    var cityAHm = getAbsentByDistrict(homeMeeting, "4", reportType);
-    var akpAHm = getAbsentByDistrict(homeMeeting, "3", reportType);
-    var gwkAHm = getAbsentByDistrict(homeMeeting, "2", reportType);
-    var hmATotal = updateAttendeesHomeTotalPercentage('Absent', reportType);
-
-    var agpAGsm = getAbsentByDistrict(gospelMeeting, "1", reportType);
-    var cityAGsm = getAbsentByDistrict(gospelMeeting, "4", reportType);
-    var akpAGsm = getAbsentByDistrict(gospelMeeting, "3", reportType);
-    var gwkAGsm = getAbsentByDistrict(gospelMeeting, "2", reportType);
-    var gsmATotal = updateAttendeesGospelTotalPercentage('Absent', reportType);
-
 
     String monthName = Jiffy(meetingDate, 'yyyy-MM-dd').format('MMMM');
 
@@ -1042,8 +623,6 @@ class HomeController extends GetxController {
       ];
     }
 
-
-
     // ---------- Build Rows ----------
     List<List<String>> buildRows({required bool isPresent}) {
       final List meetingTypes = meetingAttendance.first['meetingTypes'];
@@ -1075,8 +654,6 @@ class HomeController extends GetxController {
         var totalSaints = areaWiseSaints[0]['count'];
 
         log("totalSaints $totalSaints");
-
-        final int grandTotal = total + oppositeTotal;
         final double percentage =
         totalSaints == 0 ? 0 : (total / totalSaints) * 100;
 
@@ -1086,8 +663,6 @@ class HomeController extends GetxController {
         return row;
       }).toList();
     }
-
-    // Create a PDF document
 
     // Add 10 pages to the PDF
     pdf.addPage(
@@ -1168,113 +743,12 @@ class HomeController extends GetxController {
                   headerAlignment: pw.Alignment.center,
                   cellAlignment: pw.Alignment.center,
                 ),
-                // pw.SizedBox(height: 30),
-                // pw.Text("Children Lords table meeting attendance",
-                //     style: pw.TextStyle(
-                //         font: customFont,
-                //         fontSize: 24,
-                //         fontWeight: pw.FontWeight.bold)),
-                // pw.SizedBox(height: 10),
-                // pw.Table.fromTextArray(
-                //   headers: ["Attendance", "Agp", "City", "AKP", "Gwk", "Total"],
-                //   data: [
-                //     [
-                //       "Present",
-                //       "$agpPChildLtm",
-                //       "$cityPChildLtm",
-                //       "$akpPChildLtm",
-                //       "$gwkPChildLtm",
-                //       "$ltmPChildTotal"
-                //     ],
-                //     [
-                //       "Absent",
-                //       "$agpAChildLtm",
-                //       "$cityAChildLtm",
-                //       "$akpAChildLtm",
-                //       "$gwkAChildLtm",
-                //       "$ltmAChildTotal"
-                //     ],
-                //   ],
-                //   headerStyle: pw.TextStyle(
-                //       font: customFont, fontWeight: pw.FontWeight.bold),
-                //   headerAlignment: pw.Alignment.center,
-                //   cellAlignment: pw.Alignment.center,
-                // ),
               ],
             ),
           ),
         ],
       ),
     );
-
-    // Loop through chunks and add individual pages
-    for (var i = 0; i < lordsDayAbsentees.length; i += 25) {
-      var chunk = lordsDayAbsentees.sublist(
-        i,
-        i + 25 > lordsDayAbsentees.length ? lordsDayAbsentees.length : i + 25,
-      );
-
-      pdf.addPage(
-        pw.Page(
-          pageFormat: PdfPageFormat.a4,
-          build: (pw.Context context) => pw.Container(
-            child: pw.Column(
-              crossAxisAlignment: pw.CrossAxisAlignment.start,
-              children: [
-                pw.Text("Lords Table Meeting Absentees",
-                    style: pw.TextStyle(
-                        fontSize: 30, fontWeight: pw.FontWeight.bold)),
-                pw.SizedBox(height: 20),
-                pw.Table.fromTextArray(
-                  headers: ["Sno", "Saint Name", "District"],
-                  data: chunk
-                      .map((e) => [e["sno"], e["name"], e["district"]])
-                      .toList(),
-                  headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold),
-                  headerAlignment: pw.Alignment.center,
-                  cellAlignment: pw.Alignment.center,
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
-    }
-
-    // Loop through chunks and add individual pages
-    for (var i = 0; i < absentees.length; i += 25) {
-      var absenteesChunk = absentees.sublist(
-        i,
-        i + 25 > absentees.length ? absentees.length : i + 25,
-      );
-
-      pdf.addPage(
-        pw.Page(
-          pageFormat: PdfPageFormat.a4,
-          build: (pw.Context context) => pw.Container(
-            child: pw.Column(
-              crossAxisAlignment: pw.CrossAxisAlignment.start,
-              children: [
-                pw.Text("Lords Day, Prayer Meeting and Group Meeting Absentees",
-                    style: pw.TextStyle(
-                        fontSize: 30, fontWeight: pw.FontWeight.bold)),
-                pw.SizedBox(height: 20),
-                pw.Table.fromTextArray(
-                  headers: ["Sno", "Saint Name", "District"],
-                  data: absenteesChunk
-                      .map((e) => [e["sno"], e["name"], e["district"]])
-                      .toList(),
-                  headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold),
-                  headerAlignment: pw.Alignment.center,
-                  cellAlignment: pw.Alignment.center,
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
-    }
-
     // You can also use a package like `share_plus` to share the file
 
     final directory = await getExternalStorageDirectory();
@@ -1288,460 +762,230 @@ class HomeController extends GetxController {
     OpenFile.open(filePath);
   }
 
-  generateMonthReport(reportType) async {
+  handleReport(type) {
+    loadPresentAbsentAttendance('monthly');
+  }
+
+  Future<void> generateMonthReport(reportType) async {
+    // ================= WEEKDAY COUNTS =================
+    var counts = loadWeekdayCounts();
+    int tuesday = counts['Tuesday'] ?? 0;
+    int friday  = counts['Friday'] ?? 0;
+    int sunday  = counts['Sunday'] ?? 0;
+
+    log("Tuesday $tuesday");
+    log("Friday $friday");
+    log("Sunday $sunday");
+
     final pdf = pw.Document();
-
-    var ltmTotal;
-    var ltmATotal;
-    var ltmAvg;
-    var ltmPercentage;
-    var saintTotal = int.parse(total.toString()) * 4;
-    var ltmMAAvg;
-    var ltmMAPercentage;
-
-    var agpGs = getCountByDistrict(generalSaints, "1");
-    var gwkGs = getCountByDistrict(generalSaints, "2");
-    var akpGs = getCountByDistrict(generalSaints, "3");
-    var cityGs = getCountByDistrict(generalSaints, "4");
-
-    var agpYws = getCountByDistrict(workingSaints, "1");
-    var gwkYws = getCountByDistrict(workingSaints, "2");
-    var akpYws = getCountByDistrict(workingSaints, "3");
-    var cityYws = getCountByDistrict(workingSaints, "4");
-
-    var agpCs = getCountByDistrict(youngOne, "1");
-    var gwkCs = getCountByDistrict(youngOne, "2");
-    var akpCs = getCountByDistrict(youngOne, "3");
-    var cityCs = getCountByDistrict(youngOne, "4");
-
-    var agpTng = getCountByDistrict(teenagers, "1");
-    var gwkTng = getCountByDistrict(teenagers, "2");
-    var akpTng = getCountByDistrict(teenagers, "3");
-    var cityTng = getCountByDistrict(teenagers, "4");
-
-    var agpChild = getCountByDistrict(children, "1");
-    var gwkChild = getCountByDistrict(children, "2");
-    var akpChild = getCountByDistrict(children, "3");
-    var cityChild = getCountByDistrict(children, "4");
-
-    var agpDs = getCountByDistrict(dormantSaints, "1");
-    var gwkDs = getCountByDistrict(dormantSaints, "2");
-    var akpDs = getCountByDistrict(dormantSaints, "3");
-    var cityDs = getCountByDistrict(dormantSaints, "4");
-
-    var gsTotal = getTotalCount(generalSaints);
-    var ywsTotal = getTotalCount(workingSaints);
-    var csTotal = getTotalCount(youngOne);
-    var tngTotal = getTotalCount(teenagers);
-    var childTotal = getTotalCount(children);
-    var dsTotal = getTotalCount(dormantSaints);
-
-    var agpLtm = getPresentByDistrict(sundayMeetingMonth, "1", reportType);
-    var cityLtm = getPresentByDistrict(sundayMeetingMonth, "4", reportType);
-    var akpLtm = getPresentByDistrict(sundayMeetingMonth, "3", reportType);
-    var gwkLtm = getPresentByDistrict(sundayMeetingMonth, "2", reportType);
-
-    double monthAgpLtm = int.parse(agpLtm) / sunday;
-    double monthCityLtm = int.parse(cityLtm) / sunday;
-    double monthAkpLtm = int.parse(akpLtm) / sunday;
-    double monthGwkLtm = int.parse(gwkLtm) / sunday;
-
-    log("monthAgpLtm $monthAgpLtm");
-
-    ltmTotal = updateAttendeesSunTotalPercentage('monthlyPresent', reportType);
-    double ltmAvgTotal = ltmTotal / sunday;
-    ltmAvg = ltmAvgTotal.round();
-    double ltmPer = (ltmTotal / saintTotal) * 100;
-    ltmPercentage = ltmPer.round();
-
-    var agpPm = getPresentByDistrict(tuesdayMeetingMonth, "1", reportType);
-    var cityPm = getPresentByDistrict(tuesdayMeetingMonth, "4", reportType);
-    var akpPm = getPresentByDistrict(tuesdayMeetingMonth, "3", reportType);
-    var gwkPm = getPresentByDistrict(tuesdayMeetingMonth, "2", reportType);
-    var pmTotal;
-    var pmAvg;
-    var pmPercentage;
-
-    double monthAgpPm = int.parse(agpPm) / tuesday;
-    double monthCityPm = int.parse(cityPm) / tuesday;
-    double monthAkpPm = int.parse(akpPm) / tuesday;
-    double monthGwkPm = int.parse(gwkPm) / tuesday;
-
-    pmTotal = updateAttendeesTuesTotalPercentage('monthlyPresent', reportType);
-    double pmAvgTotal = pmTotal / tuesday;
-    pmAvg = pmAvgTotal.round();
-    double pmPer = (pmTotal / saintTotal) * 100;
-    pmPercentage = pmPer.round();
-
-    var agpGm = getPresentByDistrict(fridayMeetingMonth, "1", reportType);
-    var cityGm = getPresentByDistrict(fridayMeetingMonth, "4", reportType);
-    var akpGm = getPresentByDistrict(fridayMeetingMonth, "3", reportType);
-    var gwkGm = getPresentByDistrict(fridayMeetingMonth, "2", reportType);
-
-    var gmTotal;
-    var gmAvg;
-    var gmPercentage;
-
-    double monthAgpGm = int.parse(agpGm) / friday;
-    double monthCityGm = int.parse(cityGm) / friday;
-    double monthAkpGm = int.parse(akpGm) / friday;
-    double monthGwkGm = int.parse(gwkGm) / friday;
-
-    gmTotal = updateAttendeesFriTotalPercentage('monthlyPresent', reportType);
-    double gmAvgTotal = gmTotal / friday;
-    gmAvg = gmAvgTotal.round();
-    double gmPer = (gmTotal / saintTotal) * 100;
-    gmPercentage = gmPer.round();
-
-    var agpAbLtm = getAbsentByDistrict(sundayMeetingMonth, "1", reportType);
-    var cityALtm = getAbsentByDistrict(sundayMeetingMonth, "4", reportType);
-    var akpLAtm = getAbsentByDistrict(sundayMeetingMonth, "3", reportType);
-    var gwkLAtm = getAbsentByDistrict(sundayMeetingMonth, "2", reportType);
-
-    double monthAgpALtm = int.parse(agpAbLtm) / sunday;
-    double monthCityALtm = int.parse(cityALtm) / sunday;
-    double monthAkpALtm = int.parse(akpLAtm) / sunday;
-    double monthGwkALtm = int.parse(gwkLAtm) / sunday;
-
-    ltmATotal = updateAttendeesSunTotalPercentage('monthlyAbsent', reportType);
-    double ltmMAAvgTotal = ltmATotal / sunday;
-    ltmMAAvg = ltmMAAvgTotal.round();
-    double ltmMAPer = (ltmMAAvgTotal / saintTotal) * 100;
-    ltmMAPercentage = ltmMAPer.round();
-
-    var agpAPm = getAbsentByDistrict(tuesdayMeetingMonth, "1", reportType);
-    var cityAPm = getAbsentByDistrict(tuesdayMeetingMonth, "4", reportType);
-    var akpAPm = getAbsentByDistrict(tuesdayMeetingMonth, "3", reportType);
-    var gwkAPm = getAbsentByDistrict(tuesdayMeetingMonth, "2", reportType);
-
-    double monthAgpAPm = int.parse(agpAPm) / tuesday;
-    double monthCityAPm = int.parse(cityAPm) / tuesday;
-    double monthAkpAPm = int.parse(akpAPm) / tuesday;
-    double monthGwkAPm = int.parse(gwkAPm) / tuesday;
-
-    var pmATotal =
-        updateAttendeesTuesTotalPercentage('monthlyAbsent', reportType);
-
-    double apmAvgTotal = pmATotal / tuesday;
-    var pmMAAvg = apmAvgTotal.round();
-    double pmMAPer = (apmAvgTotal / saintTotal) * 100;
-    var pmMAPercentage = pmMAPer.round();
-
-    var agpAGm = getAbsentByDistrict(fridayMeetingMonth, "1", reportType);
-    var cityAGm = getAbsentByDistrict(fridayMeetingMonth, "4", reportType);
-    var akpAGm = getAbsentByDistrict(fridayMeetingMonth, "3", reportType);
-    var gwkAGm = getAbsentByDistrict(fridayMeetingMonth, "2", reportType);
-
-    double monthAgpAGm = int.parse(agpAGm) / friday;
-    double monthCityAGm = int.parse(cityAGm) / friday;
-    double monthAkpAGm = int.parse(akpAGm) / friday;
-    double monthGwkAGm = int.parse(gwkAGm) / friday;
-
-    var gmATotal =
-        updateAttendeesFriTotalPercentage('monthlyAbsent', reportType);
-
-    double agmAvgTotal = pmATotal / tuesday;
-    var gmMAAvg = agmAvgTotal.round();
-    double gmMAPer = (agmAvgTotal / saintTotal) * 100;
-    var gmMAPercentage = gmMAPer.round();
-
-    var agpPChildLtm =
-        getPresentAbsentByDistrict(sundayMeeting, "1", "childPresent");
-    var cityPChildLtm =
-        getPresentAbsentByDistrict(sundayMeeting, "4", "childPresent");
-    var akpPChildLtm =
-        getPresentAbsentByDistrict(sundayMeeting, "3", "childPresent");
-    var gwkPChildLtm =
-        getPresentAbsentByDistrict(sundayMeeting, "2", "childPresent");
-    var ltmPChildTotal = updateChildTotal('childPresent');
-
-    var agpAChildLtm =
-        getPresentAbsentByDistrict(sundayMeeting, "1", "childAbsent");
-    var cityAChildLtm =
-        getPresentAbsentByDistrict(sundayMeeting, "4", "childAbsent");
-    var akpAChildLtm =
-        getPresentAbsentByDistrict(sundayMeeting, "3", "childAbsent");
-    var gwkAChildLtm =
-        getPresentAbsentByDistrict(sundayMeeting, "2", "childAbsent");
-    var ltmAChildTotal = updateChildTotal('childAbsent');
+    final customFont = await loadCustomFont();
 
     String monthName = Jiffy(meetingDate, 'yyyy-MM-dd').format('MMMM');
+    String reportTitle = "$monthName Month";
 
-    String reportTitle = reportType.toString() == 'week'
-        ? "$meetingDate Week"
-        : "$monthName Month";
+    // ================= CATEGORY COUNT =================
+    int getCount(district, category) {
+      final districtData = categoryWiseSaints.firstWhere(
+            (e) => e['district'] == district,
+        orElse: () => null,
+      );
 
+      if (districtData == null) return 0;
+
+      final catData = districtData['categories'].firstWhere(
+            (c) => c['category'] == category,
+        orElse: () => null,
+      );
+
+      return catData == null ? 0 : catData['count'];
+    }
+
+    final List<String> districts =
+    categoryWiseSaints.map((e) => e['district'].toString()).toList();
+
+    final List<String> headers = ["Category", ...districts, "Total"];
+
+    final List<List<String>> tableData = categories.map((category) {
+      int rowTotal = 0;
+      final List<String> row = [category];
+
+      for (var district in districts) {
+        final count = getCount(district, category);
+        rowTotal += count;
+        row.add(count.toString());
+      }
+
+      row.add(rowTotal.toString());
+      return row;
+    }).toList();
+
+    // ================= MEETING DIVISOR =================
+    int getMeetingDivisor(String meetingType) {
+      final type = meetingType.toLowerCase();
+
+      if (type.contains('Lords')) {
+        return sunday == 0 ? 1 : sunday;
+      } else if (type.contains('Prayer')) {
+        return tuesday == 0 ? 1 : tuesday;
+      } else if (type.contains('Group')) {
+        return friday == 0 ? 1 : friday;
+      }
+      return 1; // no division
+    }
+
+    // ================= TABLE HEADERS =================
+    List<String> buildHeaders() {
+      return [
+        'Meetings',
+        ...monthlyAttendance
+            .map((d) => d['district'].toString())
+            .toList(),
+        'Total',
+        'Percentage (%)',
+      ];
+    }
+
+    // ================= TABLE ROWS =================
+    List<List<String>> buildRows({required bool isPresent}) {
+      final List meetingTypes = monthlyAttendance.first['meetingTypes'];
+
+      return meetingTypes.map<List<String>>((meeting) {
+        int total = 0;
+
+        List<String> row = [
+          meeting['meetingType'].toString(),
+        ];
+
+        final int divisor =
+        getMeetingDivisor(meeting['meetingType'].toString());
+
+        for (var district in monthlyAttendance) {
+          final mt = district['meetingTypes'].firstWhere(
+                (m) => m['meetingType'] == meeting['meetingType'],
+          );
+
+          int value = isPresent ? mt['present'] : mt['absent'];
+
+          // ===== APPLY WEEKDAY DIVISION =====
+          if (divisor > 1) {
+            value = (value / divisor).round();
+          }
+
+          total += value;
+          row.add(value.toString());
+        }
+
+        int totalSaints = areaWiseSaints[0]['count'];
+
+        final double percentage =
+        totalSaints == 0 ? 0 : (total / totalSaints) * 100;
+
+        row.add(total.toString());
+        row.add('${percentage.toStringAsFixed(2)}%');
+
+        return row;
+      }).toList();
+    }
+
+    // ================= PDF PAGE =================
     pdf.addPage(
       pw.MultiPage(
         pageFormat: PdfPageFormat.a4,
         build: (pw.Context context) => [
-          pw.Container(
-            child: pw.Column(
-              crossAxisAlignment: pw.CrossAxisAlignment.start,
-              children: [
-                pw.Text("$reportTitle Report",
-                    style: pw.TextStyle(
-                        fontSize: 30, fontWeight: pw.FontWeight.bold)),
-                pw.SizedBox(height: 20),
-                pw.Text("Area wise saints",
-                    style: pw.TextStyle(
-                        fontSize: 24, fontWeight: pw.FontWeight.bold)),
-                pw.SizedBox(height: 10),
-                pw.Table.fromTextArray(
-                  headers: ["Total Saints", "Agp", "City", "AKP", "Gwk"],
-                  data: [
-                    [
-                      "$total",
-                      "$agpCount",
-                      "$cityCount",
-                      "$akpCount",
-                      "$gwkCount"
-                    ]
-                  ],
-                  headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold),
-                  headerAlignment: pw.Alignment.center,
-                  cellAlignment: pw.Alignment.center,
+          pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              pw.Text(
+                "$reportTitle Report",
+                style: pw.TextStyle(
+                  fontSize: 30,
+                  fontWeight: pw.FontWeight.bold,
                 ),
-                pw.SizedBox(height: 20),
-                pw.Text("Category wise saints",
-                    style: pw.TextStyle(
-                        fontSize: 24, fontWeight: pw.FontWeight.bold)),
-                pw.SizedBox(height: 10),
-                pw.Table.fromTextArray(
-                  headers: ["Category", "Agp", "City", "AKP", "Gwk", "Total"],
-                  data: [
-                    [
-                      "General Saints",
-                      "$agpGs",
-                      "$cityGs",
-                      "$akpGs",
-                      "$gwkGs",
-                      "$gsTotal"
-                    ],
-                    [
-                      "Young Working Saints",
-                      "$agpYws",
-                      "$cityYws",
-                      "$akpYws",
-                      "$gwkYws",
-                      "$ywsTotal"
-                    ],
-                    [
-                      "College Students",
-                      "$agpCs",
-                      "$cityCs",
-                      "$akpCs",
-                      "$gwkCs",
-                      "$csTotal"
-                    ],
-                    [
-                      "Teenagers",
-                      "$agpTng",
-                      "$cityTng",
-                      "$akpTng",
-                      "$gwkTng",
-                      "$tngTotal"
-                    ],
-                    [
-                      "Children",
-                      "$agpChild",
-                      "$cityChild",
-                      "$akpChild",
-                      "$gwkChild",
-                      "$childTotal"
-                    ],
-                    [
-                      "Dormant Saints",
-                      "$agpDs",
-                      "$cityDs",
-                      "$akpDs",
-                      "$gwkDs",
-                      "$dsTotal"
-                    ],
-                  ],
-                  headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold),
-                  headerAlignment: pw.Alignment.center,
-                  cellAlignment: pw.Alignment.center,
-                ),
-                pw.SizedBox(height: 20),
-                pw.Text("Attendees",
-                    style: pw.TextStyle(
-                        fontSize: 24, fontWeight: pw.FontWeight.bold)),
-                pw.SizedBox(height: 10),
-                pw.Table.fromTextArray(
-                  headers: ["Meetings", "Agp", "City", "AKP", "Gwk", "Avg (%)"],
-                  data: [
-                    [
-                      "Lord's Table Meeting",
-                      "${monthAgpLtm.round()}",
-                      "${monthCityLtm.round()}",
-                      "${monthAkpLtm.round()}",
-                      "${monthGwkLtm.round()}",
-                      "$ltmAvg ($ltmPercentage%)"
-                    ],
-                    [
-                      "Prayer Meeting",
-                      "${monthAgpPm.round()}",
-                      "${monthCityPm.round()}",
-                      "${monthAkpPm.round()}",
-                      "${monthGwkPm.round()}",
-                      "$pmAvg ($pmPercentage%)"
-                    ],
-                    [
-                      "Group Meeting",
-                      "${monthAgpGm.round()}",
-                      "${monthCityGm.round()}",
-                      "${monthAkpGm.round()}",
-                      "${monthGwkGm.round()}",
-                      "$gmAvg ($gmPercentage%)"
-                    ],
-                  ],
-                  headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold),
-                  headerAlignment: pw.Alignment.center,
-                  cellAlignment: pw.Alignment.center,
-                ),
-                pw.SizedBox(height: 20),
-                pw.Text("Absentees",
-                    style: pw.TextStyle(
-                        fontSize: 24, fontWeight: pw.FontWeight.bold)),
-                pw.SizedBox(height: 10),
-                pw.Table.fromTextArray(
-                  headers: ["Meetings", "Agp", "City", "AKP", "Gwk", "Avg (%)"],
-                  data: [
-                    [
-                      "Lord's Table Meeting",
-                      "${monthAgpALtm.round()}",
-                      "${monthCityALtm.round()}",
-                      "${monthAkpALtm.round()}",
-                      "${monthGwkALtm.round()}",
-                      "$ltmMAAvg ($ltmMAPercentage%)"
-                    ],
-                    [
-                      "Prayer Meeting",
-                      "${monthAgpAPm.round()}",
-                      "${monthCityAPm.round()}",
-                      "${monthAkpAPm.round()}",
-                      "${monthGwkAPm.round()}",
-                      "$pmMAAvg ($pmMAPercentage%)",
-                    ],
-                    [
-                      "Group Meeting",
-                      "${monthAgpAGm.round()}",
-                      "${monthCityAGm.round()}",
-                      "${monthAkpAGm.round()}",
-                      "${monthGwkAGm.round()}",
-                      "$gmMAAvg ($gmMAPercentage%)"
-                    ],
-                  ],
-                  headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold),
-                  headerAlignment: pw.Alignment.center,
-                  cellAlignment: pw.Alignment.center,
-                ),
-                pw.SizedBox(height: 30),
-                // pw.Text("Children Lords table meeting attendance",
-                //     style: pw.TextStyle(
-                //         fontSize: 24, fontWeight: pw.FontWeight.bold)),
-                // pw.SizedBox(height: 10),
-                // pw.Table.fromTextArray(
-                //   headers: ["Attendance", "Agp", "City", "AKP", "Gwk", "Total"],
-                //   data: [
-                //     [
-                //       "Present",
-                //       "$agpPChildLtm",
-                //       "$cityPChildLtm",
-                //       "$akpPChildLtm",
-                //       "$gwkPChildLtm",
-                //       "$ltmPChildTotal"
-                //     ],
-                //     [
-                //       "Absent",
-                //       "$agpAChildLtm",
-                //       "$cityAChildLtm",
-                //       "$akpAChildLtm",
-                //       "$gwkAChildLtm",
-                //       "$ltmAChildTotal"
-                //     ],
-                //   ],
-                //   headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold),
-                //   headerAlignment: pw.Alignment.center,
-                //   cellAlignment: pw.Alignment.center,
-                // ),
-              ],
-            ),
+              ),
+              pw.SizedBox(height: 20),
+
+              // ===== AREA WISE =====
+              pw.Text("Area wise saints",
+                  style: pw.TextStyle(
+                      fontSize: 24, fontWeight: pw.FontWeight.bold)),
+              pw.SizedBox(height: 10),
+
+              pw.Table.fromTextArray(
+                headers: ["Area", "Count"],
+                data: areaWiseSaints.map<List<String>>((item) {
+                  return [
+                    item['area'].toString(),
+                    item['count'].toString(),
+                  ];
+                }).toList(),
+                headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                headerAlignment: pw.Alignment.center,
+                cellAlignment: pw.Alignment.center,
+              ),
+
+              pw.SizedBox(height: 20),
+
+              // ===== CATEGORY WISE =====
+              pw.Text("Category wise saints",
+                  style: pw.TextStyle(
+                      fontSize: 24, fontWeight: pw.FontWeight.bold)),
+              pw.SizedBox(height: 10),
+
+              pw.Table.fromTextArray(
+                headers: headers,
+                data: tableData,
+                headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                headerAlignment: pw.Alignment.center,
+                cellAlignment: pw.Alignment.center,
+              ),
+
+              pw.SizedBox(height: 40),
+
+              // ===== ATTENDEES =====
+              pw.Text("Attendees",
+                  style: pw.TextStyle(
+                      fontSize: 24, fontWeight: pw.FontWeight.bold)),
+              pw.SizedBox(height: 10),
+
+              pw.Table.fromTextArray(
+                headers: buildHeaders(),
+                data: buildRows(isPresent: true),
+                headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                headerAlignment: pw.Alignment.center,
+                cellAlignment: pw.Alignment.center,
+              ),
+
+              pw.SizedBox(height: 20),
+
+              // ===== ABSENTEES =====
+              pw.Text("Absentees",
+                  style: pw.TextStyle(
+                      fontSize: 24, fontWeight: pw.FontWeight.bold)),
+              pw.SizedBox(height: 10),
+
+              pw.Table.fromTextArray(
+                headers: buildHeaders(),
+                data: buildRows(isPresent: false),
+                headerStyle: pw.TextStyle(
+                    font: customFont, fontWeight: pw.FontWeight.bold),
+                headerAlignment: pw.Alignment.center,
+                cellAlignment: pw.Alignment.center,
+              ),
+            ],
           ),
         ],
       ),
     );
 
+    // ================= SAVE & OPEN =================
     final directory = await getExternalStorageDirectory();
     final filePath = "${directory!.path}/${reportTitle}_report.pdf";
     final file = File(filePath);
 
-    // Write the PDF file
     await file.writeAsBytes(await pdf.save());
-
-    // Open the file
     OpenFile.open(filePath);
   }
 
-  handleReport(type) {
-    loadMonthlyReportAttendance(type);
-  }
-
-  loadMonthlyReportAttendance(type) async {
-    final body = jsonEncode({
-      "district": districtId.toString(),
-      "date": meetingDate.toString(),
-      'attendanceType': type.toString()
-    });
-    log("Encode Body $body");
-    await ApiService.post("monthlyAttendance", body).then((success) {
-      if (success.statusCode == 200) {
-        var responseBody = jsonDecode(success.body);
-        if (responseBody['status'].toString() == '200') {
-          log("Attendance Meetings $responseBody");
-          sundayMeetingMonth = responseBody['sundayMeeting'];
-          tuesdayMeetingMonth = responseBody['tuesdayMeeting'];
-          fridayMeetingMonth = responseBody['fridayMeeting'];
-          homeMeetingMonth = responseBody['homeMeeting'];
-          gospelMeetingMonth = responseBody['gospelMeeting'];
-          generateMonthReport(type);
-          isLoading = false;
-          update();
-        } else {
-          Get.rawSnackbar(
-              snackPosition: SnackPosition.TOP,
-              message: responseBody['message'].toString());
-        }
-      } else {
-        Get.rawSnackbar(
-            snackPosition: SnackPosition.TOP,
-            message: 'Something went wrong, Please retry later');
-      }
-      update();
-    });
-    update();
-  }
-
-  // callingAttendance() {
-  //   loadMeetingAttendance();
-  //   handleMonthlyAttendance();
-  //   update();
-  // }
-  //
-  // handleMonthlyAttendance() async {
-  //   await generateReport(attendanceType);
-  //   update();
-  // }
-
-  String getCountByDistrict(generalSaints, districtID) {
-    return generalSaints
-        .firstWhere(
-          (sunday) => sunday['districtID'].toString() == districtID,
-          orElse: () => {"count": "0"},
-        )['count']
-        .toString();
-  }
 
   logout() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
@@ -1757,57 +1001,6 @@ class HomeController extends GetxController {
     Get.offAll(() => const LoginScreen());
   }
 
-  getTotalCount(List generalSaints) {
-    return generalSaints
-        .fold<int>(0, (sum, gen) => sum + int.parse(gen['count'].toString()))
-        .toString();
-  }
-
-  getPresentByDistrict(List sundayMeeting, String districtID, reportType) {
-    if (reportType.toString() == 'week') {
-      return sundayMeeting
-          .firstWhere(
-            (sunday) => sunday['districtID'].toString() == districtID,
-            orElse: () => {"Present": "0"},
-          )['Present']
-          .toString();
-    } else {
-      return sundayMeeting
-          .firstWhere(
-            (sunday) => sunday['districtID'].toString() == districtID,
-            orElse: () => {"monthlyPresent": "0"},
-          )['monthlyPresent']
-          .toString();
-    }
-  }
-
-  getPresentAbsentByDistrict(
-      List sundayMeeting, String districtID, String type) {
-    return sundayMeeting
-        .firstWhere(
-          (sunday) => sunday['districtID'].toString() == districtID,
-          orElse: () => {"$type": "0"},
-        )['$type']
-        .toString();
-  }
-
-  getAbsentByDistrict(List sundayMeeting, String districtID, reportType) {
-    if (reportType.toString() == 'week') {
-      return sundayMeeting
-          .firstWhere(
-            (sunday) => sunday['districtID'].toString() == districtID,
-            orElse: () => {"Absent": "0"},
-          )['Absent']
-          .toString();
-    } else {
-      return sundayMeeting
-          .firstWhere(
-            (sunday) => sunday['districtID'].toString() == districtID,
-            orElse: () => {"monthlyAbsent": "0"},
-          )['monthlyAbsent']
-          .toString();
-    }
-  }
 
   updateChildTotal(key) {
     var sundayTotal = sundayMeeting.fold<int>(0,

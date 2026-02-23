@@ -21,14 +21,7 @@ class AttendanceController extends GetxController {
     {"id": 0, "name": "Absent"}
   ];
 
-  List meetingTypes = [
-    {"id": "", "name": "-- Select --"},
-    {"id": 1, "name": "Lords Table Meeting"},
-    {"id": 2, "name": "Prayer Meeting"},
-    {"id": 3, "name": "Group Meeting"},
-    {"id": 4, "name": "Home Meeting"},
-    {"id": 5, "name": "Gospel Meeting"},
-  ];
+  List meetingTypes = [];
   String districtId = "0";
   String meetingTypeId = "0";
   String categoryId = "0";
@@ -48,7 +41,30 @@ class AttendanceController extends GetxController {
     // TODO: implement onInit
     loadSaints();
     loadDistricts(Utilities.locationID);
+    loadMeetingTypes();
     super.onInit();
+  }
+
+  Future<void> loadMeetingTypes() async {
+    try {
+      final responses = await Future.wait(
+          [ApiService.get("masterData?dropdownID=5&featureID=2&isActive=1")]);
+
+      final firstResponse = responses[0];
+
+      if (firstResponse.statusCode == 200) {
+        final data = jsonDecode(firstResponse.body);
+        meetingTypes = data['masterData'];
+        log("meetingTypes: $meetingTypes");
+      } else {
+        _showErrorSnackbar();
+      }
+    } catch (e) {
+      log("Error in loadDropdownData: $e");
+      _showErrorSnackbar();
+    }
+
+    update(); // Call once after all updates
   }
 
   Future<void> loadDistricts(String? value) async {

@@ -13,6 +13,7 @@ class FinanceHomeController extends GetxController {
   List submenus = [];
   bool isLoading = true;
   String roleId = "";
+  String userId = "";
 
   @override
   void onInit() {
@@ -24,6 +25,7 @@ class FinanceHomeController extends GetxController {
   loadSubMenus() async {
     SharedPreferences userPref = await SharedPreferences.getInstance();
     roleId = userPref.getString('roleID').toString();
+    userId = userPref.getString('userID').toString();
     var id = Utilities.navId.toString();
 
     var body =

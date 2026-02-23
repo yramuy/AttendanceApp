@@ -126,7 +126,7 @@ class MonthlyMaintenance extends StatelessWidget {
                           height: 25,
                         ),
                         Container(
-                          // width: 400,
+                          width: MediaQuery.of(context).size.width,
                           decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(8),
@@ -295,6 +295,7 @@ class MonthlyMaintenance extends StatelessWidget {
                           height: 10,
                         ),
                         Container(
+                          width: MediaQuery.of(context).size.width,
                           decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(8),
@@ -398,6 +399,7 @@ class MonthlyMaintenance extends StatelessWidget {
                                                   ? Colors.green
                                                   : Colors.red,
                                           fontFamily: "Inter-Medium",
+                                          fontWeight: FontWeight.bold
                                         ),
                                       )),
                                       DataCell(Text(

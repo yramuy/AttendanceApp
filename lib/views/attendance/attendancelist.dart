@@ -4,6 +4,7 @@ import 'package:lite_rolling_switch/lite_rolling_switch.dart';
 import 'package:maintenanceapp/controllers/attendance/attendancelistcontroller.dart';
 import 'package:maintenanceapp/views/attendance/attendance.dart';
 
+import '../../helpers/utilities.dart';
 import '../bottompages/bottomnavigationbar.dart';
 
 class AttendanceList extends StatefulWidget {
@@ -38,7 +39,9 @@ class _AttendanceListState extends State<AttendanceList> {
                   ),
                 ),
                 actions: [
-                  Container(
+                  Utilities.locationID.toString() ==
+                      Utilities.loginLocationID.toString()
+                      ? Container(
                     margin: EdgeInsets.only(right: 10),
                     child: IconButton(
                         onPressed: () {
@@ -48,7 +51,7 @@ class _AttendanceListState extends State<AttendanceList> {
                           Icons.add_circle_outline_rounded,
                           size: 35,
                         )),
-                  ),
+                  ) : Container(),
                   IconButton(
                       onPressed: (){
                         Get.offAll(() => const BottomNavigationTileScreen());
