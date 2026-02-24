@@ -70,7 +70,7 @@ class WeeklyReportController extends GetxController {
     update();
   }
 
-  handleReport(districtID) async {
+  handleReport(districtID,districtName) async {
     var body = jsonEncode({
       "location_id": Utilities.locationID,
       "district_id": districtID,
@@ -82,7 +82,7 @@ class WeeklyReportController extends GetxController {
         if (responseBody['status'].toString() == '200') {
           weeklyAttendance = responseBody['weeklyAttendance'];
           log("weeklyAttendance $weeklyAttendance");
-          loadPDFReport();
+          loadPDFReport(districtName);
         }
       } else {
         Get.snackbar('Alert', 'Something went wrong, Please retry later',
@@ -96,37 +96,59 @@ class WeeklyReportController extends GetxController {
 
     update();
   }
+
   Future<pw.Font> loadCustomFont() async {
     final fontData = await rootBundle.load("assets/fonts/NotoSans-Regular.ttf");
     return pw.Font.ttf(fontData);
   }
 
-
-
-  Future<void> loadPDFReport() async {
+  Future<void> loadPDFReport(districtName) async {
     final pdf = pw.Document();
     final customFont = await loadCustomFont();
 
     String reportTitle = meetingDate;
     String monthName = Jiffy(meetingDate, 'yyyy-MM-dd').format('MMMM');
 
-    const int chunkSize = 20;
-
-    // ✅ FIX: Cast List<dynamic> → List<Map<String, dynamic>>
+    // Safe cast
     final List<Map<String, dynamic>> attendanceList =
     weeklyAttendance.cast<Map<String, dynamic>>();
 
-    // Split data into chunks
-    List<List<Map<String, dynamic>>> chunks = [];
-    for (int i = 0; i < attendanceList.length; i += chunkSize) {
-      chunks.add(
-        attendanceList.sublist(
-          i,
-          i + chunkSize > attendanceList.length
-              ? attendanceList.length
-              : i + chunkSize,
-        ),
-      );
+    // Extract meeting types dynamically (from first record)
+    final List<String> meetingTypes =
+    (attendanceList.first['attendance'] as List)
+        .map<String>((e) => e['meeting_type'].toString())
+        .toList();
+
+    int sno = 1;
+
+    // ---- Calculate summary counts ----
+    final Map<String, Map<String, int>> meetingSummary = {};
+
+    for (final meetingType in meetingTypes) {
+      int present = 0;
+      int absent = 0;
+
+      for (final item in attendanceList) {
+        final List attendance = item['attendance'];
+
+        final meeting = attendance.firstWhere(
+              (m) =>
+          m['meeting_type'].toString().trim().toLowerCase() ==
+              meetingType.trim().toLowerCase(),
+          orElse: () => {'attendance': 0},
+        );
+
+        if (meeting['attendance'] == 1) {
+          present++;
+        } else {
+          absent++;
+        }
+      }
+
+      meetingSummary[meetingType] = {
+        'present': present,
+        'absent': absent,
+      };
     }
 
     pdf.addPage(
@@ -137,83 +159,167 @@ class WeeklyReportController extends GetxController {
           bold: customFont,
         ),
         build: (context) {
-          return chunks.map((chunk) {
-            return pw.Column(
-              crossAxisAlignment: pw.CrossAxisAlignment.start,
+          return [
+            pw.Text(
+              "$reportTitle $districtName Report",
+              style: pw.TextStyle(
+                fontSize: 26,
+                fontWeight: pw.FontWeight.bold,
+              ),
+            ),
+            pw.SizedBox(height: 6),
+
+            // pw.Text(
+            //   "Weekly Attendance - $monthName",
+            //   style: pw.TextStyle(
+            //     fontSize: 18,
+            //     fontWeight: pw.FontWeight.bold,
+            //   ),
+            // ),
+            // pw.SizedBox(height: 12),
+
+            // ================= TABLE =================
+            pw.Table(
+              border: pw.TableBorder.all(width: 0.8),
+              defaultVerticalAlignment:
+              pw.TableCellVerticalAlignment.middle,
               children: [
-                pw.Text(
-                  "$reportTitle Report",
-                  style: pw.TextStyle(
-                    fontSize: 28,
-                    fontWeight: pw.FontWeight.bold,
-                  ),
-                ),
 
-                pw.SizedBox(height: 5),
-
-                pw.Text(
-                  "Month : $monthName",
-                  style: const pw.TextStyle(fontSize: 14),
-                ),
-
-                pw.SizedBox(height: 15),
-
-                pw.Text(
-                  "Weekly Attendance",
-                  style: pw.TextStyle(
-                    fontSize: 22,
-                    fontWeight: pw.FontWeight.bold,
-                  ),
-                ),
-
-                pw.SizedBox(height: 10),
-
-                pw.Table(
-                  border: pw.TableBorder.all(width: 0.8),
+                // -------- SUMMARY ROW (TOP) --------
+                pw.TableRow(
+                  decoration: const pw.BoxDecoration(color: PdfColors.grey200),
                   children: [
-                    pw.TableRow(
-                      decoration:
-                      const pw.BoxDecoration(color: PdfColors.grey300),
-                      children: [
-                        pw.Padding(
-                          padding: const pw.EdgeInsets.all(8),
-                          child: pw.Text(
-                            "Name",
-                            textAlign: pw.TextAlign.center,
-                            style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
-                          ),
-                        ),
-                      ],
-                    ),
-                    ...chunk.map((item) {
-                      return pw.TableRow(
-                        children: [
-                          pw.Padding(
-                            padding: const pw.EdgeInsets.all(8),
-                            child: pw.Text(
-                              item['name']?.toString() ?? '',
-                              textAlign: pw.TextAlign.center,
+                    _headerCell(''),
+                    _headerCell(''),
+
+                    ...meetingTypes.map((meeting) {
+                      final summary = meetingSummary[meeting]!;
+
+                      return pw.Padding(
+                        padding: const pw.EdgeInsets.all(4),
+                        child: pw.Column(
+                          mainAxisAlignment: pw.MainAxisAlignment.center,
+                          children: [
+                            pw.Text(
+                              'Present : ${summary['present']}',
+                              style: pw.TextStyle(
+                                fontSize: 10,
+                                fontWeight: pw.FontWeight.bold,
+                                color: PdfColors.green,
+                              ),
                             ),
-                          ),
-                        ],
+                            pw.SizedBox(height: 2),
+                            pw.Text(
+                              'Absent : ${summary['absent']}',
+                              style: pw.TextStyle(
+                                fontSize: 10,
+                                fontWeight: pw.FontWeight.bold,
+                                color: PdfColors.red,
+                              ),
+                            ),
+                          ],
+                        ),
                       );
                     }).toList(),
                   ],
                 ),
+                // -------- HEADER ROW --------
+                pw.TableRow(
+                  decoration:
+                  const pw.BoxDecoration(color: PdfColors.grey300),
+                  children: [
+                    _headerCell("Sno"),
+                    _headerCell("Name"),
 
-                pw.SizedBox(height: 20),
+                    // One column per meeting
+                    ...meetingTypes.map(
+                          (meeting) => _headerCell(meeting),
+                    ),
+                  ],
+                ),
+
+                // -------- DATA ROWS --------
+                ...attendanceList.map((item) {
+                  final List attendance = item['attendance'];
+
+                  return pw.TableRow(
+                    children: [
+                      _cell((sno++).toString()),
+                      _cell(item['name'].toString()),
+
+                      // P / A per meeting (FIXED)
+                      ...meetingTypes.map((meetingType) {
+                        final meeting = attendance.firstWhere(
+                              (m) =>
+                          m['meeting_type']
+                              .toString()
+                              .trim()
+                              .toLowerCase() ==
+                              meetingType.trim().toLowerCase(),
+                          orElse: () => {'attendance': 0},
+                        );
+
+                        final bool isPresent = meeting['attendance'] == 1;
+
+                        return _statusCell(isPresent);
+                      }),
+                    ],
+                  );
+                }).toList(),
               ],
-            );
-          }).toList();
+            ),
+          ];
         },
       ),
     );
 
     final directory = await getExternalStorageDirectory();
-    final filePath = "${directory!.path}/${reportTitle}_report.pdf";
+    final filePath = "${directory!.path}/${reportTitle}_weekly_report.pdf";
     final file = File(filePath);
 
     await file.writeAsBytes(await pdf.save());
     await OpenFile.open(filePath);
+  }
+
+  pw.Widget _headerCell(String text) {
+    return pw.Padding(
+      padding: const pw.EdgeInsets.all(6),
+      child: pw.Text(
+        text,
+        textAlign: pw.TextAlign.center,
+        style: pw.TextStyle(
+          fontWeight: pw.FontWeight.bold,
+          fontSize: 9,
+        ),
+      ),
+    );
+  }
+
+  pw.Widget _cell(String text) {
+    return pw.Padding(
+      padding: const pw.EdgeInsets.all(6),
+      child: pw.Text(
+        text,
+        textAlign: pw.TextAlign.center,
+        style: const pw.TextStyle(fontSize: 11),
+      ),
+    );
+  }
+
+  pw.Widget _statusCell(bool isPresent) {
+    return pw.Padding(
+      padding: const pw.EdgeInsets.all(6),
+      child: pw.Center(
+        child: pw.Text(
+          isPresent ? 'Present' : 'Absent',
+          textAlign: pw.TextAlign.center,
+          style: pw.TextStyle(
+            fontSize: 12,
+            fontWeight: pw.FontWeight.bold,
+            color: isPresent ? PdfColors.green : PdfColors.red,
+          ),
+        ),
+      ),
+    );
   }
 }

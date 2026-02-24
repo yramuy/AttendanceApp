@@ -97,7 +97,7 @@ class _WeeklyReportState extends State<WeeklyReport> {
                         return GestureDetector(
                           onTap: () {
                             controller.handleReport(
-                                controller.districts[index]['config_id']);
+                                controller.districts[index]['config_id'],controller.districts[index]['name']);
                           },
                           child: Container(
                             padding: EdgeInsets.all(20),
